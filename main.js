@@ -210,62 +210,58 @@ const initWipeDust = () => {
     animate();
 };
 
-// ════════════════ B-ROLL ENGINE (BULLETPROOF PARALLAX) ════════════════
+// ════════════════ B-ROLL ENGINE (MAJESTIC ROYAL REVEAL) ════════════════
 const initBRollEngine = () => {
     const sc = document.getElementById('scroll');
     const wipe = document.getElementById('wipe');
     const wipeBar = document.getElementById('wipe-bar');
     let curS = 0;
     let isT = false;
-    let failSafe;
 
     if (!sc || !wipe) return;
 
-    // Initial State: Ensure Hero is visible immediately
     const sections = document.querySelectorAll('.S');
-    if (sections[0]) {
-        sections[0].classList.add('active-scene');
-        const content = sections[0].querySelector('.inner, .card');
-        if (content) gsap.set(content, { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' });
-    }
+    
+    // 1. Initial State Visibility
+    const show = (i) => {
+        sections.forEach((s, idx) => {
+            const content = s.querySelector('.inner, .card');
+            if (idx === i) {
+                s.classList.add('active-scene');
+                s.style.zIndex = "10";
+                if (content) gsap.set(content, { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' });
+            } else {
+                s.classList.remove('active-scene');
+                s.style.zIndex = "1";
+                if (content) gsap.set(content, { opacity: 0, filter: 'blur(10px)' });
+            }
+        });
+    };
+    show(0);
 
     sc.addEventListener('scroll', () => {
         const h = window.innerHeight;
-        const st = sc.scrollTop;
-        const nextS = Math.round(st / h);
+        const nextS = Math.round(sc.scrollTop / h);
 
-        // 1. Proactive Bloom (Starts as soon as we leave the center of a section)
-        const offset = st - (curS * h);
-        if (Math.abs(offset) > 30 && !isT) {
+        if (nextS !== curS && !isT) {
             isT = true;
-            const dir = nextS !== curS ? (nextS > curS ? 1 : -1) : (offset > 0 ? 1 : -1);
-            
-            clearTimeout(failSafe);
+            const dir = nextS > curS ? 1 : -1;
             
             const tl = gsap.timeline({
                 onComplete: () => {
                     curS = nextS;
                     isT = false;
-                    gsap.set(wipe, { opacity: 0, display: 'none' });
-                    sections.forEach((s, i) => {
-                        if (i !== nextS) s.classList.remove('active-scene');
-                    });
+                    gsap.set(wipe, { display: 'none', opacity: 0 });
                 }
             });
 
-            const curContent = sections[curS]?.querySelector('.inner, .card');
-            const nextContent = sections[nextS]?.querySelector('.inner, .card');
-
-            // PHASE 1: AGGRESSIVE OVERSHADOW (Pins current content)
+            // PHASE 1: GOLDEN WIPE (THE B-ROLL FLASH)
             tl.set(wipe, { display: 'flex', opacity: 0 })
-              .to(wipe, { opacity: 1, duration: 0.4, ease: 'power2.in' }) // FAST Bloom
-              .fromTo(wipeBar, { y: dir * 100, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }, 0)
-              .call(() => { if (burstDust) burstDust(dir); }, null, 0.05)
-              
-              // Pin current content so it doesn't "move away" while blooming
-              .to(curContent, { y: offset, duration: 0.4, ease: 'none' }, 0) 
+              .to(wipe, { opacity: 1, duration: 0.6, ease: 'power2.inOut' })
+              .fromTo(wipeBar, { y: dir * 100, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out' }, 0)
+              .call(() => { if (burstDust) burstDust(dir); }, null, 0.2)
             
-            // PHASE 2: CINEMATIC SWAP (Total coverage reached)
+            // PHASE 2: ELEGANT SWAP (Occurs during peak bloom)
             .call(() => {
                 sections.forEach((s, i) => {
                     const content = s.querySelector('.inner, .card');
@@ -273,51 +269,33 @@ const initBRollEngine = () => {
 
                     if (i === nextS) {
                         s.classList.add('active-scene');
-                        s.style.zIndex = "50";
+                        s.style.zIndex = "10";
                         gsap.fromTo(content, 
-                            { y: dir * 150, opacity: 0, scale: 0.9, filter: 'blur(30px)' },
-                            { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 1.8, ease: 'expo.out', overwrite: true }
+                            { y: dir * 100, opacity: 0, scale: 0.95, filter: 'blur(20px)' },
+                            { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 1.5, ease: 'power4.out', overwrite: true }
                         );
                     } else if (i === curS) {
-                        s.style.zIndex = "20";
+                        s.style.zIndex = "5";
                         gsap.to(content, { 
-                            y: -dir * 120, 
+                            y: -dir * 80, 
                             opacity: 0, 
-                            scale: 1.15, 
-                            filter: 'blur(40px)',
-                            duration: 1.2, 
-                            ease: 'power3.inOut',
-                            overwrite: true,
-                            onComplete: () => { s.classList.remove('active-scene'); }
+                            scale: 1.05, 
+                            filter: 'blur(30px)',
+                            duration: 1.0, 
+                            ease: 'power2.inOut',
+                            overwrite: true
                         });
                     } else {
                         s.classList.remove('active-scene');
-                        gsap.set(content, { opacity: 0, y: dir * 150, filter: 'blur(20px)' });
+                        s.style.zIndex = "1";
+                        gsap.set(content, { opacity: 0, filter: 'blur(10px)' });
                     }
                 });
-            }, null, 0.4) // Trigger at peak bloom
+            }, null, 0.5)
             
-            // PHASE 3: REVEAL
-            .to(wipe, { opacity: 0, duration: 1.4, ease: 'power2.out', delay: 0.2 })
-            .to(wipeBar, { y: -dir * 150, opacity: 0, duration: 1.4, ease: 'power3.in' }, 0.6);
-
-            // EMERGENCY FAIL-SAFE
-            failSafe = setTimeout(() => {
-                if (isT) {
-                    isT = false;
-                    curS = nextS;
-                    gsap.set(wipe, { opacity: 0, display: 'none' });
-                    sections.forEach((s, i) => {
-                        const content = s.querySelector('.inner, .card');
-                        if (i === nextS) {
-                            s.classList.add('active-scene');
-                            if (content) gsap.set(content, { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' });
-                        } else {
-                            s.classList.remove('active-scene');
-                        }
-                    });
-                }
-            }, 3500);
+            // PHASE 3: GRACEFUL EXIT
+            .to(wipe, { opacity: 0, duration: 1.0, ease: 'power2.inOut', delay: 0.2 })
+            .to(wipeBar, { y: -dir * 100, opacity: 0, duration: 1.0, ease: 'power3.in' }, 0.8);
         }
     });
 };
