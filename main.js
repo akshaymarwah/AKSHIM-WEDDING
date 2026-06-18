@@ -159,63 +159,158 @@ const initGoldDust = () => {
     animate();
 };
 
-    .to('#pre', { yPercent: -100, duration: 1.1, ease: 'power4.inOut', onComplete: () => {
-        document.getElementById('pre').remove();
-    }}, 'exit+=0.8')
-    .to('#nav', { opacity: 1, duration: 1, ease: 'power2.out' }, 'exit+=1.1')
-    .fromTo('.fc', { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 1.2, stagger: 0.1, ease: 'back.out(2)' }, 'exit+=1.0')
-    .fromTo('#heroContent', { opacity: 0, y: 30, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 1.8, ease: 'power3.out' }, 'exit+=0.8')
-    .to('#hint', { opacity: 1, duration: 1 }, 'exit+=2.5');
+// 4. Majestic Wipe Dust (Cinematic Cloud)
+let burstDust; 
+const initWipeDust = () => {
+    const cv = document.getElementById('wipe-dust');
+    const cx = cv.getContext('2d');
+    let W, H;
+    const resize = () => { W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; };
+    resize();
+    window.addEventListener('resize', resize);
+
+    let pts = [];
+    burstDust = (dir) => {
+        pts = Array.from({ length: 300 }, () => ({
+            x: W / 2 + (Math.random() - 0.5) * W * 1.5,
+            y: H / 2 + (Math.random() - 0.5) * H * 1.5,
+            r: Math.random() * 1.2 + 0.3, // Smaller particles
+            vx: (Math.random() - 0.5) * 4,
+            vy: (Math.random() - 0.5) * 4 + (dir * 2),
+            jitter: Math.random() * 0.1,
+            a: 1,
+            life: 1,
+            decay: Math.random() * 0.008 + 0.004,
+            color: `rgba(${212 + Math.random() * 43 | 0}, ${175 + Math.random() * 30 | 0}, ${55 + Math.random() * 40 | 0}, `
+        }));
+    };
+
+    const animate = () => {
+        cx.clearRect(0, 0, W, H);
+        pts.forEach((p, i) => {
+            // Random jitter for "cloud" feel
+            p.vx += (Math.random() - 0.5) * 0.5;
+            p.vy += (Math.random() - 0.5) * 0.5;
+            
+            p.x += p.vx;
+            p.y += p.vy;
+            p.life -= p.decay;
+
+            if (p.life <= 0) {
+                pts.splice(i, 1);
+                return;
+            }
+            cx.beginPath();
+            cx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            cx.fillStyle = p.color + p.life + ')';
+            cx.fill();
+        });
+        requestAnimationFrame(animate);
+    };
+    animate();
 };
 
-// ════════════════ B-ROLL ENGINE (ROBUST) ════════════════
+// ════════════════ B-ROLL ENGINE (BULLETPROOF PARALLAX) ════════════════
 const initBRollEngine = () => {
     const sc = document.getElementById('scroll');
     const wipe = document.getElementById('wipe');
+    const wipeBar = document.getElementById('wipe-bar');
+    let curS = 0;
+    let isT = false;
+    let failSafe;
+
+    if (!sc || !wipe) return;
+
+    // Initial State: Ensure Hero is visible immediately
     const sections = document.querySelectorAll('.S');
+    if (sections[0]) {
+        sections[0].classList.add('active-scene');
+        const content = sections[0].querySelector('.inner, .card');
+        if (content) gsap.set(content, { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' });
+    }
 
-    sections.forEach((s) => {
-        const content = s.querySelector('.inner, .card');
-        if (!content) return;
+    sc.addEventListener('scroll', () => {
+        const h = window.innerHeight;
+        const nextS = Math.round(sc.scrollTop / h);
 
-        ScrollTrigger.create({
-            trigger: sc,
-            scroller: sc,
-            start: () => `top+=${s.offsetTop - window.innerHeight / 2} top`,
-            end: () => `top+=${s.offsetTop + window.innerHeight / 2} top`,
-            onToggle: (self) => {
-                if (self.isActive) {
-                    s.classList.add('active-scene');
-                    gsap.to(content, { 
-                        opacity: 1, 
-                        y: 0, 
-                        scale: 1, 
-                        duration: 0.8, 
-                        ease: "power2.out",
-                        overwrite: true
-                    });
-                    
-                    // Cinematic Wipe
-                    gsap.fromTo(wipe, { opacity: 0 }, { 
-                        opacity: 0.7, 
-                        duration: 0.3, 
-                        ease: "power2.in", 
-                        onComplete: () => {
-                            gsap.to(wipe, { opacity: 0, duration: 0.5, ease: "power2.out" });
-                        }
-                    });
-                } else {
-                    s.classList.remove('active-scene');
-                    gsap.to(content, { 
-                        opacity: 0, 
-                        y: 20, 
-                        duration: 0.4, 
-                        ease: "power2.in",
-                        overwrite: true
+        if (nextS !== curS && !isT) {
+            isT = true;
+            const dir = nextS > curS ? 1 : -1;
+            
+            // Clear any existing fail-safe
+            clearTimeout(failSafe);
+            
+            const tl = gsap.timeline({
+                onComplete: () => {
+                    curS = nextS;
+                    isT = false;
+                    gsap.set(wipe, { opacity: 0, display: 'none' });
+                    sections.forEach((s, i) => {
+                        if (i !== nextS) s.classList.remove('active-scene');
                     });
                 }
-            }
-        });
+            });
+
+            // 1. PHASE 1: IMMEDIATE GOLDEN OVERSHADOW (Starts at 0)
+            tl.set(wipe, { display: 'flex', opacity: 0 })
+              .to(wipe, { opacity: 1, duration: 0.8, ease: 'power2.in' }) // Covers quickly
+              .fromTo(wipeBar, { y: dir * 150, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, 0)
+              .call(() => { if (burstDust) burstDust(dir); }, null, 0.05) // Dust starts almost instantly
+            
+            // 2. PHASE 2: CINEMATIC SWAP (Only after overshadowed)
+            .call(() => {
+                sections.forEach((s, i) => {
+                    const content = s.querySelector('.inner, .card');
+                    if (!content) return;
+
+                    if (i === nextS) {
+                        s.classList.add('active-scene');
+                        s.style.zIndex = "50";
+                        gsap.fromTo(content, 
+                            { y: dir * 120, opacity: 0, scale: 0.92, filter: 'blur(20px)' },
+                            { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 1.6, ease: 'expo.out', overwrite: true }
+                        );
+                    } else if (i === curS) {
+                        s.style.zIndex = "20";
+                        gsap.to(content, { 
+                            y: -dir * 100, 
+                            opacity: 0, 
+                            scale: 1.1, 
+                            filter: 'blur(30px)',
+                            duration: 1.0, 
+                            ease: 'power2.inOut',
+                            overwrite: true,
+                            onComplete: () => { s.classList.remove('active-scene'); }
+                        });
+                    } else {
+                        s.classList.remove('active-scene');
+                        gsap.set(content, { opacity: 0, y: dir * 100, filter: 'blur(20px)' });
+                    }
+                });
+            }, null, 0.8) // EXACTLY when wipe is at max opacity
+            
+            // 3. PHASE 3: GRACEFUL REVEAL
+            .to(wipe, { opacity: 0, duration: 1.2, ease: 'power2.out', delay: 0.2 })
+            .to(wipeBar, { y: -dir * 150, opacity: 0, duration: 1.2, ease: 'power3.in' }, 1.0);
+
+            // EMERGENCY FAIL-SAFE
+            failSafe = setTimeout(() => {
+                if (isT) {
+                    isT = false;
+                    curS = nextS;
+                    gsap.set(wipe, { opacity: 0, display: 'none' });
+                    sections.forEach((s, i) => {
+                        const content = s.querySelector('.inner, .card');
+                        if (i === nextS) {
+                            s.classList.add('active-scene');
+                            if (content) gsap.set(content, { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' });
+                        } else {
+                            s.classList.remove('active-scene');
+                        }
+                    });
+                }
+            }, 3000);
+        }
     });
 };
 
@@ -236,7 +331,6 @@ const runPreloader = () => {
     }, 0.3)
     .to('.pc', {
         opacity: 1, y: 0, scale: 1,
-        filter: 'blur(0px)',
         duration: 0.5, stagger: 0.1, ease: 'back.out(2)'
     }, 0.7)
     .to('#pre-line', { width: '240px', duration: 1.2, ease: 'power3.out' }, 1.2)
@@ -247,14 +341,17 @@ const runPreloader = () => {
     .to('#pre-curtain', { scaleY: 1, duration: 0.7, ease: 'power4.in' }, 'exit')
     .to('.pc', { y: -40, opacity: 0, stagger: 0.04, duration: 0.5, ease: 'power2.in' }, 'exit+=0.1')
     .to('#pre-tagline,#pre-cd,#pre-line', { opacity: 0, duration: 0.3 }, 'exit+=0.1')
-    .to('#pre-curtain', { scaleY: 0, transformOrigin: 'bottom center', duration: 0.9, ease: 'expo.inOut' }, 'exit+=0.65')
     .to('#pre', { yPercent: -100, duration: 1.1, ease: 'power4.inOut', onComplete: () => {
-        document.getElementById('pre').remove();
+        const pre = document.getElementById('pre');
+        if (pre) pre.remove();
+        // START HEAVY ASSETS ONLY AFTER PRELOADER IS GONE
+        initGodRays();
+        initGoldDust();
     }}, 'exit+=0.8')
     .to('#nav', { opacity: 1, duration: 1, ease: 'power2.out' }, 'exit+=1.1')
     .fromTo('.fc', { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 1.2, stagger: 0.1, ease: 'back.out(2)' }, 'exit+=1.0')
-    .fromTo('#heroContent', { opacity: 0, y: 30, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 1.8, ease: 'power3.out' }, 'exit+=0.8')
-    .to('#hint', { opacity: 1, duration: 1 }, 'exit+=2.5');
+    .fromTo('#heroContent', { opacity: 0, y: 30, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 1.5, ease: 'power3.out' }, 'exit+=0.9')
+    .to('#hint', { opacity: 1, duration: 1 }, 'exit+=2.2');
 };
 
 // ════════════════ UTILITIES ════════════════
@@ -298,13 +395,15 @@ function cpAddr() {
     alert("Address copied to clipboard!");
 }
 
+function toggleMenu() {
+    const menu = document.getElementById('m-menu');
+    menu.classList.toggle('translate-x-full');
+}
+
 // ════════════════ INIT ════════════════
 document.addEventListener('DOMContentLoaded', () => {
-    initStarField();
-    initGodRays();
-    initGoldDust();
+    initStarField(); // Only lightweight stars at start
     initBRollEngine();
-    
-    // Check if we should skip preloader (e.g. dev)
+    initWipeDust();
     runPreloader();
 });
