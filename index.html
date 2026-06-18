@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AKSHIM — The Royal Union</title>
+    <link rel="stylesheet" href="index.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#050010] text-[#fdf2cf] overflow-hidden">
+
+    <!-- ── CANVAS LAYERS (CINEMATIC DEPTH) ── -->
+    <canvas id="c-bg" class="fixed inset-0 z-0 pointer-events-none"></canvas>
+    <canvas id="c-rays" class="fixed inset-0 z-[1] pointer-events-none mix-blend-screen opacity-35"></canvas>
+    <canvas id="c-dust" class="fixed inset-0 z-[2] pointer-events-none"></canvas>
+
+    <!-- ── ROYAL FRAME & CORNERS ── -->
+    <div id="frame" class="fixed inset-[18px] z-[900] pointer-events-none border border-[#D4AF37]/40 shadow-[inset_0_0_60px_rgba(212,175,55,0.04),0_0_40px_rgba(0,0,0,0.8)]">
+        <div class="fc fc-tl absolute top-[-1px] left-[-1px] w-[60px] h-[60px]">
+            <svg viewBox="0 0 60 60" fill="none" stroke="rgba(212,175,55,0.65)" stroke-width="1">
+                <path d="M2 30 L2 2 L30 2"/><path d="M2 20 L2 2 L20 2" stroke-width="0.5" opacity=".5"/>
+                <circle cx="2" cy="2" r="3" fill="rgba(212,175,55,0.3)" stroke-width="0.8"/>
+                <path d="M8 2 L2 2 L2 8" stroke-width="0.5" opacity=".4"/>
+            </svg>
+        </div>
+        <div class="fc fc-tr absolute top-[-1px] right-[-1px] w-[60px] h-[60px] rotate-90">
+            <svg viewBox="0 0 60 60" fill="none" stroke="rgba(212,175,55,0.65)" stroke-width="1">
+                <path d="M2 30 L2 2 L30 2"/><path d="M2 20 L2 2 L20 2" stroke-width="0.5" opacity=".5"/>
+                <circle cx="2" cy="2" r="3" fill="rgba(212,175,55,0.3)" stroke-width="0.8"/>
+            </svg>
+        </div>
+        <div class="fc fc-bl absolute bottom-[-1px] left-[-1px] w-[60px] h-[60px] -rotate-90">
+            <svg viewBox="0 0 60 60" fill="none" stroke="rgba(212,175,55,0.65)" stroke-width="1">
+                <path d="M2 30 L2 2 L30 2"/><path d="M2 20 L2 2 L20 2" stroke-width="0.5" opacity=".5"/>
+                <circle cx="2" cy="2" r="3" fill="rgba(212,175,55,0.3)" stroke-width="0.8"/>
+            </svg>
+        </div>
+        <div class="fc fc-br absolute bottom-[-1px] right-[-1px] w-[60px] h-[60px] rotate-180">
+            <svg viewBox="0 0 60 60" fill="none" stroke="rgba(212,175,55,0.65)" stroke-width="1">
+                <path d="M2 30 L2 2 L30 2"/><path d="M2 20 L2 2 L20 2" stroke-width="0.5" opacity=".5"/>
+                <circle cx="2" cy="2" r="3" fill="rgba(212,175,55,0.3)" stroke-width="0.8"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- ── PRELOADER ── -->
+    <div id="pre" class="fixed inset-0 z-[9999] bg-[#050010] flex flex-col items-center justify-center overflow-hidden">
+        <div id="pre-mandala-wrap" class="relative w-[220px] h-[220px] mb-12">
+            <svg id="pre-m1" class="pre-svg absolute inset-0 animate-spin-slow" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="48" stroke-dasharray="1,1.8" fill="none" stroke="#D4AF37" stroke-width="0.4"/>
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#D4AF37" stroke-width="0.4"/>
+                <polygon points="50,2 54,20 70,20 68,35 80,45 68,58 70,74 54,74 50,88 46,74 30,74 32,58 20,45 32,35 30,20 46,20" fill="none" stroke="#D4AF37" stroke-width="0.35"/>
+            </svg>
+            <svg id="pre-m2" class="pre-svg absolute inset-[12px] animate-spin-reverse" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="47" fill="none" stroke="#D4AF37" stroke-width="0.3"/>
+                <polygon points="50,2 54,20 70,20 68,35 80,45 68,58 70,74 54,74 50,88 46,74 30,74 32,58 20,45 32,35 30,20 46,20" transform="rotate(22.5 50 50)" fill="none" stroke="#D4AF37" stroke-width="0.3" stroke-dasharray=".8,1"/>
+                <circle cx="50" cy="50" r="30" fill="none" stroke="#D4AF37" stroke-width="0.3" stroke-dasharray="1.5,2"/>
+            </svg>
+            <svg id="pre-m3" class="pre-svg absolute inset-[24px] animate-spin-fast" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="46" fill="none" stroke="#D4AF37" stroke-width="0.3"/>
+                <line x1="50" y1="4" x2="50" y2="96" opacity=".5" stroke="#D4AF37" stroke-width="0.3"/>
+                <line x1="4" y1="50" x2="96" y2="50" opacity=".5" stroke="#D4AF37" stroke-width="0.3"/>
+            </svg>
+                <div id="pre-core" class="absolute inset-0 flex flex-col items-center justify-center gap-1">
+                    <div class="pre-core-ring absolute inset-[58px] rounded-full bg-[radial-gradient(circle,#2a0060_0%,#0a011a_100%)] border border-[#D4AF37]/30"></div>
+                    <img src="images/akshim_logo.png" alt="AKSHIM Logo" class="logo-screen relative z-10 w-32 h-32 object-contain opacity-0 scale-50" id="pre-logo">
+                    <div id="pre-chars" class="hidden"></div>
+                </div>
+        </div>
+        <div id="pre-line" class="w-0 h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mb-8"></div>
+        <p id="pre-tagline" class="royal-head italic text-base tracking-[0.4em] text-[#fdf2cf]/60 mb-10 opacity-0">The Royal Union</p>
+        
+        <div class="pre-cd flex gap-5 items-center opacity-0" id="pre-cd">
+            <div class="cd-b text-center bg-[#D4AF37]/10 border border-[#D4AF37]/30 p-3 min-w-[70px]">
+                <div class="cd-n royal-head text-3xl text-[#fdf2cf] leading-none" id="pD">00</div>
+                <div class="cd-l font-montserrat text-[10px] tracking-[0.2em] text-[#D4AF37]/60 mt-1 uppercase">DAYS</div>
+            </div>
+            <div class="cd-s royal-head text-2xl text-[#D4AF37] animate-pulse">:</div>
+            <div class="cd-b text-center bg-[#D4AF37]/10 border border-[#D4AF37]/30 p-3 min-w-[70px]">
+                <div class="cd-n royal-head text-3xl text-[#fdf2cf] leading-none" id="pH">00</div>
+                <div class="cd-l font-montserrat text-[10px] tracking-[0.2em] text-[#D4AF37]/60 mt-1 uppercase">HRS</div>
+            </div>
+            <div class="cd-s royal-head text-2xl text-[#D4AF37] animate-pulse">:</div>
+            <div class="cd-b text-center bg-[#D4AF37]/10 border border-[#D4AF37]/30 p-3 min-w-[70px]">
+                <div class="cd-n royal-head text-3xl text-[#fdf2cf] leading-none" id="pM">00</div>
+                <div class="cd-l font-montserrat text-[10px] tracking-[0.2em] text-[#D4AF37]/60 mt-1 uppercase">MIN</div>
+            </div>
+            <div class="cd-s royal-head text-2xl text-[#D4AF37] animate-pulse">:</div>
+            <div class="cd-b text-center bg-[#D4AF37]/10 border border-[#D4AF37]/30 p-3 min-w-[70px]">
+                <div class="cd-n royal-head text-3xl text-[#fdf2cf] leading-none" id="pS">00</div>
+                <div class="cd-l font-montserrat text-[10px] tracking-[0.2em] text-[#D4AF37]/60 mt-1 uppercase">SEC</div>
+            </div>
+        </div>
+        <div id="pre-curtain" class="absolute inset-0 bg-[#050010] scale-y-0 origin-top"></div>
+    </div>
+
+    <!-- ── NAVIGATION ── -->
+    <nav id="nav" class="fixed top-0 left-0 right-0 z-[800] flex items-center justify-between px-12 py-4 bg-gradient-to-b from-[#0a011a]/98 to-transparent backdrop-blur-[4px] opacity-0">
+        <div class="nav-brand flex items-center gap-4">
+            <img src="images/akshim_logo.png" alt="Logo" class="logo-screen w-12 h-12 object-contain">
+            <div class="nav-logo royal-head text-sm tracking-[0.7em] gold-metallic animate-gold-shimmer">AKSHIM</div>
+        </div>
+        <div class="nav-links flex gap-8 items-center">
+            <button class="nb royal-head text-[10px] tracking-[0.35em] text-[#fdf2cf]/55 hover:text-[#D4AF37] transition-colors" onclick="goTo(0)">HOME</button>
+            <button class="nb royal-head text-[10px] tracking-[0.35em] text-[#fdf2cf]/55 hover:text-[#D4AF37] transition-colors" onclick="goTo(1)">STORY</button>
+            <button class="nb royal-head text-[10px] tracking-[0.35em] text-[#fdf2cf]/55 hover:text-[#D4AF37] transition-colors" onclick="goTo(2)">EVENTS</button>
+            <button class="nb royal-head text-[10px] tracking-[0.35em] text-[#fdf2cf]/55 hover:text-[#D4AF37] transition-colors" onclick="goTo(3)">VENUE</button>
+            <button class="nb royal-head text-[10px] tracking-[0.35em] text-[#fdf2cf]/55 hover:text-[#D4AF37] transition-colors" onclick="goTo(4)">RSVP</button>
+            <button class="nb royal-head text-[10px] tracking-[0.35em] text-[#fdf2cf]/55 hover:text-[#D4AF37] transition-colors" onclick="goTo(5)">GALLERY</button>
+            <button id="nbg" class="royal-head text-[10px] tracking-[0.2em] text-[#fdf2cf] bg-[#D4AF37]/10 border border-[#D4AF37]/30 px-5 py-2 hover:bg-[#D4AF37]/20 transition-all" onclick="openLogin()">GUEST LOGIN</button>
+        </div>
+    </nav>
+
+    <!-- CELESTIAL BACKGROUND DECORATIONS (Refined Majestic Mandalas) -->
+    <div class="celestial-decor-container fixed inset-0 pointer-events-none z-0 overflow-hidden flex items-center justify-center">
+        <img src="C:/Users/admin/.gemini/antigravity/brain/c0399533-0222-4893-b5cf-d77398c8b251/royal_gold_celestial_mandala_1781473997325.png" class="bg-mandala mandala-center scale-150 opacity-10" alt="">
+        <img src="C:/Users/admin/.gemini/antigravity/brain/c0399533-0222-4893-b5cf-d77398c8b251/royal_gold_celestial_mandala_1781473997325.png" class="bg-mandala mandala-tl -top-20 -left-20 opacity-20" alt="">
+        <img src="C:/Users/admin/.gemini/antigravity/brain/c0399533-0222-4893-b5cf-d77398c8b251/royal_gold_celestial_mandala_1781473997325.png" class="bg-mandala mandala-br -bottom-20 -right-20 opacity-20" alt="">
+    </div>
+
+    <!-- ── B-ROLL WIPE OVERLAY ── -->
+    <div id="wipe" class="fixed inset-0 z-[600] pointer-events-none bg-[radial-gradient(ellipse_at_center,rgba(80,0,160,0.4)_0%,rgba(5,0,16,1)_100%)] opacity-0"></div>
+
+    <!-- ── SCROLL CONTAINER ── -->
+    <div id="scroll" class="fixed inset-0 z-10 overflow-y-scroll overflow-x-hidden snap-y snap-mandatory scrollbar-none">
+
+        <!-- S0: HERO -->
+        <section class="S active-scene snap-start snap-always" id="s0">
+            <!-- Ambient B-Roll Mandala -->
+            <svg class="amb absolute pointer-events-none fill-none stroke-[#D4AF37]/10 stroke-[0.3] w-[90vmin] h-[90vmin] -left-[15%] -top-[15%] animate-spin-slowest" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="48" stroke-dasharray="1,2"/><polygon points="50,2 55,25 78,25 60,40 70,65 50,50 30,65 40,40 22,25 45,25"/>
+                <circle cx="50" cy="50" r="30" stroke-dasharray="2,3"/>
+            </svg>
+            
+            <div class="inner relative z-10 text-center" id="heroContent">
+                <img src="images/akshim_logo.png" alt="Royal Logo" class="logo-screen w-64 h-64 sm:w-[480px] sm:h-[480px] mx-auto mb-4 drop-shadow-[0_0_50px_rgba(212,175,55,0.4)]">
+                <div class="orn flex items-center gap-5 mx-auto max-w-[320px] mb-8">
+                    <div class="orn-line flex-1 h-[0.5px] bg-gradient-to-r from-transparent via-[#D4AF37]/50 to-transparent"></div>
+                    <div class="orn-gem w-[7px] h-[7px] border border-[#D4AF37]/60 rotate-45 bg-[#D4AF37]/20 shadow-[0_0_8px_rgba(212,175,55,0.3)]"></div>
+                    <div class="orn-line flex-1 h-[0.5px] bg-gradient-to-l from-transparent via-[#D4AF37]/50 to-transparent"></div>
+                </div>
+                
+                <div class="hero-names royal-head text-2xl tracking-[0.5em] text-[#fdf2cf] mb-4 uppercase gold-metallic">Akshay & Himanshi</div>
+                <div class="hero-date font-montserrat text-xs tracking-[0.8em] text-[#D4AF37]/80 mb-6">JULY 7 · 2026 · NEW DELHI</div>
+                <div class="hero-tagline font-cormorant italic text-lg text-[#fdf2cf]/60">Two souls, one destiny. Bound by traditions, celebrated in love.</div>
+                
+                <div id="hw" class="hero-welcome hidden mt-6 font-cormorant italic text-lg text-[#fdf2cf]/85 border-t border-[#D4AF37]/20 pt-4"></div>
+            </div>
+        </section>
+
+        <!-- S1: STORY -->
+        <section class="S min-h-screen w-full flex items-center justify-center snap-start snap-always relative py-20 px-10 overflow-hidden" id="s1">
+            <div class="inner card matte-royal-card max-w-[740px] w-full p-16 text-center opacity-0 translate-y-[50px]" id="s1c">
+                <p class="s-label royal-head text-[10px] tracking-[0.5em] text-[#D4AF37]/55 mb-5 uppercase">Est. Forever · The Beginning</p>
+                <h2 class="s-h royal-head text-[clamp(1.5rem,4vw,2.5rem)] tracking-[0.22em] gold-metallic animate-gold-shimmer">Our Eternal Story</h2>
+                <div class="orn flex items-center gap-5 mx-auto max-w-[320px] my-6">
+                    <div class="orn-line flex-1 h-[0.5px] bg-gradient-to-r from-transparent via-[#D4AF37]/50 to-transparent"></div>
+                    <div class="orn-gem w-[7px] h-[7px] border border-[#D4AF37]/60 rotate-45 bg-[#D4AF37]/20 shadow-[0_0_8px_rgba(212,175,55,0.3)]"></div>
+                    <div class="orn-line flex-1 h-[0.5px] bg-gradient-to-l from-transparent via-[#D4AF37]/50 to-transparent"></div>
+                </div>
+                <p class="royal-body text-xl font-light leading-relaxed max-w-2xl mx-auto">
+                    In the heart of Punjab, where traditions run as deep as the five rivers, the world celebrates the beginning of #AKSHIM. A journey of a thousand lifetimes, rooted in authentic Hindu rituals and royal Punjabi vibrance, brought together by the blessings of the Marwah family.
+                </p>
+                <p class="s-body font-cormorant text-lg text-[#fdf2cf]/65 leading-[2] tracking-wide">
+                    Akshay and Himanshi first crossed paths under the golden canopy of a winter wedding, their eyes meeting across a sea of marigolds. What began as a conversation about shared dreams grew into a love rooted in authenticity, laughter, and the sacred vibrance of Punjabi tradition. Today, with the blessings of **Sh. Vishwa Prakash Marwah & Smt. Ritika Marwah**, and the support of **Aman Marwah**, they invite you to witness the beginning of #AKSHIM.
+                </p>
+                <p class="s-label royal-head text-[10px] tracking-[0.5em] text-[#D4AF37]/55 mt-10 uppercase">#Akshim · The Royal Union · MMXXVI</p>
+            </div>
+        </section>
+
+        <!-- S2: CELEBRATIONS -->
+        <section class="S min-h-screen w-full flex items-center justify-center snap-start snap-always relative py-20 px-10 overflow-hidden" id="s2">
+            <div class="inner w-full max-w-[960px] z-10 opacity-0 translate-y-[40px]">
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="royal-head text-[9px] sm:text-xs tracking-[0.25em] text-[#fdf2cf] opacity-95 font-bold">AKSHIM</span>
+                </div>
+                <h2 class="s-h royal-head text-4xl tracking-[0.22em] gold-metallic text-center mb-10">The Celebrations</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="celGrid">
+                    <!-- Events will be added here or kept as static -->
+                    <div class="card matte-royal-card p-10 text-center reveal">
+                        <div class="cel-n royal-head text-[10px] tracking-[0.4em] text-[#D4AF37]/50 mb-3 uppercase">01 // The Sacred Ceremony</div>
+                        <h3 class="s-h royal-head text-2xl tracking-[0.18em] mb-2">The Wedding</h3>
+                        <p class="cel-sub royal-head text-[10px] tracking-[0.35em] text-[#D4AF37]/70 mb-5">THE GRAND MANDAP</p>
+                        <p class="cel-body font-cormorant italic text-lg text-[#fdf2cf]/65 leading-relaxed mb-6">Sacred vows under the royal canopy of tradition. Anand Karaj followed by Saptapadi.</p>
+                        <div class="cel-info font-montserrat font-light text-[10px] tracking-[0.12em] text-[#D4AF37]/60 leading-loose">📅 JULY 7, 2026 · 10:00 AM<br>📍 Taj Palace, New Delhi</div>
+                        <button class="gbtn mt-6 royal-head text-[10px] tracking-[0.3em] border border-[#D4AF37]/30 px-6 py-2 hover:bg-[#D4AF37] hover:text-[#050010] transition-all" onclick="goTo(4)">RSVP NOW</button>
+                    </div>
+                    <div class="card matte-royal-card p-10 text-center reveal">
+                        <div class="cel-n royal-head text-[10px] tracking-[0.4em] text-[#D4AF37]/50 mb-3 uppercase">02 // The Grand Feast</div>
+                        <h3 class="s-h royal-head text-2xl tracking-[0.18em] mb-2">Reception</h3>
+                        <p class="cel-sub royal-head text-[10px] tracking-[0.35em] text-[#D4AF37]/70 mb-5">THE ROYAL BANQUET</p>
+                        <p class="cel-body font-cormorant italic text-lg text-[#fdf2cf]/65 leading-relaxed mb-6">A night of starlit celebrations, gourmet feast, music and eternal memories.</p>
+                        <div class="cel-info font-montserrat font-light text-[10px] tracking-[0.12em] text-[#D4AF37]/60 leading-loose">📅 JULY 7, 2026 · 7:00 PM<br>📍 Taj Palace Ballroom</div>
+                        <button class="gbtn mt-6 royal-head text-[10px] tracking-[0.3em] border border-[#D4AF37]/30 px-6 py-2 hover:bg-[#D4AF37] hover:text-[#050010] transition-all" onclick="goTo(4)">RSVP NOW</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- S3: VENUE -->
+        <section class="S min-h-screen w-full flex items-center justify-center snap-start snap-always relative py-20 px-10 overflow-hidden" id="s3">
+            <div class="inner card matte-royal-card max-w-[780px] w-full p-16 text-center opacity-0 translate-y-[40px]" id="s3c">
+                <p class="s-label royal-head text-[10px] tracking-[0.5em] text-[#D4AF37]/55 mb-4 uppercase">The Sacred Grounds</p>
+                <h2 class="s-h royal-head text-4xl tracking-[0.22em] gold-metallic">Venue & Directions</h2>
+                <div class="venue-n font-cormorant italic text-3xl text-[#fdf2cf] mt-6 mb-2">Taj Palace, New Delhi</div>
+                <p class="venue-a font-montserrat font-light text-xs tracking-[0.2em] text-[#D4AF37]/65 leading-loose">2, Sardar Patel Marg, Diplomatic Enclave<br>Chanakyapuri, New Delhi – 110 021</p>
+                <div class="map-box my-10 w-full max-w-[520px] h-[170px] mx-auto bg-gradient-to-br from-[#1e003c]/80 to-[#050016]/95 border border-[#D4AF37]/15 flex items-center justify-center relative overflow-hidden">
+                    <div class="relative z-10 text-center">
+                        <div class="map-pin text-5xl animate-bounce-slow filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">📍</div>
+                        <p class="s-label royal-head text-[10px] tracking-[0.5em] mt-2">TAJ PALACE · NEW DELHI</p>
+                    </div>
+                </div>
+                <div class="flex gap-4 justify-center flex-wrap">
+                    <a href="https://maps.google.com/?q=Taj+Palace+New+Delhi" target="_blank"><button class="gbtn royal-head text-[10px] tracking-[0.3em] border border-[#D4AF37]/30 px-6 py-2">🗺 OPEN IN MAPS</button></a>
+                    <button class="gbtn royal-head text-[10px] tracking-[0.3em] border border-[#D4AF37]/30 px-6 py-2" onclick="cpAddr()">📋 COPY ADDRESS</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- S4: RSVP -->
+        <section class="S min-h-screen w-full flex items-center justify-center snap-start snap-always relative py-20 px-10 overflow-hidden" id="s4">
+            <!-- Lock Overlay -->
+            <div id="rsvpLock" class="lock absolute inset-0 z-50 bg-[#050010]/88 backdrop-blur-[14px] flex flex-col items-center justify-center gap-4 text-center p-8">
+                <div class="lock-ico text-5xl opacity-70 mb-2">🔒</div>
+                <p class="lock-msg font-cormorant italic text-2xl text-[#fdf2cf]/80 max-w-[300px] leading-relaxed">"Please identify yourself, dear guest, to confirm your presence."</p>
+                <p class="lock-sub royal-head text-[10px] tracking-[0.3em] text-[#D4AF37]/60">LOGIN REQUIRED</p>
+                <button class="gbtn mt-4 royal-head text-[10px] tracking-[0.3em] border border-[#D4AF37]/30 px-6 py-2 hover:bg-[#D4AF37] hover:text-[#050010]" onclick="openLogin()">GUEST LOGIN</button>
+            </div>
+            
+            <div class="inner card matte-royal-card max-w-[680px] w-full p-16 opacity-0 translate-y-[40px]" id="rsvpBox">
+                <div id="rsvpForm">
+                    <p class="s-label royal-head text-[10px] tracking-[0.5em] text-[#D4AF37]/55 mb-2 uppercase">Confirm Your Presence</p>
+                    <h2 class="s-h royal-head text-4xl tracking-[0.22em] gold-metallic mb-10">Royal RSVP</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+                        <div class="field"><label class="royal-head text-[10px] tracking-[0.3em] text-[#D4AF37]/70 block mb-2">FULL NAME</label><input id="rN" type="text" placeholder="Your Name" class="w-full bg-white/5 border-b border-[#D4AF37]/20 py-3 text-[#fdf2cf] font-cormorant text-lg outline-none focus:border-[#D4AF37]/70 transition-colors"></div>
+                        <div class="field"><label class="royal-head text-[10px] tracking-[0.3em] text-[#D4AF37]/70 block mb-2">GUESTS</label><input id="rG" type="number" min="1" max="10" value="1" class="w-full bg-white/5 border-b border-[#D4AF37]/20 py-3 text-[#fdf2cf] font-cormorant text-lg outline-none focus:border-[#D4AF37]/70 transition-colors"></div>
+                    </div>
+                    <button class="gbtn w-full royal-head text-[10px] tracking-[0.3em] border border-[#D4AF37]/30 px-6 py-4 hover:bg-[#D4AF37] hover:text-[#050010] transition-all" onclick="doRSVP()">CONFIRM MY PRESENCE →</button>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ── SCROLL HINT ── -->
+    <div id="hint" class="fixed right-8 bottom-10 z-[700] flex flex-col items-center gap-2 opacity-0 transition-opacity duration-600">
+        <span class="h-txt royal-head text-[10px] tracking-[0.4em] text-white/70 [writing-mode:vertical-rl]">SCROLL</span>
+        <div class="h-mouse w-[18px] h-[30px] border border-white/50 rounded-[9px] relative">
+            <div class="h-w absolute w-[3px] h-[5px] bg-[#D4AF37] rounded-[2px] left-1/2 -translate-x-1/2 top-[5px] animate-wheel-move"></div>
+        </div>
+    </div>
+
+    <!-- ── LOGIN MODAL ── -->
+    <div id="loginModal" class="modal fixed inset-0 z-[2000] bg-[#050010]/96 backdrop-blur-[20px] hidden items-center justify-center p-6">
+        <div class="card matte-royal-card max-w-[500px] w-full p-12 text-center">
+            <h3 class="s-h royal-head text-3xl tracking-[0.2em] mb-2">Welcome, Dear Guest</h3>
+            <p class="font-cormorant italic text-lg text-[#fdf2cf]/65 mb-8">Please identify yourself to enter the royal celebration.</p>
+            <div id="lErr" class="font-montserrat text-[10px] text-red-500 mb-4 h-4"></div>
+            <div class="field text-left mb-6">
+                <label class="royal-head text-[10px] tracking-[0.3em] text-[#D4AF37]/70 block mb-2 uppercase">Your Full Name</label>
+                <input type="text" id="lN" placeholder="e.g. Priya Sharma" class="w-full bg-white/5 border-b border-[#D4AF37]/20 py-3 text-[#fdf2cf] font-cormorant text-lg outline-none focus:border-[#D4AF37]/70 transition-colors" onkeydown="if(event.key==='Enter')doLogin()">
+            </div>
+            <button class="gbtn w-full royal-head text-[10px] tracking-[0.3em] border border-[#D4AF37]/30 px-6 py-4 hover:bg-[#D4AF37] hover:text-[#050010] transition-all" onclick="doLogin()">ENTER THE CELEBRATION →</button>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>

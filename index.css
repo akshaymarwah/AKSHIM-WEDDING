@@ -1,0 +1,208 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@200;300;400&display=swap');
+
+:root {
+    --deep-gold: #D4AF37;
+    --gold-light: #fdf2cf;
+    --gold-dark: #946b1a;
+    --rose-gold: #e7c0b0;
+    --champagne: #f7e7ce;
+    --purple-deep: #0a011a;
+    --purple-mid: #1a0235;
+    --purple-rich: #25034d;
+    --metallic: linear-gradient(135deg, #b8860b 0%, #d4af37 20%, #fdf2cf 45%, #d4af37 70%, #b8860b 100%);
+    --soft-glow: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ── LOGO & BRANDING ── */
+.logo-screen {
+    mix-blend-mode: screen;
+    filter: brightness(1.1) contrast(1.1);
+    transition: transform 0.3s ease;
+    image-rendering: -webkit-optimize-contrast;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+}
+
+.hero-names {
+    margin-top: 1rem;
+    font-size: clamp(1.2rem, 3vw, 1.75rem);
+    letter-spacing: 0.3em;
+}
+
+.royal-frame {
+    border-color: rgba(212, 175, 55, 0.25);
+}
+
+/* ── TYPOGRAPHY ── */
+.royal-head {
+    font-family: 'Cinzel', serif;
+    text-transform: uppercase;
+}
+
+.font-cormorant { font-family: 'Cormorant Garamond', serif; }
+.font-montserrat { font-family: 'Montserrat', sans-serif; }
+
+.gold-metallic {
+    background: var(--metallic);
+    background-size: 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes gold-shimmer {
+    0% { background-position: 200%; }
+    100% { background-position: -200%; }
+}
+.animate-gold-shimmer { animation: gold-shimmer 8s linear infinite; }
+
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+.animate-spin-slow { animation: spin-slow 18s linear infinite; }
+
+@keyframes spin-reverse { to { transform: rotate(-360deg); } }
+.animate-spin-reverse { animation: spin-reverse 12s linear infinite; }
+
+@keyframes spin-fast { to { transform: rotate(360deg); } }
+.animate-spin-fast { animation: spin-fast 8s linear infinite; }
+
+@keyframes spin-slowest { to { transform: rotate(360deg); } }
+.animate-spin-slowest { animation: spin-slowest 200s linear infinite; }
+
+@keyframes wheel-move {
+    0% { top: 5px; opacity: 1; }
+    60% { top: 14px; opacity: 0.2; }
+    100% { top: 5px; opacity: 1; }
+}
+.animate-wheel-move { animation: wheel-move 2s ease-in-out infinite; }
+
+@keyframes bounce-slow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+.animate-bounce-slow { animation: bounce-slow 3s ease-in-out infinite; }
+
+/* ── MATTE ROYAL CARDS (MAJESTIC WEDDING) ── */
+.matte-royal-card {
+    background: linear-gradient(145deg, rgba(26, 2, 53, 0.95) 0%, rgba(10, 1, 26, 0.98) 100%);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.6s cubic-bezier(0.2, 1, 0.3, 1);
+    border-radius: 8px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(212, 175, 55, 0.05);
+    backdrop-filter: blur(5px);
+}
+
+.hero-blur-in {
+    filter: blur(20px);
+    opacity: 0;
+    transform: scale(0.95);
+}
+
+.matte-royal-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 50% 0%, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
+    z-index: 1;
+}
+
+.matte-royal-card:hover {
+    border-color: rgba(212, 175, 55, 0.45);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 40px rgba(212, 175, 55, 0.07);
+    transform: translateY(-5px);
+}
+
+/* ── BUTTONS ── */
+.gbtn {
+    transition: all 0.4s cubic-bezier(0.2, 1, 0.3, 1);
+}
+.gbtn:hover {
+    background-color: var(--deep-gold);
+    color: var(--purple-deep);
+    border-color: var(--deep-gold);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+/* ── PRELOADER ── */
+.pc {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--gold-light);
+    opacity: 0;
+    display: inline-block;
+    transform: translateY(20px) scale(0.8);
+    filter: blur(5px);
+}
+
+/* ── SECTION TRANSITIONS & B-ROLL ── */
+.S {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    z-index: 10;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+}
+
+.S.active-scene {
+    z-index: 20;
+}
+
+.inner, .card {
+    will-change: transform, opacity;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+}
+
+/* Ambient section gradients - Floral & Royal Tones */
+#s0 { background: radial-gradient(ellipse at 50% 60%, rgba(120, 0, 60, 0.15) 0%, transparent 70%); }
+#s1 { background: radial-gradient(ellipse at 30% 50%, rgba(100, 0, 80, 0.12) 0%, transparent 65%); }
+#s2 { background: radial-gradient(ellipse at 70% 40%, rgba(80, 0, 120, 0.12) 0%, transparent 65%); }
+#s3 { background: radial-gradient(ellipse at 50% 50%, rgba(120, 60, 0, 0.1) 0%, transparent 65%); }
+#s4 { background: radial-gradient(ellipse at 40% 60%, rgba(130, 0, 70, 0.12) 0%, transparent 65%); }
+
+/* ── CUSTOM SCROLLBAR ── */
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── GUEST LOGIN & LOCK ── */
+.lock {
+    background: rgba(5, 0, 16, 0.88);
+    backdrop-filter: blur(14px);
+}
+
+.field input, .field select, .field textarea {
+    background: rgba(255, 255, 255, 0.03);
+    border: none;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    padding: 0.7rem 0;
+    color: var(--gold-light);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    outline: none;
+    transition: border-color 0.4s;
+}
+
+.field input:focus, .field textarea:focus {
+    border-bottom-color: rgba(212, 175, 55, 0.7);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+    #nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; } /* Hide links on mobile for simplicity, or use hamburger */
+    .S { padding: 70px 1.5rem 2rem; }
+    .matte-royal-card { padding: 2rem !important; }
+}
