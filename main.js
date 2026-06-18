@@ -159,6 +159,15 @@ const initGoldDust = () => {
     animate();
 };
 
+    .to('#pre', { yPercent: -100, duration: 1.1, ease: 'power4.inOut', onComplete: () => {
+        document.getElementById('pre').remove();
+    }}, 'exit+=0.8')
+    .to('#nav', { opacity: 1, duration: 1, ease: 'power2.out' }, 'exit+=1.1')
+    .fromTo('.fc', { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 1.2, stagger: 0.1, ease: 'back.out(2)' }, 'exit+=1.0')
+    .fromTo('#heroContent', { opacity: 0, y: 30, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 1.8, ease: 'power3.out' }, 'exit+=0.8')
+    .to('#hint', { opacity: 1, duration: 1 }, 'exit+=2.5');
+};
+
 // ════════════════ B-ROLL ENGINE (ROBUST) ════════════════
 const initBRollEngine = () => {
     const sc = document.getElementById('scroll');
@@ -170,10 +179,10 @@ const initBRollEngine = () => {
         if (!content) return;
 
         ScrollTrigger.create({
-            trigger: s,
+            trigger: sc,
             scroller: sc,
-            start: "top center",
-            end: "bottom center",
+            start: () => `top+=${s.offsetTop - window.innerHeight / 2} top`,
+            end: () => `top+=${s.offsetTop + window.innerHeight / 2} top`,
             onToggle: (self) => {
                 if (self.isActive) {
                     s.classList.add('active-scene');
@@ -181,29 +190,26 @@ const initBRollEngine = () => {
                         opacity: 1, 
                         y: 0, 
                         scale: 1, 
-                        filter: "none", 
-                        duration: 1, 
-                        ease: "power3.out",
+                        duration: 0.8, 
+                        ease: "power2.out",
                         overwrite: true
                     });
                     
                     // Cinematic Wipe
                     gsap.fromTo(wipe, { opacity: 0 }, { 
-                        opacity: 0.8, 
+                        opacity: 0.7, 
                         duration: 0.3, 
                         ease: "power2.in", 
                         onComplete: () => {
-                            gsap.to(wipe, { opacity: 0, duration: 0.7, ease: "power2.out" });
+                            gsap.to(wipe, { opacity: 0, duration: 0.5, ease: "power2.out" });
                         }
                     });
                 } else {
                     s.classList.remove('active-scene');
                     gsap.to(content, { 
                         opacity: 0, 
-                        y: 30, 
-                        scale: 0.98, 
-                        filter: "blur(12px)", 
-                        duration: 0.6, 
+                        y: 20, 
+                        duration: 0.4, 
                         ease: "power2.in",
                         overwrite: true
                     });
@@ -247,8 +253,7 @@ const runPreloader = () => {
     }}, 'exit+=0.8')
     .to('#nav', { opacity: 1, duration: 1, ease: 'power2.out' }, 'exit+=1.1')
     .fromTo('.fc', { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 1.2, stagger: 0.1, ease: 'back.out(2)' }, 'exit+=1.0')
-    .fromTo('#heroContent', { filter: 'blur(15px)', opacity: 0, scale: 0.95 }, { filter: 'none', opacity: 1, scale: 1, duration: 2.2, ease: 'power4.out' }, 'exit+=0.8')
-    .fromTo('.hero-names,.hero-date,.hero-tagline,.orn', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 1, stagger: 0.1, ease: 'power2.out' }, 'exit+=1.2')
+    .fromTo('#heroContent', { opacity: 0, y: 30, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 1.8, ease: 'power3.out' }, 'exit+=0.8')
     .to('#hint', { opacity: 1, duration: 1 }, 'exit+=2.5');
 };
 
