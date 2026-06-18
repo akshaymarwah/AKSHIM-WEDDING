@@ -231,13 +231,15 @@ const initBRollEngine = () => {
 
     sc.addEventListener('scroll', () => {
         const h = window.innerHeight;
-        const nextS = Math.round(sc.scrollTop / h);
+        const st = sc.scrollTop;
+        const nextS = Math.round(st / h);
 
-        if (nextS !== curS && !isT) {
+        // 1. Proactive Bloom (Starts as soon as we leave the center of a section)
+        const offset = st - (curS * h);
+        if (Math.abs(offset) > 30 && !isT) {
             isT = true;
-            const dir = nextS > curS ? 1 : -1;
+            const dir = nextS !== curS ? (nextS > curS ? 1 : -1) : (offset > 0 ? 1 : -1);
             
-            // Clear any existing fail-safe
             clearTimeout(failSafe);
             
             const tl = gsap.timeline({
@@ -251,13 +253,19 @@ const initBRollEngine = () => {
                 }
             });
 
-            // 1. PHASE 1: IMMEDIATE GOLDEN OVERSHADOW (Starts at 0)
+            const curContent = sections[curS]?.querySelector('.inner, .card');
+            const nextContent = sections[nextS]?.querySelector('.inner, .card');
+
+            // PHASE 1: AGGRESSIVE OVERSHADOW (Pins current content)
             tl.set(wipe, { display: 'flex', opacity: 0 })
-              .to(wipe, { opacity: 1, duration: 0.8, ease: 'power2.in' }) // Covers quickly
-              .fromTo(wipeBar, { y: dir * 150, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, 0)
-              .call(() => { if (burstDust) burstDust(dir); }, null, 0.05) // Dust starts almost instantly
+              .to(wipe, { opacity: 1, duration: 0.4, ease: 'power2.in' }) // FAST Bloom
+              .fromTo(wipeBar, { y: dir * 100, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }, 0)
+              .call(() => { if (burstDust) burstDust(dir); }, null, 0.05)
+              
+              // Pin current content so it doesn't "move away" while blooming
+              .to(curContent, { y: offset, duration: 0.4, ease: 'none' }, 0) 
             
-            // 2. PHASE 2: CINEMATIC SWAP (Only after overshadowed)
+            // PHASE 2: CINEMATIC SWAP (Total coverage reached)
             .call(() => {
                 sections.forEach((s, i) => {
                     const content = s.querySelector('.inner, .card');
@@ -267,31 +275,31 @@ const initBRollEngine = () => {
                         s.classList.add('active-scene');
                         s.style.zIndex = "50";
                         gsap.fromTo(content, 
-                            { y: dir * 120, opacity: 0, scale: 0.92, filter: 'blur(20px)' },
-                            { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 1.6, ease: 'expo.out', overwrite: true }
+                            { y: dir * 150, opacity: 0, scale: 0.9, filter: 'blur(30px)' },
+                            { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 1.8, ease: 'expo.out', overwrite: true }
                         );
                     } else if (i === curS) {
                         s.style.zIndex = "20";
                         gsap.to(content, { 
-                            y: -dir * 100, 
+                            y: -dir * 120, 
                             opacity: 0, 
-                            scale: 1.1, 
-                            filter: 'blur(30px)',
-                            duration: 1.0, 
-                            ease: 'power2.inOut',
+                            scale: 1.15, 
+                            filter: 'blur(40px)',
+                            duration: 1.2, 
+                            ease: 'power3.inOut',
                             overwrite: true,
                             onComplete: () => { s.classList.remove('active-scene'); }
                         });
                     } else {
                         s.classList.remove('active-scene');
-                        gsap.set(content, { opacity: 0, y: dir * 100, filter: 'blur(20px)' });
+                        gsap.set(content, { opacity: 0, y: dir * 150, filter: 'blur(20px)' });
                     }
                 });
-            }, null, 0.8) // EXACTLY when wipe is at max opacity
+            }, null, 0.4) // Trigger at peak bloom
             
-            // 3. PHASE 3: GRACEFUL REVEAL
-            .to(wipe, { opacity: 0, duration: 1.2, ease: 'power2.out', delay: 0.2 })
-            .to(wipeBar, { y: -dir * 150, opacity: 0, duration: 1.2, ease: 'power3.in' }, 1.0);
+            // PHASE 3: REVEAL
+            .to(wipe, { opacity: 0, duration: 1.4, ease: 'power2.out', delay: 0.2 })
+            .to(wipeBar, { y: -dir * 150, opacity: 0, duration: 1.4, ease: 'power3.in' }, 0.6);
 
             // EMERGENCY FAIL-SAFE
             failSafe = setTimeout(() => {
@@ -309,7 +317,7 @@ const initBRollEngine = () => {
                         }
                     });
                 }
-            }, 3000);
+            }, 3500);
         }
     });
 };
