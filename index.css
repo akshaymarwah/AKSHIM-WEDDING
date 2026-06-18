@@ -145,26 +145,32 @@
     filter: blur(5px);
 }
 
-/* ── SECTION TRANSITIONS & B-ROLL ── */
+/* ── SECTION TRANSITIONS & PURE PARALLAX ── */
 .S {
-    position: relative;
+    position: fixed;
+    inset: 0;
     width: 100%;
     height: 100vh;
     overflow: hidden;
-    z-index: 10;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
+    z-index: 1;
+    opacity: 0;
+    pointer-events: none; /* Let scroll pass through to #scroll container */
+    visibility: hidden;
+    will-change: transform, opacity;
 }
 
 .S.active-scene {
-    z-index: 20;
+    z-index: 10;
+    opacity: 1;
+    visibility: visible;
 }
 
 .inner, .card {
-    will-change: transform, opacity;
+    pointer-events: auto; /* Only content is interactive */
+    will-change: transform, opacity, filter;
     opacity: 0;
-    transform: translateY(30px) translateZ(0); /* Force GPU */
-    transition: all 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+    transform: translateZ(0);
+    transition: none !important;
 }
 
 /* Ambient section gradients - Floral & Royal Tones */

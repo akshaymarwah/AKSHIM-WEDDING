@@ -22,7 +22,6 @@ function updateCountdown() {
 
     const fmt = n => String(n).padStart(2, '0');
     
-    // Update preloader countdown
     if (document.getElementById('pD')) {
         document.getElementById('pD').textContent = fmt(days);
         document.getElementById('pH').textContent = fmt(hours);
@@ -38,6 +37,7 @@ updateCountdown();
 // 1. Star Field (BG)
 const initStarField = () => {
     const cv = document.getElementById('c-bg');
+    if (!cv) return;
     const cx = cv.getContext('2d');
     let W, H;
     const resize = () => { W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; };
@@ -73,9 +73,10 @@ const initStarField = () => {
     animate();
 };
 
-// 2. God Rays (Cinematic Atmosphere)
+// 2. God Rays
 const initGodRays = () => {
     const cv = document.getElementById('c-rays');
+    if (!cv) return;
     const cx = cv.getContext('2d');
     let W, H, t = 0;
     const resize = () => { W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; };
@@ -118,9 +119,10 @@ const initGodRays = () => {
     animate();
 };
 
-// 3. Animus Gold Dust (Interactive)
+// 3. Gold Dust
 const initGoldDust = () => {
     const cv = document.getElementById('c-dust');
+    if (!cv) return;
     const cx = cv.getContext('2d');
     let W, H;
     const resize = () => { W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; };
@@ -159,150 +161,158 @@ const initGoldDust = () => {
     animate();
 };
 
-// 4. Majestic Wipe Dust (Cinematic Cloud)
-let burstDust; 
-const initWipeDust = () => {
-    const cv = document.getElementById('wipe-dust');
+// ════════════════ INTERGALACTIC WARP ENGINE ════════════════
+let startWarp;
+const initWarpEngine = () => {
+    const cv = document.getElementById('warp-canvas');
+    if (!cv) return;
     const cx = cv.getContext('2d');
     let W, H;
     const resize = () => { W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; };
     resize();
     window.addEventListener('resize', resize);
 
-    let pts = [];
-    burstDust = (dir) => {
-        pts = Array.from({ length: 300 }, () => ({
-            x: W / 2 + (Math.random() - 0.5) * W * 1.5,
-            y: H / 2 + (Math.random() - 0.5) * H * 1.5,
-            r: Math.random() * 1.2 + 0.3, // Smaller particles
-            vx: (Math.random() - 0.5) * 4,
-            vy: (Math.random() - 0.5) * 4 + (dir * 2),
-            jitter: Math.random() * 0.1,
-            a: 1,
-            life: 1,
-            decay: Math.random() * 0.008 + 0.004,
-            color: `rgba(${212 + Math.random() * 43 | 0}, ${175 + Math.random() * 30 | 0}, ${55 + Math.random() * 40 | 0}, `
+    let stars = [];
+    let isWarping = false;
+    let speed = 0;
+
+    startWarp = (dir) => {
+        isWarping = true;
+        gsap.to(cv, { opacity: 1, duration: 0.3 });
+        
+        stars = Array.from({ length: 150 }, () => ({
+            x: Math.random() * W,
+            y: Math.random() * H,
+            z: Math.random() * W
         }));
+
+        const tl = gsap.timeline({
+            onComplete: () => {
+                isWarping = false;
+                gsap.to(cv, { opacity: 0, duration: 0.5 });
+            }
+        });
+
+        tl.to({ v: 0 }, { v: 40, duration: 0.6, ease: 'power2.in', onUpdate: function() { speed = this.targets()[0].v; } })
+          .to({ v: 40 }, { v: 0, duration: 0.8, ease: 'power2.out', onUpdate: function() { speed = this.targets()[0].v; } });
     };
 
     const animate = () => {
-        cx.clearRect(0, 0, W, H);
-        pts.forEach((p, i) => {
-            // Random jitter for "cloud" feel
-            p.vx += (Math.random() - 0.5) * 0.5;
-            p.vy += (Math.random() - 0.5) * 0.5;
-            
-            p.x += p.vx;
-            p.y += p.vy;
-            p.life -= p.decay;
+        if (!isWarping) {
+            cx.clearRect(0, 0, W, H);
+            requestAnimationFrame(animate);
+            return;
+        }
 
-            if (p.life <= 0) {
-                pts.splice(i, 1);
-                return;
-            }
+        cx.fillStyle = 'rgba(5, 0, 16, 0.2)';
+        cx.fillRect(0, 0, W, H);
+
+        stars.forEach(s => {
+            s.z -= speed;
+            if (s.z <= 0) s.z = W;
+            const x = (s.x - W / 2) * (W / s.z) + W / 2;
+            const y = (s.y - H / 2) * (W / s.z) + H / 2;
+            const r = (W / s.z) * 1.5;
+            const px = (s.x - W / 2) * (W / (s.z + speed * 2)) + W / 2;
+            const py = (s.y - H / 2) * (W / (s.z + speed * 2)) + H / 2;
+
             cx.beginPath();
-            cx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            cx.fillStyle = p.color + p.life + ')';
-            cx.fill();
+            cx.moveTo(x, y);
+            cx.lineTo(px, py);
+            cx.lineWidth = r;
+            cx.strokeStyle = `rgba(212, 175, 55, ${Math.min(1, 2 - s.z/500)})`;
+            cx.stroke();
         });
+
         requestAnimationFrame(animate);
     };
     animate();
 };
 
-// ════════════════ B-ROLL ENGINE (MAJESTIC ROYAL REVEAL) ════════════════
+// ════════════════ CINEMATIC SCROLL INTERCEPTOR ════════════════
 const initBRollEngine = () => {
-    const sc = document.getElementById('scroll');
-    const wipe = document.getElementById('wipe');
-    const wipeBar = document.getElementById('wipe-bar');
+    const sections = document.querySelectorAll('.S');
     let curS = 0;
     let isT = false;
 
-    if (!sc || !wipe) return;
+    if (!sections.length) return;
 
-    const sections = document.querySelectorAll('.S');
-    
-    // 1. Initial State Visibility
     const show = (i) => {
         sections.forEach((s, idx) => {
             const content = s.querySelector('.inner, .card');
             if (idx === i) {
                 s.classList.add('active-scene');
-                s.style.zIndex = "10";
-                if (content) gsap.set(content, { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' });
+                if (content) gsap.set(content, { opacity: 1, scale: 1, filter: 'blur(0px)', y: 0 });
             } else {
                 s.classList.remove('active-scene');
-                s.style.zIndex = "1";
-                if (content) gsap.set(content, { opacity: 0, filter: 'blur(10px)' });
+                if (content) gsap.set(content, { opacity: 0 });
             }
         });
     };
     show(0);
 
-    sc.addEventListener('scroll', () => {
-        const h = window.innerHeight;
-        const nextS = Math.round(sc.scrollTop / h);
+    const navigate = (targetIndex) => {
+        if (isT || targetIndex < 0 || targetIndex >= sections.length || targetIndex === curS) return;
 
-        if (nextS !== curS && !isT) {
-            isT = true;
-            const dir = nextS > curS ? 1 : -1;
-            
-            const tl = gsap.timeline({
-                onComplete: () => {
-                    curS = nextS;
-                    isT = false;
-                    gsap.set(wipe, { display: 'none', opacity: 0 });
-                }
-            });
+        isT = true;
+        const dir = targetIndex > curS ? 1 : -1;
+        const prevContent = sections[curS]?.querySelector('.inner, .card');
+        const nextContent = sections[targetIndex]?.querySelector('.inner, .card');
 
-            // PHASE 1: GOLDEN WIPE (THE B-ROLL FLASH)
-            tl.set(wipe, { display: 'flex', opacity: 0 })
-              .to(wipe, { opacity: 1, duration: 0.6, ease: 'power2.inOut' })
-              .fromTo(wipeBar, { y: dir * 100, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out' }, 0)
-              .call(() => { if (burstDust) burstDust(dir); }, null, 0.2)
-            
-            // PHASE 2: ELEGANT SWAP (Occurs during peak bloom)
-            .call(() => {
-                sections.forEach((s, i) => {
-                    const content = s.querySelector('.inner, .card');
-                    if (!content) return;
+        if (startWarp) startWarp(dir);
 
-                    if (i === nextS) {
-                        s.classList.add('active-scene');
-                        s.style.zIndex = "10";
-                        gsap.fromTo(content, 
-                            { y: dir * 100, opacity: 0, scale: 0.95, filter: 'blur(20px)' },
-                            { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 1.5, ease: 'power4.out', overwrite: true }
-                        );
-                    } else if (i === curS) {
-                        s.style.zIndex = "5";
-                        gsap.to(content, { 
-                            y: -dir * 80, 
-                            opacity: 0, 
-                            scale: 1.05, 
-                            filter: 'blur(30px)',
-                            duration: 1.0, 
-                            ease: 'power2.inOut',
-                            overwrite: true
-                        });
-                    } else {
-                        s.classList.remove('active-scene');
-                        s.style.zIndex = "1";
-                        gsap.set(content, { opacity: 0, filter: 'blur(10px)' });
-                    }
-                });
-            }, null, 0.5)
-            
-            // PHASE 3: GRACEFUL EXIT
-            .to(wipe, { opacity: 0, duration: 1.0, ease: 'power2.inOut', delay: 0.2 })
-            .to(wipeBar, { y: -dir * 100, opacity: 0, duration: 1.0, ease: 'power3.in' }, 0.8);
+        const tl = gsap.timeline({
+            onComplete: () => {
+                curS = targetIndex;
+                isT = false;
+                show(targetIndex);
+            }
+        });
+
+        if (dir === 1) {
+            if (prevContent) tl.to(prevContent, { scale: 6, opacity: 0, filter: 'blur(60px)', duration: 1.2, ease: 'power2.in' }, 0);
+            if (nextContent) {
+                sections[targetIndex].classList.add('active-scene');
+                tl.fromTo(nextContent, { scale: 0, opacity: 0, filter: 'blur(40px)' }, { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 1.5, ease: 'expo.out' }, 0.2);
+            }
+        } else {
+            if (prevContent) tl.to(prevContent, { scale: 0, opacity: 0, filter: 'blur(40px)', duration: 1.0, ease: 'power2.in' }, 0);
+            if (nextContent) {
+                sections[targetIndex].classList.add('active-scene');
+                tl.fromTo(nextContent, { scale: 6, opacity: 0, filter: 'blur(60px)' }, { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 1.5, ease: 'expo.out' }, 0.2);
+            }
         }
-    });
+
+        gsap.to('.bg-mandala', { 
+            scale: dir === 1 ? 5 : 0.2, opacity: 0, duration: 1, ease: 'power4.in',
+            onComplete: () => {
+                gsap.set('.bg-mandala', { scale: dir === 1 ? 0.2 : 5 });
+                gsap.to('.bg-mandala', { scale: 1.5, opacity: 0.1, duration: 1.5, ease: 'power2.out' });
+            }
+        });
+    };
+
+    window.addEventListener('wheel', (e) => {
+        if (Math.abs(e.deltaY) < 15) return;
+        navigate(curS + (e.deltaY > 0 ? 1 : -1));
+    }, { passive: true });
+
+    let ts = 0;
+    window.addEventListener('touchstart', (e) => ts = e.touches[0].clientY, { passive: true });
+    window.addEventListener('touchend', (e) => {
+        const te = e.changedTouches[0].clientY;
+        const diff = ts - te;
+        if (Math.abs(diff) > 40) navigate(curS + (diff > 0 ? 1 : -1));
+    }, { passive: true });
+
+    // Expose to global for menu links
+    window.goTo = (i) => navigate(i);
 };
 
 // ════════════════ PRELOADER SEQUENCE ════════════════
 const runPreloader = () => {
     const wrap = document.getElementById('pre-chars');
+    if (!wrap) return;
     'AKSHIM'.split('').forEach(c => {
         const s = document.createElement('span');
         s.className = 'pc';
@@ -312,13 +322,8 @@ const runPreloader = () => {
 
     const tl = gsap.timeline();
 
-    tl.to('#pre-logo', {
-        opacity: 1, scale: 1, duration: 0.8, ease: 'back.out(1.7)'
-    }, 0.3)
-    .to('.pc', {
-        opacity: 1, y: 0, scale: 1,
-        duration: 0.5, stagger: 0.1, ease: 'back.out(2)'
-    }, 0.7)
+    tl.to('#pre-logo', { opacity: 1, scale: 1, duration: 0.8, ease: 'back.out(1.7)' }, 0.3)
+    .to('.pc', { opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.1, ease: 'back.out(2)' }, 0.7)
     .to('#pre-line', { width: '240px', duration: 1.2, ease: 'power3.out' }, 1.2)
     .to('#pre-tagline', { opacity: 0.75, y: 0, duration: 1, ease: 'power2.out' }, 1.5)
     .to('#pre-cd', { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 1.8)
@@ -330,46 +335,44 @@ const runPreloader = () => {
     .to('#pre', { yPercent: -100, duration: 1.1, ease: 'power4.inOut', onComplete: () => {
         const pre = document.getElementById('pre');
         if (pre) pre.remove();
-        // START HEAVY ASSETS ONLY AFTER PRELOADER IS GONE
         initGodRays();
         initGoldDust();
     }}, 'exit+=0.8')
     .to('#nav', { opacity: 1, duration: 1, ease: 'power2.out' }, 'exit+=1.1')
-    .fromTo('.fc', { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 1.2, stagger: 0.1, ease: 'back.out(2)' }, 'exit+=1.0')
-    .fromTo('#heroContent', { opacity: 0, y: 30, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 1.5, ease: 'power3.out' }, 'exit+=0.9')
-    .to('#hint', { opacity: 1, duration: 1 }, 'exit+=2.2');
+    .fromTo('#heroContent', { opacity: 0, y: 30, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 1.5, ease: 'power3.out' }, 'exit+=0.9');
 };
 
 // ════════════════ UTILITIES ════════════════
-function goTo(i) {
-    const sections = document.querySelectorAll('.S');
-    if (sections[i]) sections[i].scrollIntoView({ behavior: 'smooth' });
-}
-
 function openLogin() { 
-    document.getElementById('loginModal').classList.remove('hidden');
-    document.getElementById('loginModal').classList.add('flex');
+    const modal = document.getElementById('loginModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
 }
 
 function doLogin() {
     const name = document.getElementById('lN').value.trim();
     if (name) {
         document.getElementById('loginModal').classList.add('hidden');
-        document.getElementById('rsvpLock').remove();
-        document.getElementById('hw').textContent = `Welcome, ${name}! The Marwah family is honored by your presence.`;
-        document.getElementById('hw').classList.remove('hidden');
-    } else {
-        document.getElementById('lErr').textContent = 'Please enter your name.';
+        const lock = document.getElementById('rsvpLock');
+        if (lock) lock.remove();
+        const hw = document.getElementById('hw');
+        if (hw) {
+            hw.textContent = `Welcome, ${name}! The Marwah family is honored by your presence.`;
+            hw.classList.remove('hidden');
+        }
     }
 }
 
 function doRSVP() {
     const name = document.getElementById('rN').value;
-    if (name) {
-        document.getElementById('rsvpBox').innerHTML = `
+    const box = document.getElementById('rsvpBox');
+    if (name && box) {
+        box.innerHTML = `
             <div class="text-center py-10">
                 <div class="text-5xl mb-4">🌸</div>
-                <h2 class="s-h royal-head text-3xl gold-metallic mb-4">Your presence is awaited!</h2>
+                <h2 class="royal-head text-3xl gold-metallic mb-4 uppercase">Awaiting Your Presence</h2>
                 <p class="font-cormorant italic text-lg text-[#fdf2cf]/80">We have received your RSVP, ${name}. We cannot wait to celebrate with you.</p>
             </div>
         `;
@@ -383,13 +386,13 @@ function cpAddr() {
 
 function toggleMenu() {
     const menu = document.getElementById('m-menu');
-    menu.classList.toggle('translate-x-full');
+    if (menu) menu.classList.toggle('translate-x-full');
 }
 
 // ════════════════ INIT ════════════════
 document.addEventListener('DOMContentLoaded', () => {
-    initStarField(); // Only lightweight stars at start
+    initStarField(); 
     initBRollEngine();
-    initWipeDust();
+    initWarpEngine();
     runPreloader();
 });
