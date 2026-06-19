@@ -126,56 +126,173 @@
     <!-- ── ARTISTIC PERSPECTIVE LAYER (Fixed Sections) ── -->
     <div id="perspective-layer" class="fixed inset-0 z-10 pointer-events-none">
         <!-- S0: HERO -->
-        <section class="S active-scene pt-20 pb-10 sm:pt-32" id="s0">
-            <div class="inner relative z-10 text-center h-full max-w-5xl mx-auto px-6 flex flex-col items-center justify-center gap-4 sm:gap-8" id="heroContent">
-                <img src="images/akshim_logo.png" alt="Royal Logo" class="w-40 sm:w-80 md:w-[420px] object-contain mb-8">
-                <h1 class="royal-head text-4xl sm:text-6xl gold-metallic uppercase tracking-[0.3em]">Akshay <span class="font-cormorant italic lowercase tracking-normal text-[#D4AF37]">weds</span> Himanshi</h1>
-                <p class="font-cinzel text-xl sm:text-3xl text-[#D4AF37] tracking-[0.5em] mt-4">JULY 7 · 2026</p>
+        <section class="S active-scene" id="s0">
+            <div class="inner relative z-10 text-center h-full max-w-5xl mx-auto px-6 flex flex-col items-center justify-center gap-6 sm:gap-12" id="heroContent">
+                <img src="images/akshim_logo.png" alt="Royal Logo" class="w-32 sm:w-64 md:w-[360px] object-contain">
+                <div class="flex flex-col items-center gap-4 sm:gap-8">
+                    <h1 class="font-decorative gold-metallic uppercase flex flex-col items-center gap-2 sm:gap-4">
+                        <span class="text-2xl sm:text-5xl tracking-[0.3em] sm:tracking-[0.5em] pl-[0.3em] sm:pl-[0.5em]">Akshay</span>
+                        <div class="flex items-center gap-4 w-full justify-center opacity-90">
+                            <div class="h-[1px] w-12 sm:w-24 bg-gradient-to-r from-transparent to-[#D4AF37]"></div>
+                            <span class="gold-metallic font-pinyon lowercase tracking-widest text-2xl sm:text-5xl">weds</span>
+                            <div class="h-[1px] w-12 sm:w-24 bg-gradient-to-l from-transparent to-[#D4AF37]"></div>
+                        </div>
+                        <span class="text-2xl sm:text-5xl tracking-[0.3em] sm:tracking-[0.5em] pl-[0.3em] sm:pl-[0.5em]">Himanshi</span>
+                    </h1>
+                    <p class="font-cinzel text-sm sm:text-xl text-[#D4AF37] tracking-[0.6em] opacity-60">JULY 7 · 2026</p>
+                </div>
             </div>
         </section>
 
         <!-- S1: STORY -->
-        <section class="S pt-32 pb-20" id="s1">
-            <div class="card relative z-10 max-w-4xl mx-auto px-6 py-20 text-center bg-[#050010]/80 border border-[#D4AF37]/20 backdrop-blur-xl">
-                <h2 class="royal-head text-3xl sm:text-5xl gold-metallic mb-8">Our Eternal Story</h2>
-                <p class="font-cormorant italic text-lg sm:text-2xl text-[#fdf2cf]/80 leading-relaxed max-w-2xl mx-auto">
-                    "A journey of a thousand lifetimes, rooted in tradition and celebrated in love. From the first shared glance to this sacred union, our tapestry is woven with forever."
-                </p>
+        <section class="S pt-20 pb-20" id="s1">
+            <div class="card relative z-10 max-w-5xl mx-auto px-6 py-12 text-center flex flex-col items-center gap-12" id="storyContent">
+                <div class="flex flex-col items-center gap-2">
+                    <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]">Our Eternal Story</h2>
+                    <div class="h-[1px] w-24 sm:w-48 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+                    <!-- Chapter I -->
+                    <div class="matte-royal-card p-10 flex flex-col gap-5 group">
+                        <span class="font-pinyon gold-metallic text-5xl opacity-80 group-hover:scale-110 transition-transform">Chapter I</span>
+                        <h3 class="font-decorative text-sm tracking-[0.3em] text-[#D4AF37]">The Solitary Stars</h3>
+                        <p class="font-cormorant italic text-xl text-[#fdf2cf]/80 leading-relaxed">
+                            "For lifetimes, we walked beneath separate heavens, each a silent masterpiece of our own making. Two solitary stars, glowing with the pride of heritage, yet waiting for an alignment only the ancients could foresee."
+                        </p>
+                    </div>
+
+                    <!-- Chapter II -->
+                    <div class="matte-royal-card p-10 flex flex-col gap-5 group">
+                        <span class="font-pinyon gold-metallic text-5xl opacity-80 group-hover:scale-110 transition-transform">Chapter II</span>
+                        <h3 class="font-decorative text-sm tracking-[0.3em] text-[#D4AF37]">The Celestial Convergence</h3>
+                        <p class="font-cormorant italic text-xl text-[#fdf2cf]/80 leading-relaxed">
+                            "When our worlds finally collided through the wisdom of our kin, the air itself shifted. In that sacred moment of introduction, the quiet paths we trod ignited into a single, brilliant flame of shared destiny."
+                        </p>
+                    </div>
+
+                    <!-- Chapter III -->
+                    <div class="matte-royal-card p-10 flex flex-col gap-5 group border-[#D4AF37]/50">
+                        <span class="font-pinyon gold-metallic text-5xl opacity-80 group-hover:scale-110 transition-transform">Chapter III</span>
+                        <h3 class="font-decorative text-sm tracking-[0.3em] text-[#D4AF37]">The Mirror Soul</h3>
+                        <p class="font-cormorant italic text-xl text-[#fdf2cf]/80 leading-relaxed">
+                            "Looking into your eyes, I found not a stranger, but the missing piece of my own soul. I found myself in you, a reflection so perfect it felt like coming home after a thousand years of wandering."
+                        </p>
+                    </div>
+                </div>
+
+                <div class="h-32 w-[1px] bg-gradient-to-b from-[#D4AF37] to-transparent opacity-30 hidden sm:block"></div>
             </div>
         </section>
 
         <!-- S2: EVENTS -->
-        <section class="S pt-32 pb-20" id="s2">
-            <div class="inner relative z-10 max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="card p-10 text-center bg-[#050010]/60 border border-[#D4AF37]/15 backdrop-blur-md">
-                    <h3 class="royal-head text-2xl gold-metallic mb-4">The Wedding</h3>
-                    <p class="font-montserrat text-[10px] tracking-[0.2em] text-[#D4AF37]/80 mb-6">JULY 7, 2026 • 10:00 AM</p>
-                    <p class="font-cormorant italic text-lg text-[#fdf2cf]/70">Taj Palace, New Delhi</p>
+        <section class="S pt-20 pb-20" id="s2">
+            <div class="inner relative z-10 max-w-6xl mx-auto px-6 flex flex-col items-center gap-12" id="eventsContent">
+                <div class="flex flex-col items-center gap-2">
+                    <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]">Grand Celebrations</h2>
+                    <div class="h-[1px] w-24 sm:w-48 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
                 </div>
-                <div class="card p-10 text-center bg-[#050010]/60 border border-[#D4AF37]/15 backdrop-blur-md">
-                    <h3 class="royal-head text-2xl gold-metallic mb-4">Reception</h3>
-                    <p class="font-montserrat text-[10px] tracking-[0.2em] text-[#D4AF37]/80 mb-6">JULY 8, 2026 • 7:30 PM</p>
-                    <p class="font-cormorant italic text-lg text-[#fdf2cf]/70">The Grand Ballroom</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+                    <!-- Event 1: Haldi & Mehendi -->
+                    <div class="matte-royal-card p-10 flex flex-col gap-4 group hover:border-[#D4AF37]/40 transition-all">
+                        <span class="font-pinyon gold-metallic text-4xl opacity-70">Day I — Morning</span>
+                        <h3 class="font-decorative text-2xl tracking-[0.2em] gold-metallic uppercase">Haldi & Mehendi</h3>
+                        <p class="font-montserrat text-[10px] tracking-[0.4em] text-[#D4AF37] mb-2">JULY 5, 2026 • 11:00 AM</p>
+                        <p class="font-cormorant italic text-lg text-[#fdf2cf]/70">The Saffron Gardens, Taj Palace</p>
+                    </div>
+
+                    <!-- Event 2: Sangeet -->
+                    <div class="matte-royal-card p-10 flex flex-col gap-4 group hover:border-[#D4AF37]/40 transition-all">
+                        <span class="font-pinyon gold-metallic text-4xl opacity-70">Day I — Night</span>
+                        <h3 class="font-decorative text-2xl tracking-[0.2em] gold-metallic uppercase">The Royal Sangeet</h3>
+                        <p class="font-montserrat text-[10px] tracking-[0.4em] text-[#D4AF37] mb-2">JULY 5, 2026 • 7:30 PM</p>
+                        <p class="font-cormorant italic text-lg text-[#fdf2cf]/70">The Durbar Hall, Taj Palace</p>
+                    </div>
+
+                    <!-- Event 3: The Wedding -->
+                    <div class="matte-royal-card p-10 flex flex-col gap-4 group border-[#D4AF37]/40 scale-[1.05] shadow-[0_0_40px_rgba(212,175,55,0.1)]">
+                        <span class="font-pinyon gold-metallic text-4xl opacity-70">Day II — The Muhurat</span>
+                        <h3 class="font-decorative text-2xl tracking-[0.2em] gold-metallic uppercase">Sacred Union</h3>
+                        <p class="font-montserrat text-[10px] tracking-[0.4em] text-[#D4AF37] mb-2">JULY 7, 2026 • 10:00 AM</p>
+                        <p class="font-cormorant italic text-lg text-[#fdf2cf]/70">The Crystal Pavilion, Taj Palace</p>
+                    </div>
+
+                    <!-- Event 4: Reception -->
+                    <div class="matte-royal-card p-10 flex flex-col gap-4 group hover:border-[#D4AF37]/40 transition-all">
+                        <span class="font-pinyon gold-metallic text-4xl opacity-70">Day III — The Celebration</span>
+                        <h3 class="font-decorative text-2xl tracking-[0.2em] gold-metallic uppercase">Grand Reception</h3>
+                        <p class="font-montserrat text-[10px] tracking-[0.4em] text-[#D4AF37] mb-2">JULY 8, 2026 • 8:00 PM</p>
+                        <p class="font-cormorant italic text-lg text-[#fdf2cf]/70">The Shahjahan Ballroom, Taj Palace</p>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- S3: VENUE -->
-        <section class="S pt-32 pb-20" id="s3">
-            <div class="card relative z-10 max-w-5xl mx-auto px-8 py-24 text-center bg-[#050010]/80 border border-[#D4AF37]/25 backdrop-blur-2xl">
-                <h2 class="royal-head text-4xl sm:text-7xl gold-metallic mb-6">The Taj Palace</h2>
-                <p class="font-montserrat text-xs tracking-[0.3em] text-[#D4AF37]/80 mb-10">NEW DELHI • CHANAKYAPURI</p>
-                <button onclick="cpAddr()" class="royal-head text-[11px] tracking-[0.3em] text-[#D4AF37] border border-[#D4AF37]/40 px-10 py-4 hover:bg-[#D4AF37]/10 transition-all uppercase">Get Directions</button>
+        <section class="S pt-20 pb-20" id="s3">
+            <div class="inner relative z-10 max-w-5xl mx-auto px-6 flex flex-col items-center gap-12" id="venueContent">
+                <div class="flex flex-col items-center gap-2">
+                    <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]">The Palatial Sanctuary</h2>
+                    <div class="h-[1px] w-24 sm:w-48 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
+                </div>
+
+                <div class="matte-royal-card w-full py-16 px-8 sm:px-20 text-center flex flex-col items-center gap-8 relative">
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(212,175,55,0.05)_0%,transparent_70%)] pointer-events-none"></div>
+                    <h2 class="font-decorative text-4xl sm:text-7xl gold-metallic mb-2">The Taj Palace</h2>
+                    <p class="font-montserrat text-xs sm:text-sm tracking-[0.6em] text-[#D4AF37] uppercase opacity-80">New Delhi • Chanakyapuri</p>
+                    
+                    <div class="h-[1px] w-12 bg-[#D4AF37]/30"></div>
+                    
+                    <p class="font-cormorant italic text-xl sm:text-3xl text-[#fdf2cf]/80 max-w-2xl">
+                        "A landmark of timeless elegance, where the echoes of history meet the brilliance of our new beginning."
+                    </p>
+
+                    <div class="flex flex-col items-center gap-6 mt-4">
+                        <p class="font-montserrat text-[10px] tracking-[0.3em] text-[#D4AF37]/60 leading-relaxed uppercase">
+                </div>
             </div>
         </section>
 
         <!-- S4: RSVP -->
-        <section class="S pt-32 pb-20" id="s4">
-            <div class="card relative z-10 max-w-2xl mx-auto px-8 py-20 text-center bg-[#0a0020]/90 border border-[#D4AF37]/30 backdrop-blur-3xl" id="rsvpBox">
-                <h2 class="royal-head text-4xl gold-metallic mb-10">Will You Join Us?</h2>
-                <div class="flex flex-col gap-8 max-w-sm mx-auto">
-                    <input type="text" id="rN" placeholder="Your Full Name" class="bg-transparent border-b border-[#D4AF37]/30 py-3 text-center outline-none font-cormorant text-xl">
-                    <button onclick="doRSVP()" class="royal-head text-xs tracking-[0.3em] bg-[#D4AF37] text-[#050010] py-5 hover:bg-[#fdf2cf] transition-all">CONFIRM ATTENDANCE</button>
+        <section class="S pt-20 pb-20" id="s4">
+            <div class="inner relative z-10 max-w-2xl mx-auto px-6 flex flex-col items-center gap-12" id="rsvpContent">
+                <div class="flex flex-col items-center gap-2 text-center">
+                    <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]">Sacred Acceptance</h2>
+                    <div class="h-[1px] w-24 sm:w-48 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
+                    <p class="font-pinyon gold-metallic text-2xl mt-4">We await your presence</p>
+                </div>
+
+                <div class="matte-royal-card w-full py-12 px-8 sm:px-12 flex flex-col gap-10" id="rsvpBox">
+                    <div class="flex flex-col gap-8">
+                        <div class="field flex flex-col gap-2">
+                            <label class="font-decorative text-[9px] tracking-[0.3em] text-[#D4AF37] uppercase opacity-60">Full Name</label>
+                            <input type="text" id="rN" placeholder="As it appears on your heart" class="bg-transparent border-b border-[#D4AF37]/20 py-3 outline-none font-cormorant italic text-xl text-[#fdf2cf] placeholder:text-[#fdf2cf]/20 focus:border-[#D4AF37] transition-all">
+                        </div>
+
+                        <div class="field flex flex-col gap-2">
+                            <label class="font-decorative text-[9px] tracking-[0.3em] text-[#D4AF37] uppercase opacity-60">Number of Souls</label>
+                            <select id="rG" class="bg-transparent border-b border-[#D4AF37]/20 py-3 outline-none font-cormorant italic text-xl text-[#fdf2cf] focus:border-[#D4AF37] transition-all cursor-pointer">
+                                <option value="1" class="bg-[#050010]">One Soul</option>
+                                <option value="2" class="bg-[#050010]">Two Souls</option>
+                                <option value="3" class="bg-[#050010]">Three Souls</option>
+                                <option value="4" class="bg-[#050010]">Family Presence</option>
+                            </select>
+                        </div>
+
+                        <div class="field flex flex-col gap-2">
+                            <label class="font-decorative text-[9px] tracking-[0.3em] text-[#D4AF37] uppercase opacity-60">Message to the Couple</label>
+                            <textarea id="rM" rows="3" placeholder="A blessing or a wish..." class="bg-transparent border-b border-[#D4AF37]/20 py-3 outline-none font-cormorant italic text-xl text-[#fdf2cf] placeholder:text-[#fdf2cf]/20 focus:border-[#D4AF37] transition-all resize-none"></textarea>
+                        </div>
+                    </div>
+
+                    <button onclick="sendR()" class="font-decorative text-[11px] tracking-[0.5em] text-[#050010] bg-[#D4AF37] px-12 py-5 hover:bg-[#fdf2cf] transition-all uppercase font-bold shadow-[0_0_30px_rgba(212,175,55,0.2)]">
+                        Accept Invitation
+                    </button>
+
+                    <p class="font-cinzel text-[8px] tracking-[0.4em] text-[#D4AF37]/40 text-center uppercase">
+                        Kindly respond by the first moon of July
+                    </p>
                 </div>
             </div>
         </section>

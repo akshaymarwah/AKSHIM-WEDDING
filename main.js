@@ -365,15 +365,18 @@ function doLogin() {
     }
 }
 
-function doRSVP() {
+function sendR() {
     const name = document.getElementById('rN').value;
     const box = document.getElementById('rsvpBox');
     if (name && box) {
         box.innerHTML = `
-            <div class="text-center py-10">
-                <div class="text-5xl mb-4">🌸</div>
-                <h2 class="royal-head text-3xl gold-metallic mb-4 uppercase">Awaiting Your Presence</h2>
-                <p class="font-cormorant italic text-lg text-[#fdf2cf]/80">We have received your RSVP, ${name}. We cannot wait to celebrate with you.</p>
+            <div class="text-center py-20 flex flex-col items-center gap-6 animate-fadeIn">
+                <span class="font-pinyon gold-metallic text-6xl">Thank You</span>
+                <h2 class="font-decorative text-2xl gold-metallic uppercase tracking-[0.3em]">Sacred Vow Received</h2>
+                <p class="font-cormorant italic text-xl text-[#fdf2cf]/80 max-w-sm">
+                    "We have received your acceptance, ${name}. Your presence will add a brilliant light to our eternal story."
+                </p>
+                <div class="h-[1px] w-24 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mt-4"></div>
             </div>
         `;
     }
