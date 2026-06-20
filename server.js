@@ -139,12 +139,20 @@ app.get('/', (req, res) => {
 // Paths for persistent data
 const CONTACTS_FILE = path.join(__dirname, 'contacts.json');
 const TEMPLATES_FILE = path.join(__dirname, 'templates.json');
+const GROUPS_FILE = path.join(__dirname, 'groups.json');
 
 // Initialize files if they don't exist
 if (!fs.existsSync(CONTACTS_FILE)) {
     fs.writeFileSync(CONTACTS_FILE, JSON.stringify([
-        { id: '1', name: 'Papa (Mock Contact)', phone: '919999999999', status: 'pending', sentAt: null },
-        { id: '2', name: 'Mummy (Mock Contact)', phone: '918888888888', status: 'pending', sentAt: null }
+        { id: '1', name: 'Papa (Mock Contact)', phone: '919999999999', status: 'pending', sentAt: null, groupId: '' },
+        { id: '2', name: 'Mummy (Mock Contact)', phone: '918888888888', status: 'pending', sentAt: null, groupId: '' }
+    ], null, 2));
+}
+if (!fs.existsSync(GROUPS_FILE)) {
+    fs.writeFileSync(GROUPS_FILE, JSON.stringify([
+        { id: '1', name: 'Family' },
+        { id: '2', name: 'Friends' },
+        { id: '3', name: 'Colleagues' }
     ], null, 2));
 }
 
@@ -363,12 +371,17 @@ function saveContacts(contacts) {
 
 // Helper to load templates
 function getTemplates() {
-    return JSON.parse(fs.readFileSync(TEMPLATES_FILE, 'utf8'));
+    try { return JSON.parse(fs.readFileSync(TEMPLATES_FILE, 'utf8')); } catch (e) { return []; }
+}
+function saveTemplates(data) {
+    fs.writeFileSync(TEMPLATES_FILE, JSON.stringify(data, null, 2));
 }
 
-// Helper to save templates
-function saveTemplates(templates) {
-    fs.writeFileSync(TEMPLATES_FILE, JSON.stringify(templates, null, 2));
+function getGroups() {
+    try { return JSON.parse(fs.readFileSync(GROUPS_FILE, 'utf8')); } catch (e) { return []; }
+}
+function saveGroups(data) {
+    fs.writeFileSync(GROUPS_FILE, JSON.stringify(data, null, 2));
 }
 
 // ════════════════ BULK SEND STATE ════════════════
@@ -521,7 +534,7 @@ app.get('/api/contacts', (req, res) => {
 });
 
 app.post('/api/contacts', (req, res) => {
-    const { name, phone } = req.body;
+    const { name, phone, groupId } = req.body;
     if (!name || !phone) {
         return res.status(400).json({ error: 'Name and phone are required' });
     }
@@ -538,6 +551,7 @@ app.post('/api/contacts', (req, res) => {
         id: Date.now().toString(),
         name,
         phone,
+        groupId: groupId || '',
         status: 'pending',
         sentAt: null
     };
@@ -548,7 +562,7 @@ app.post('/api/contacts', (req, res) => {
 
 app.put('/api/contacts/:id', (req, res) => {
     const { id } = req.params;
-    const { name, phone, status } = req.body;
+    const { name, phone, status, groupId } = req.body;
     const contacts = getContacts();
     const idx = contacts.findIndex(c => c.id === id);
     if (idx === -1) {
@@ -559,7 +573,8 @@ app.put('/api/contacts/:id', (req, res) => {
         ...contacts[idx],
         ...(name && { name }),
         ...(phone && { phone }),
-        ...(status && { status })
+        ...(status && { status }),
+        ...(groupId !== undefined && { groupId })
     };
     saveContacts(contacts);
     res.json(contacts[idx]);
@@ -585,6 +600,20 @@ app.post('/api/templates', (req, res) => {
     }
     saveTemplates(templates);
     res.json({ success: true, templates });
+});
+
+// 4. Groups API
+app.get('/api/groups', (req, res) => {
+    res.json(getGroups());
+});
+
+app.post('/api/groups', (req, res) => {
+    const { groups } = req.body;
+    if (!Array.isArray(groups)) {
+        return res.status(400).json({ error: 'Invalid groups array' });
+    }
+    saveGroups(groups);
+    res.json({ success: true, groups });
 });
 
 // 4. File Import (CSV)

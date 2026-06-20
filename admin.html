@@ -273,11 +273,15 @@
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gold/40 text-sm"></i>
                         <input type="text" id="search-query" onkeyup="filterActiveTab()" placeholder="Search guests by name or phone..." class="w-full bg-royal-bg/80 border border-gold/20 rounded pl-10 pr-4 py-2.5 text-sm text-gold-light outline-none focus:border-gold transition">
                     </div>
-                    <div class="flex gap-2" id="directory-filters">
+                    <div class="flex items-center gap-3">
                         <select id="filter-status" onchange="filterGuests()" class="bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold outline-none focus:border-gold">
-                            <option value="all">All Statuses</option>
-                            <option value="pending">Pending Invitations</option>
-                            <option value="sent">Sent Invitations</option>
+                            <option value="all">-- All Status --</option>
+                            <option value="pending">Pending</option>
+                            <option value="sent">Sent</option>
+                        </select>
+                        <select id="filter-group" onchange="filterGuests()" class="bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold outline-none focus:border-gold">
+                            <option value="all">-- All Groups --</option>
+                            <!-- Groups loaded dynamically -->
                         </select>
                         <button onclick="clearSelectedGuests()" class="text-xs text-gold/60 border border-gold/15 px-3 py-2.5 hover:bg-gold/5">
                             Clear Selection
@@ -291,14 +295,15 @@
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr class="border-b border-gold/20 text-gold/70 text-xs tracking-wider uppercase bg-royal-bg/40">
-                                    <th class="py-3 px-4 text-center w-12">
-                                        <input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll(this)" class="accent-gold h-4 w-4 rounded border-gray-300">
+                                <tr class="text-left text-gold/60 text-xs uppercase tracking-widest border-b border-gold/15">
+                                    <th class="py-3 px-4 w-12 text-center">
+                                        <input type="checkbox" id="select-all-guests" onclick="toggleSelectAllGuests(this.checked)" class="accent-gold h-4 w-4 rounded border-gray-300">
                                     </th>
                                     <th class="py-3 px-4">Guest Name</th>
-                                    <th class="py-3 px-4">WhatsApp Phone</th>
+                                    <th class="py-3 px-4">WhatsApp</th>
+                                    <th class="py-3 px-4">Group</th>
                                     <th class="py-3 px-4 text-center">Status</th>
-                                    <th class="py-3 px-4">Sent Date</th>
+                                    <th class="py-3 px-4">Last Sent</th>
                                     <th class="py-3 px-4 text-center">Actions</th>
                                 </tr>
                             </thead>
@@ -359,6 +364,26 @@
 
             </div>
 
+            <!-- Group Editor Card -->
+            <div class="bg-royal-card gold-border-glow p-6 rounded-lg transition duration-300">
+                <div class="flex justify-between items-center border-b border-gold/15 pb-4 mb-4">
+                    <h2 class="royal-font text-lg tracking-wider text-gold font-bold">
+                        <i class="fa-solid fa-layer-group mr-2"></i>Group Configurator
+                    </h2>
+                    <div class="flex gap-2">
+                        <button onclick="addNewGroup()" class="bg-royal-bg border border-gold/40 text-gold text-xs px-4 py-2 hover:bg-gold/10 font-bold rounded transition">
+                            <i class="fa-solid fa-plus mr-1.5"></i>Add Group
+                        </button>
+                        <button onclick="saveAllGroups()" class="bg-gold text-royal-bg text-xs px-4 py-2 hover:bg-gold-light font-bold rounded transition">
+                            <i class="fa-solid fa-floppy-disk mr-1.5"></i>Save Groups
+                        </button>
+                    </div>
+                </div>
+                <div id="groups-editor-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    <!-- Dynamically loaded groups -->
+                </div>
+            </div>
+
             <!-- Templates Editor Card -->
             <div class="bg-royal-card gold-border-glow p-6 rounded-lg transition duration-300">
                 <div class="flex justify-between items-center border-b border-gold/15 pb-4 mb-4">
@@ -400,6 +425,13 @@
                     <input type="text" id="add-guest-phone" required placeholder="e.g. 919876543210 (include country code)" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold-light outline-none focus:border-gold">
                     <p class="text-[10px] text-gold/50 mt-1">Recommendation: Prepend 91 for Indian mobile numbers without spaces or +.</p>
                 </div>
+                <div>
+                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">Assign to Group</label>
+                    <select id="add-guest-group" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold outline-none focus:border-gold">
+                        <option value="">-- No Group --</option>
+                        <!-- Loaded dynamically -->
+                    </select>
+                </div>
                 <button type="submit" class="w-full bg-gold hover:bg-gold-light text-royal-bg font-bold py-3 text-xs tracking-wider uppercase transition mt-6">
                     Add Guest To Directory
                 </button>
@@ -417,6 +449,13 @@
             <p class="text-xs text-gold/60 mb-6">Configure delay rules and templates to protect your WhatsApp account against account suspension.</p>
             
             <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">Select by Group (Auto-Check)</label>
+                    <select id="bulk-select-group" onchange="selectGuestsByGroup(this.value)" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold outline-none focus:border-gold">
+                        <option value="">-- Manual Selection --</option>
+                        <!-- Loaded dynamically -->
+                    </select>
+                </div>
                 <div>
                     <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">Selected Contacts count</label>
                     <div class="bg-royal-bg border border-gold/10 p-3 text-sm font-semibold text-center text-gold" id="bulk-selection-count">
@@ -500,6 +539,7 @@
     <script>
         let contacts = [];
         let templates = [];
+        let groups = [];
         let activeBulkJob = false;
         let selectedRecipientId = null;
         let activeTab = 'directory';
@@ -634,11 +674,21 @@
         }
 
         async function saveContactAsGuest(name, phone) {
+            let groupId = '';
+            if (groups.length > 0) {
+                const groupList = groups.map((g, i) => `[${i+1}] ${g.name}`).join('\n');
+                const choice = prompt(`Assign ${name} to a group?\n\nType the number or leave empty for no group:\n\n${groupList}`);
+                if (choice) {
+                    const idx = parseInt(choice) - 1;
+                    if (groups[idx]) groupId = groups[idx].id;
+                }
+            }
+
             try {
                 const res = await fetch('/api/contacts', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, phone })
+                    body: JSON.stringify({ name, phone, groupId })
                 });
                 const data = await res.json();
                 
@@ -921,43 +971,56 @@
                     : '-';
 
                 // Build template buttons dynamically based on templates config
-                let templateButtonsHtml = '';
-                const quickTemplates = templates.filter(t => t.isQuickAction);
+                 const lastSent = g.sentAt ? new Date(g.sentAt).toLocaleString('en-IN', { dateStyle: 'short', timeStyle: 'short' }) : 'Never';
+                const groupName = groups.find(gr => gr.id === g.groupId)?.name || '-';
                 
-                // If no quick templates selected, show first 3 as fallback
-                const templatesToShow = quickTemplates.length > 0 ? quickTemplates : templates.slice(0, 3);
-
+                let templateButtonsHtml = '';
+                const templatesToShow = templates.filter(t => t.isQuickAction);
+                
                 templatesToShow.forEach(t => {
                     // Extract first real word (skipping emojis/icons)
                     const words = t.title.split(' ');
                     const firstWord = words.find(w => /[a-zA-Z0-9]/.test(w)) || 'Send';
-                    const shortTitle = firstWord.replace(/[^\w\s]/gi, ''); 
                     
                     templateButtonsHtml += `
-                        <button onclick="sendTemplateInvite('${g.id}', '${g.phone}', '${g.name}', '${t.id}')" title="${t.title}" class="bg-gold hover:bg-gold-light text-royal-bg px-2.5 py-1 text-[10px] rounded transition font-bold whitespace-nowrap min-w-[75px] shadow-sm">
-                            <i class="fa-solid fa-paper-plane mr-1.5 text-[8px]"></i>${shortTitle}
+                        <button onclick="sendTemplateInIndividualMsg('${g.id}', '${t.id}')" 
+                                class="bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 text-[10px] px-2 py-1 rounded border border-yellow-500/20 transition flex items-center gap-1">
+                            <i class="fa-solid fa-paper-plane text-[9px]"></i>
+                            ${firstWord}
                         </button>
                     `;
                 });
 
                 const row = document.createElement('tr');
-                row.className = 'hover:bg-royal-bg/30 transition border-b border-gold/5';
+                row.className = 'border-b border-gold/5 hover:bg-gold/[0.02] transition group';
                 row.innerHTML = `
-                    <td class="py-3 px-4 text-center">
-                        <input type="checkbox" data-id="${g.id}" class="guest-selector accent-gold h-4 w-4 rounded border-gray-300">
+                    <td class="py-4 px-4 text-center">
+                        <input type="checkbox" data-id="${g.id}" onchange="updateBulkUI()" class="accent-gold h-4 w-4 rounded border-gray-300">
                     </td>
-                    <td class="py-3 px-4 font-semibold text-gold-light">${g.name}</td>
-                    <td class="py-3 px-4 text-xs font-mono text-gold/80">+${g.phone}</td>
-                    <td class="py-3 px-4 text-center">${statusBadge}</td>
-                    <td class="py-3 px-4 text-xs text-gold/60">${sentDate}</td>
-                    <td class="py-3 px-4 text-center flex flex-wrap items-center justify-center gap-1.5">
-                        ${templateButtonsHtml}
-                        <button onclick="openCustomMsgModal('${g.id}', '${g.name}', '${g.phone}')" title="Custom message" class="border border-gold/45 text-gold hover:bg-gold/10 px-2 py-1 text-[10px] rounded transition flex items-center gap-1">
-                            <i class="fa-solid fa-comment-dots text-[8px]"></i>Custom
-                        </button>
-                        <button onclick="deleteGuest('${g.id}')" title="Delete guest" class="text-red-400 hover:text-red-300 px-2 py-1 text-xs transition">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
+                    <td class="py-4 px-4">
+                        <div class="flex flex-col">
+                            <span class="text-sm font-semibold text-gold-light">${g.name}</span>
+                            ${g.type === 'rsvp' ? '<span class="text-[9px] text-green-400 font-bold uppercase tracking-tighter">via RSVP</span>' : ''}
+                        </div>
+                    </td>
+                    <td class="py-4 px-4 text-sm text-gold/80">${g.phone || '-'}</td>
+                    <td class="py-4 px-4 text-xs text-gold/60 font-medium">${groupName}</td>
+                    <td class="py-4 px-4 text-center">
+                        <span class="px-2 py-1 rounded-full text-[10px] font-bold uppercase ${g.status === 'sent' ? 'bg-green-500/10 text-green-400' : 'bg-yellow-500/10 text-yellow-400'}">
+                            ${g.status}
+                        </span>
+                    </td>
+                    <td class="py-4 px-4 text-xs text-gold/40">${lastSent}</td>
+                    <td class="py-4 px-4">
+                        <div class="flex items-center justify-center gap-2">
+                            ${templateButtonsHtml}
+                            <button onclick="openCustomMsgModal('${g.id}')" title="Custom message" class="text-gold/60 hover:text-gold px-2 py-1 text-xs transition">
+                                <i class="fa-solid fa-comment-dots"></i>
+                            </button>
+                            <button onclick="deleteGuest('${g.id}')" title="Delete guest" class="text-red-400 hover:text-red-300 px-2 py-1 text-xs transition">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -966,14 +1029,15 @@
 
         function filterGuests() {
             const query = document.getElementById('search-query').value.toLowerCase();
-            const statusFilter = document.getElementById('filter-status').value;
-
-            const filtered = contacts.filter(c => {
-                const matchesQuery = c.name.toLowerCase().includes(query) || c.phone.toString().includes(query);
-                const matchesStatus = statusFilter === 'all' || c.status === statusFilter;
-                return matchesQuery && matchesStatus;
+            const status = document.getElementById('filter-status').value;
+            const group = document.getElementById('filter-group').value;
+            
+            const filtered = contacts.filter(g => {
+                const matchSearch = g.name.toLowerCase().includes(query) || g.phone.includes(query);
+                const matchStatus = status === 'all' || g.status === status;
+                const matchGroup = group === 'all' || g.groupId === group;
+                return matchSearch && matchStatus && matchGroup;
             });
-
             renderGuests(filtered);
         }
 
@@ -991,29 +1055,28 @@
 
         async function submitAddGuest(e) {
             e.preventDefault();
-            const name = document.getElementById('add-guest-name').value.trim();
-            let phone = document.getElementById('add-guest-phone').value.trim();
-            
-            // Strip characters
-            phone = phone.replace(/\D/g, '');
+            const name = document.getElementById('add-guest-name').value;
+            const phone = document.getElementById('add-guest-phone').value;
+            const groupId = document.getElementById('add-guest-group').value;
 
             try {
                 const res = await fetch('/api/contacts', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, phone })
+                    body: JSON.stringify({ name, phone, groupId })
                 });
                 const data = await res.json();
-                
                 if (data.error) {
                     showToast(data.error, 'error');
                 } else {
-                    showToast(`Added ${name} to directory`);
+                    showToast('Guest added successfully!');
+                    document.getElementById('add-guest-form').reset();
+                    await loadContacts();
+                    renderGuests();
                     closeAddGuestModal();
-                    loadContacts();
                 }
             } catch (err) {
-                showToast(err.message, 'error');
+                showToast('Network error', 'error');
             }
         }
 
@@ -1330,6 +1393,14 @@
             document.getElementById('modal-bulk-send').classList.remove('flex');
         }
 
+        function updateBulkUI() {
+            const selectedIds = getSelectedGuestIds();
+            const countEl = document.getElementById('bulk-selection-count');
+            if (countEl) {
+                countEl.textContent = `${selectedIds.length} guest(s) selected`;
+            }
+        }
+
         function updateBulkPreview() {
             const tmplId = document.getElementById('bulk-select-tmpl').value;
             const customMsg = document.getElementById('bulk-custom-msg').value;
@@ -1462,6 +1533,149 @@
             const list = document.getElementById('bulk-errors-list');
             list.classList.toggle('hidden');
         }
+
+        async function fetchGroups() {
+            try {
+                const res = await fetch('/api/groups');
+                groups = await res.json();
+                populateGroupDropdowns();
+                renderGroupsEditor();
+            } catch (err) {
+                console.error('Failed to fetch groups:', err);
+            }
+        }
+
+        function populateGroupDropdowns() {
+            const filterGroup = document.getElementById('filter-group');
+            const addGuestGroup = document.getElementById('add-guest-group');
+            const bulkGroup = document.getElementById('bulk-select-group');
+            
+            if (!filterGroup || !addGuestGroup) return;
+
+            // Clear existing except first option
+            filterGroup.innerHTML = '<option value="all">-- All Groups --</option>';
+            addGuestGroup.innerHTML = '<option value="">-- No Group --</option>';
+            if (bulkGroup) bulkGroup.innerHTML = '<option value="">-- Manual Selection --</option>';
+            
+            groups.forEach(g => {
+                const opt1 = document.createElement('option');
+                opt1.value = g.id;
+                opt1.textContent = g.name;
+                filterGroup.appendChild(opt1);
+                
+                const opt2 = document.createElement('option');
+                opt2.value = g.id;
+                opt2.textContent = g.name;
+                addGuestGroup.appendChild(opt2);
+
+                if (bulkGroup) {
+                    const opt3 = document.createElement('option');
+                    opt3.value = g.id;
+                    opt3.textContent = g.name;
+                    bulkGroup.appendChild(opt3);
+                }
+            });
+        }
+
+        function selectGuestsByGroup(groupId) {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"][data-id]');
+            checkboxes.forEach(cb => {
+                const guestId = cb.getAttribute('data-id');
+                const guest = contacts.find(g => g.id === guestId);
+                if (guest) {
+                    cb.checked = (groupId === '' ? false : guest.groupId === groupId);
+                }
+            });
+            updateBulkUI();
+        }
+
+        function renderGroupsEditor() {
+            const container = document.getElementById('groups-editor-container');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            groups.forEach((g, idx) => {
+                const groupEl = document.createElement('div');
+                groupEl.className = 'bg-royal-bg border border-gold/15 p-4 rounded flex flex-col gap-3 relative group';
+                groupEl.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] text-gold/40 font-bold uppercase tracking-widest">Group #${idx + 1}</span>
+                        <button onclick="removeGroup('${g.id}')" class="text-red-400/50 hover:text-red-400 transition-colors text-xs">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                    <input type="text" value="${g.name}" placeholder="Group Name" onchange="updateGroupTitle('${g.id}', this.value)" 
+                        class="w-full bg-transparent border-b border-gold/10 py-1 text-sm text-gold-light outline-none focus:border-gold">
+                `;
+                container.appendChild(groupEl);
+            });
+            
+            if (groups.length === 0) {
+                container.innerHTML = '<div class="col-span-full py-8 text-center text-gold/30 italic text-sm">No groups defined yet. Click "Add Group" to begin.</div>';
+            }
+        }
+
+        function addNewGroup() {
+            const newId = Date.now().toString();
+            groups.push({
+                id: newId,
+                name: 'New Group'
+            });
+            renderGroupsEditor();
+        }
+
+        function updateGroupTitle(id, val) {
+            const idx = groups.findIndex(g => g.id === id);
+            if (idx !== -1) groups[idx].name = val;
+        }
+
+        function removeGroup(id) {
+            if (!confirm('Are you sure you want to remove this group? Guests in this group will be unassigned.')) return;
+            groups = groups.filter(g => g.id !== id);
+            renderGroupsEditor();
+        }
+
+        async function saveAllGroups() {
+            try {
+                const res = await fetch('/api/groups', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ groups })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast('Groups saved successfully!');
+                    populateGroupDropdowns();
+                    loadContacts();
+                }
+            } catch (err) {
+                showToast('Failed to save groups', 'error');
+            }
+        }
+
+        async function initialLoad() {
+            try {
+                // Initial data fetch
+                await Promise.all([
+                    loadContacts(),
+                    loadTemplates(),
+                    fetchGroups()
+                ]);
+                
+                // Start status sync
+                checkWhatsAppStatus();
+                setInterval(checkWhatsAppStatus, 10000);
+                setInterval(checkBulkSendStatus, 3000);
+                
+                console.log('Admin Dashboard Initialized');
+            } catch (err) {
+                console.error('Initial load error:', err);
+                showToast('Failed to load initial data', 'error');
+            }
+        }
+
+        // Run on startup
+        initialLoad();
     </script>
 </body>
 </html>
