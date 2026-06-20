@@ -178,7 +178,7 @@
             <!-- Templates Manager -->
             <div class="bg-royal-card gold-border-glow p-6 rounded-lg transition duration-300">
                 <h2 class="royal-font text-lg tracking-wider text-gold mb-6 font-bold">
-                    <i class="fa-solid fa-envelope-open-text mr-2"></i>Templates List
+                    <i class="fa-solid fa-envelope-open-text mr-2"></i>Quick Templates
                 </h2>
                 <div id="templates-selector-list" class="flex flex-col gap-3 max-h-[300px] overflow-y-auto pr-1">
                     <!-- Loaded dynamically -->
@@ -922,10 +922,15 @@
 
                 // Build template buttons dynamically based on templates config
                 let templateButtonsHtml = '';
-                templates.forEach(t => {
-                    const shortTitle = t.title.split(' ')[0]; // E.g., "Official", "Sangeet", "Reception"
+                const quickTemplates = templates.filter(t => t.isQuickAction);
+                
+                // If no quick templates selected, show first 3 as fallback
+                const templatesToShow = quickTemplates.length > 0 ? quickTemplates : templates.slice(0, 3);
+
+                templatesToShow.forEach(t => {
+                    const shortTitle = t.title.split(' ')[0].replace(/[^\w\s]/gi, ''); // Clean title
                     templateButtonsHtml += `
-                        <button onclick="sendTemplateInvite('${g.id}', '${g.phone}', '${g.name}', '${t.id}')" title="Send message: ${t.title}" class="bg-gold hover:bg-gold-light text-royal-bg px-2 py-1 text-[10px] rounded transition font-bold whitespace-nowrap">
+                        <button onclick="sendTemplateInvite('${g.id}', '${g.phone}', '${g.name}', '${t.id}')" title="Send message: ${t.title}" class="bg-gold hover:bg-gold-light text-royal-bg px-2 py-1 text-[10px] rounded transition font-bold whitespace-nowrap min-w-[60px]">
                             <i class="fa-solid fa-paper-plane mr-1 text-[8px]"></i>${shortTitle}
                         </button>
                     `;
@@ -1073,10 +1078,37 @@
                 const res = await fetch('/api/templates');
                 templates = await res.json();
                 renderTemplatesEditor();
+                renderTemplatesSelectorList(); // Sidebar list
                 populateTemplateDropdowns();
                 renderGuests();
             } catch (err) {
                 showToast('Failed to load templates config', 'error');
+            }
+        }
+
+        function renderTemplatesSelectorList() {
+            const container = document.getElementById('templates-selector-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const quickTemplates = templates.filter(t => t.isQuickAction);
+            const toRender = quickTemplates.length > 0 ? quickTemplates : templates.slice(0, 3);
+
+            toRender.forEach(tmpl => {
+                const item = document.createElement('div');
+                item.className = 'bg-royal-bg/40 border border-gold/10 p-3 rounded flex flex-col gap-2 hover:border-gold/30 transition';
+                item.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-gold truncate">${tmpl.title}</span>
+                        <span class="text-[9px] px-1.5 py-0.5 rounded bg-gold/10 text-gold/60 border border-gold/10">Active</span>
+                    </div>
+                    <p class="text-[10px] text-gold/50 line-clamp-2 italic">"${tmpl.body.substring(0, 60)}..."</p>
+                `;
+                container.appendChild(item);
+            });
+            
+            if (toRender.length === 0) {
+                container.innerHTML = '<p class="text-[10px] text-gold/40 text-center py-4">No quick templates selected</p>';
             }
         }
 
@@ -1086,13 +1118,18 @@
 
             templates.forEach((tmpl, idx) => {
                 const card = document.createElement('div');
-                card.className = 'bg-royal-bg/50 border border-gold/10 p-4 rounded space-y-3 relative';
+                card.className = 'bg-royal-card gold-border-glow p-4 rounded space-y-3 relative';
                 card.innerHTML = `
                     <div class="flex justify-between items-center">
-                        <input type="text" value="${tmpl.title}" id="tmpl-title-${tmpl.id}" class="bg-transparent border-b border-gold/20 font-semibold text-sm text-gold py-1 outline-none focus:border-gold w-3/4">
+                        <div class="flex items-center gap-3 w-3/4">
+                            <input type="text" value="${tmpl.title}" id="tmpl-title-${tmpl.id}" class="bg-transparent border-b border-gold/20 font-semibold text-sm text-gold py-1 outline-none focus:border-gold w-full">
+                        </div>
                         <div class="flex items-center gap-3">
-                            <span class="text-[10px] font-mono text-gold/40">ID: ${tmpl.id}</span>
-                            <button onclick="deleteTemplate('${tmpl.id}')" title="Delete Template" class="text-red-500/50 hover:text-red-400 transition">
+                            <label class="flex items-center gap-1.5 cursor-pointer group">
+                                <input type="checkbox" id="tmpl-quick-${tmpl.id}" ${tmpl.isQuickAction ? 'checked' : ''} class="accent-gold h-3.5 w-3.5 rounded">
+                                <span class="text-[10px] text-gold/60 group-hover:text-gold transition">Quick Action</span>
+                            </label>
+                            <button onclick="deleteTemplate('${tmpl.id}')" title="Delete Template" class="text-red-500/50 hover:text-red-400 transition ml-2">
                                 <i class="fa-solid fa-trash-can text-xs"></i>
                             </button>
                         </div>
@@ -1110,7 +1147,8 @@
             templates.push({
                 id: newId,
                 title: 'New Invitation Template',
-                body: 'Dear {name}, \n\nYou are cordially invited to...'
+                body: 'Dear {name}, \n\nYou are cordially invited to...',
+                isQuickAction: false
             });
             renderTemplatesEditor();
             showToast('New template added to list. Remember to save changes!');
@@ -1142,7 +1180,8 @@
                 return {
                     id: t.id,
                     title: document.getElementById(`tmpl-title-${t.id}`).value,
-                    body: document.getElementById(`tmpl-body-${t.id}`).value
+                    body: document.getElementById(`tmpl-body-${t.id}`).value,
+                    isQuickAction: document.getElementById(`tmpl-quick-${t.id}`).checked
                 };
             });
 
@@ -1157,6 +1196,7 @@
                     showToast('Templates configurations saved!');
                     templates = updated;
                     populateTemplateDropdowns();
+                    renderTemplatesSelectorList();
                     renderGuests();
                 }
             } catch (err) {
