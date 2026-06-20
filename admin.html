@@ -56,12 +56,17 @@
             background: #D4AF37;
             border-radius: 3px;
         }
+        /* Mobile Optimizations */
+        @media (max-width: 640px) {
+            .mobile-hide { display: none !important; }
+            .mobile-full { width: 100% !important; }
+        }
     </style>
 </head>
 <body class="p-4 sm:p-8 min-h-screen">
 
     <!-- ── HEADER ── -->
-    <header class="flex flex-col sm:flex-row items-center justify-between border-b border-gold/20 pb-6 mb-8 gap-4">
+    <header class="flex flex-col md:flex-row items-center justify-between border-b border-gold/20 pb-6 mb-8 gap-6">
         <div class="flex items-center gap-4">
             <img src="images/akshim_logo.png" alt="AKSHIM Logo" class="w-16 h-16 object-contain">
             <div>
@@ -69,15 +74,12 @@
                 <p class="text-xs text-gold/60 tracking-wider">GUEST INVITATION & BROADCAST CONTROL CENTER</p>
             </div>
         </div>
-        <div class="flex flex-wrap gap-3">
-            <a href="index.html" target="_blank" class="royal-font text-xs tracking-wider border border-gold/40 px-4 py-2 hover:bg-gold/15 transition duration-300">
-                <i class="fa-solid fa-eye mr-2"></i>View Card Website
+        <div class="flex flex-wrap items-center justify-center md:justify-end gap-3 w-full md:w-auto">
+            <a href="index.html" target="_blank" class="royal-font text-[10px] tracking-widest border border-gold/40 px-4 py-2 hover:bg-gold/15 transition w-[48%] sm:w-auto text-center uppercase font-bold">
+                <i class="fa-solid fa-eye mr-1.5"></i>Live Site
             </a>
-            <button onclick="restartClient()" class="royal-font text-xs tracking-wider border border-red-500/40 text-red-400 px-4 py-2 hover:bg-red-500/10 transition duration-300">
-                <i class="fa-solid fa-sync mr-2"></i>Reset WhatsApp
-            </button>
-            <button onclick="logoutAdmin()" class="royal-font text-xs tracking-wider bg-red-950/40 border border-red-500/30 text-red-300 px-4 py-2 hover:bg-red-500/20 transition duration-300">
-                <i class="fa-solid fa-right-from-bracket mr-2"></i>Logout Admin
+            <button onclick="logoutAdmin()" class="royal-font text-[10px] tracking-widest bg-red-950/40 border border-red-500/30 text-red-300 px-4 py-2 hover:bg-red-500/20 transition w-[48%] sm:w-auto uppercase font-bold">
+                <i class="fa-solid fa-power-off mr-1.5"></i>Logout
             </button>
         </div>
     </header>
@@ -94,8 +96,8 @@
                     <h2 class="royal-font text-lg tracking-wider text-gold font-bold">
                         <i class="fa-brands fa-whatsapp text-green-500 mr-2 text-xl align-middle"></i>WhatsApp Link
                     </h2>
-                    <span id="conn-badge" class="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-red-950/50 text-red-400 border border-red-500/30">
-                        Disconnected
+                    <span id="conn-badge" class="px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-red-950/50 text-red-400 border border-red-500/30">
+                        Checking...
                     </span>
                 </div>
                 
@@ -103,337 +105,270 @@
                 <div class="mb-5 border-b border-gold/10 pb-4">
                     <label class="block text-[10px] text-gold/60 uppercase tracking-widest font-semibold mb-2">WhatsApp Profile</label>
                     <div class="flex gap-2">
-                        <select id="session-select" onchange="onSessionChange()" class="w-full bg-royal-bg border border-gold/25 rounded px-3 py-2 text-xs text-gold-light outline-none focus:border-gold">
+                        <select id="session-select" onchange="onSessionChange()" class="w-full bg-royal-bg border border-gold/25 rounded px-3 py-2.5 text-xs text-gold-light outline-none focus:border-gold">
                             <option value="default">Main Admin</option>
                             <option value="papa">Papa's WhatsApp</option>
                             <option value="mummy">Mummy's WhatsApp</option>
                             <option value="groom">Akshay's WhatsApp</option>
                             <option value="bride">Himanshi's WhatsApp</option>
                         </select>
-                        <button onclick="addNewSession()" title="Add custom device" class="bg-gold/10 hover:bg-gold/25 border border-gold/30 text-gold px-3 rounded flex items-center justify-center transition">
+                        <button onclick="addNewSession()" title="Add custom profile" class="bg-gold/10 hover:bg-gold/25 border border-gold/30 text-gold px-3 rounded flex items-center justify-center transition">
                             <i class="fa-solid fa-plus text-xs"></i>
                         </button>
                     </div>
                 </div>
                 
-                <!-- Disconnected State (QR Code) -->
+                <!-- Connection States -->
                 <div id="wa-disconnected" class="flex flex-col items-center justify-center p-4">
-                    <p class="text-xs text-center text-gold/70 mb-4 max-w-[280px]">
-                        Scan this QR code from your phone's linked devices screen in WhatsApp to authenticate.
-                    </p>
-                    <div class="bg-white p-4 rounded-lg relative w-56 h-56 flex items-center justify-center border border-gold/30">
+                    <div class="bg-white p-4 rounded-lg relative w-48 h-48 flex items-center justify-center border border-gold/30">
                         <div id="qr-loading" class="absolute inset-0 bg-white/90 flex flex-col items-center justify-center text-black">
                             <i class="fa-solid fa-spinner animate-spin text-gold text-3xl mb-2"></i>
-                            <span class="text-[10px] uppercase font-bold tracking-widest text-gray-500">Waiting for QR...</span>
+                            <span class="text-[10px] uppercase font-bold tracking-widest text-gray-400">Loading...</span>
                         </div>
-                        <img id="qr-image" src="" alt="WhatsApp QR Code" class="w-full h-full hidden">
+                        <img id="qr-image" src="" alt="QR" class="w-full h-full hidden">
                     </div>
+                    <p class="text-[10px] text-center text-gold/50 mt-4 leading-relaxed uppercase tracking-widest font-bold">Scan to link device</p>
                 </div>
 
-                <!-- Connecting State -->
-                <div id="wa-connecting" class="hidden flex flex-col items-center justify-center p-12 text-center">
-                    <i class="fa-solid fa-circle-notch animate-spin text-gold text-4xl mb-4"></i>
-                    <p class="text-sm font-semibold tracking-wider">Establishing Connection...</p>
-                    <p class="text-[10px] text-gold/60 mt-1">Starting Puppeteer headless instance. This may take a minute.</p>
+                <div id="wa-connecting" class="hidden flex flex-col items-center justify-center p-8 text-center">
+                    <i class="fa-solid fa-circle-notch animate-spin text-gold text-3xl mb-3"></i>
+                    <p class="text-xs font-semibold tracking-wider text-gold/80 uppercase">Connecting...</p>
                 </div>
 
-                <!-- Connected State -->
                 <div id="wa-connected" class="hidden flex flex-col items-center justify-center p-6 text-center">
-                    <div class="w-20 h-20 bg-green-500/10 border border-green-500/30 rounded-full flex items-center justify-center text-green-500 text-3xl mb-4 shadow-[0_0_20px_rgba(34,197,94,0.15)]">
-                        <i class="fa-solid fa-circle-check"></i>
+                    <div class="w-16 h-16 bg-green-500/10 border border-green-500/30 rounded-full flex items-center justify-center text-green-500 text-2xl mb-3">
+                        <i class="fa-solid fa-check"></i>
                     </div>
-                    <p class="text-base font-semibold tracking-wide text-green-400" id="connected-user">Successfully Connected!</p>
-                    <p class="text-xs text-gold/60 mt-2" id="connected-phone">Session Active</p>
-                    <button onclick="logoutWA()" class="mt-6 border border-red-500/40 text-red-400 text-xs px-6 py-2 hover:bg-red-500/15 rounded transition duration-300">
-                        Disconnect Session
+                    <p class="text-sm font-bold tracking-wide text-green-400" id="connected-user">Linked</p>
+                    <p class="text-[10px] text-gold/60 mt-1 uppercase tracking-tighter" id="connected-phone">Active</p>
+                    <button onclick="logoutWA()" class="mt-4 border border-red-500/40 text-red-400 text-[10px] uppercase font-bold px-4 py-2 hover:bg-red-500/10 rounded transition">
+                        Disconnect
                     </button>
                 </div>
             </div>
 
-            <!-- Dashboard Stats -->
-            <div class="bg-royal-card gold-border-glow p-6 rounded-lg transition duration-300">
-                <h2 class="royal-font text-lg tracking-wider text-gold mb-6 font-bold">
-                    <i class="fa-solid fa-chart-pie mr-2"></i>Statistics
+            <!-- Stats -->
+            <div class="bg-royal-card gold-border-glow p-6 rounded-lg">
+                <h2 class="royal-font text-base tracking-wider text-gold mb-6 font-bold uppercase">
+                    <i class="fa-solid fa-chart-line mr-2"></i>Live Stats
                 </h2>
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-royal-bg/50 border border-gold/15 p-4 rounded text-center">
-                        <p class="text-[10px] text-gold/60 tracking-wider uppercase">Total Guests</p>
-                        <p id="stat-total" class="text-3xl font-semibold text-gold mt-1">0</p>
+                    <div class="bg-royal-bg/40 border border-gold/10 p-4 rounded text-center">
+                        <p class="text-[9px] text-gold/40 tracking-widest uppercase font-bold">Total</p>
+                        <p id="stat-total" class="text-2xl font-bold text-gold mt-1">0</p>
                     </div>
-                    <div class="bg-royal-bg/50 border border-gold/15 p-4 rounded text-center">
-                        <p class="text-[10px] text-gold/60 tracking-wider uppercase">Invites Sent</p>
-                        <p id="stat-sent" class="text-3xl font-semibold text-green-400 mt-1">0</p>
+                    <div class="bg-royal-bg/40 border border-gold/10 p-4 rounded text-center">
+                        <p class="text-[9px] text-gold/40 tracking-widest uppercase font-bold">Sent</p>
+                        <p id="stat-sent" class="text-2xl font-bold text-green-400 mt-1">0</p>
                     </div>
-                    <div class="bg-royal-bg/50 border border-gold/15 p-4 rounded text-center">
-                        <p class="text-[10px] text-gold/60 tracking-wider uppercase">Pending Invites</p>
-                        <p id="stat-pending" class="text-3xl font-semibold text-yellow-500 mt-1">0</p>
+                    <div class="bg-royal-bg/40 border border-gold/10 p-4 rounded text-center">
+                        <p class="text-[9px] text-gold/40 tracking-widest uppercase font-bold">Pending</p>
+                        <p id="stat-pending" class="text-2xl font-bold text-yellow-500 mt-1">0</p>
                     </div>
-                    <div class="bg-royal-bg/50 border border-gold/15 p-4 rounded text-center">
-                        <p class="text-[10px] text-gold/60 tracking-wider uppercase">Completion</p>
-                        <p id="stat-percent" class="text-3xl font-semibold text-sky-400 mt-1">0%</p>
+                    <div class="bg-royal-bg/40 border border-gold/10 p-4 rounded text-center">
+                        <p class="text-[9px] text-gold/40 tracking-widest uppercase font-bold">Done</p>
+                        <p id="stat-percent" class="text-2xl font-bold text-sky-400 mt-1">0%</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Templates Manager -->
-            <div class="bg-royal-card gold-border-glow p-6 rounded-lg transition duration-300">
-                <h2 class="royal-font text-lg tracking-wider text-gold mb-6 font-bold">
-                    <i class="fa-solid fa-envelope-open-text mr-2"></i>Quick Templates
+            <!-- Quick Action Templates -->
+            <div class="bg-royal-card gold-border-glow p-6 rounded-lg">
+                <h2 class="royal-font text-base tracking-wider text-gold mb-6 font-bold uppercase">
+                    <i class="fa-solid fa-bolt mr-2 text-yellow-500"></i>Quick Actions
                 </h2>
-                <div id="templates-selector-list" class="flex flex-col gap-3 max-h-[300px] overflow-y-auto pr-1">
+                <div id="templates-selector-list" class="flex flex-col gap-3">
                     <!-- Loaded dynamically -->
                 </div>
             </div>
-
         </div>
 
         <!-- ── RIGHT COLUMN (TABLE + ACTIONS) ── -->
         <div class="lg:col-span-8 flex flex-col gap-8">
             
-            <!-- Bulk Send Dashboard (Active Broadcast overlay) -->
-            <div id="bulk-progress-panel" class="hidden bg-royal-card border border-sky-500/30 p-6 rounded-lg relative overflow-hidden shadow-[0_0_20px_rgba(14,165,233,0.1)]">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-sky-500/5 rounded-full blur-2xl pointer-events-none"></div>
-                <div class="flex justify-between items-start mb-4">
+            <!-- Bulk Send Dashboard (Active Broadcast) -->
+            <div id="bulk-progress-panel" class="hidden bg-royal-card border border-sky-500/30 p-6 rounded-lg shadow-[0_0_20px_rgba(14,165,233,0.1)]">
+                <div class="flex justify-between items-start mb-6">
                     <div>
-                        <h3 class="royal-font text-base text-sky-400 tracking-wider font-bold">
-                            <i class="fa-solid fa-paper-plane animate-bounce mr-2"></i>Bulk Broadcast in Progress
+                        <h3 class="royal-font text-sm text-sky-400 tracking-widest font-bold uppercase">
+                            <i class="fa-solid fa-paper-plane animate-pulse mr-2"></i>Bulk Broadcasting
                         </h3>
-                        <p class="text-xs text-gold/60 mt-1" id="bulk-status-text">Sending invitations to your guest list...</p>
+                        <p class="text-[10px] text-gold/40 mt-1 uppercase font-semibold" id="bulk-status-text">Dispatching invites...</p>
                     </div>
-                    <button onclick="cancelBulkSend()" class="bg-red-950/50 hover:bg-red-900 border border-red-500/35 text-red-400 text-xs px-3 py-1.5 rounded transition">
-                        <i class="fa-solid fa-ban mr-1.5"></i>Cancel Broadcast
+                    <button onclick="cancelBulkSend()" class="bg-red-950/30 border border-red-500/40 text-red-400 text-[10px] uppercase font-bold px-3 py-2 rounded hover:bg-red-900/40 transition">
+                        Stop
                     </button>
                 </div>
-                
-                <!-- Progress bar -->
-                <div class="w-full bg-royal-bg border border-gold/10 rounded-full h-3.5 mb-2 overflow-hidden">
-                    <div id="bulk-progress-bar" class="bg-gradient-to-r from-sky-500 to-indigo-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                <div class="w-full bg-royal-bg border border-gold/10 rounded-full h-3 mb-2 overflow-hidden">
+                    <div id="bulk-progress-bar" class="bg-sky-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
                 </div>
-                <div class="flex justify-between text-xs text-gold/70 mb-4">
+                <div class="flex justify-between text-[10px] font-bold text-gold/60 uppercase tracking-tighter">
                     <span id="bulk-numbers">Sent: 0 / 0</span>
-                    <span id="bulk-current-contact">Preparing next contact...</span>
+                    <span id="bulk-current-contact" class="text-sky-400">Preparing...</span>
                 </div>
-
-                <!-- Errors expander -->
-                <div id="bulk-errors-container" class="hidden">
-                    <button onclick="toggleBulkErrors()" class="text-xs text-red-400 hover:text-red-300 font-semibold focus:outline-none mb-2">
-                        <i class="fa-solid fa-circle-exclamation mr-1.5"></i>View Sending Failures (<span id="bulk-error-count">0</span>)
+                <div id="bulk-errors-container" class="hidden mt-4 pt-4 border-t border-red-500/20">
+                    <button onclick="toggleBulkErrors()" class="text-[10px] text-red-400 uppercase font-bold hover:underline">
+                        Failed Numbers (<span id="bulk-error-count">0</span>)
                     </button>
-                    <div id="bulk-errors-list" class="hidden bg-royal-bg/60 border border-red-500/20 p-3 rounded text-xs text-red-300 max-h-[120px] overflow-y-auto font-mono">
-                        <!-- Failed numbers list -->
-                    </div>
+                    <div id="bulk-errors-list" class="hidden mt-2 bg-royal-bg/40 p-2 rounded text-[10px] text-red-300 font-mono"></div>
                 </div>
             </div>
 
             <!-- Guest List Card -->
-            <div class="bg-royal-card gold-border-glow p-6 rounded-lg transition duration-300">
+            <div class="bg-royal-card gold-border-glow p-6 rounded-lg">
                 
-                <!-- Tabs and Toolbar -->
-                <div class="flex flex-col border-b border-gold/15 pb-4 mb-6">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
-                        <!-- Tab Buttons -->
-                        <div class="flex border-b border-gold/15 md:border-none gap-2 pb-2 md:pb-0">
-                            <button id="tab-btn-directory" onclick="switchTab('directory')" class="royal-font text-base sm:text-lg tracking-wider text-gold font-bold border-b-2 border-gold pb-2 px-2 focus:outline-none transition">
-                                <i class="fa-solid fa-users mr-2"></i>Guest Directory
-                            </button>
-                            <button id="tab-btn-whatsapp" onclick="switchTab('whatsapp')" class="royal-font text-base sm:text-lg tracking-wider text-gold/50 font-semibold border-b-2 border-transparent pb-2 px-2 hover:text-gold/80 focus:outline-none transition">
-                                <i class="fa-brands fa-whatsapp mr-2 text-green-500"></i>WhatsApp Contacts
-                            </button>
-                        </div>
-                        
-                        <!-- Guest Directory Toolbar (Visible on Guest Tab) -->
-                        <div id="directory-toolbar" class="flex flex-wrap gap-2">
-                            <!-- Add guest button -->
-                            <button onclick="openAddGuestModal()" class="bg-gold text-royal-bg text-xs px-4 py-2 hover:bg-gold-light font-bold flex items-center gap-1.5 transition">
-                                <i class="fa-solid fa-user-plus"></i>Add Guest
-                            </button>
-                            <!-- Import CSV button -->
-                            <label class="bg-royal-bg border border-gold/45 text-gold text-xs px-4 py-2 hover:bg-gold/10 font-bold flex items-center gap-1.5 cursor-pointer transition">
-                                <i class="fa-solid fa-file-csv"></i>Import CSV
-                                <input type="file" id="csv-input" accept=".csv" class="hidden" onchange="importCSV(this)">
-                            </label>
-                            <!-- Select all / action buttons -->
-                            <button onclick="triggerBulkSendModal()" class="bg-gradient-to-r from-yellow-500 to-gold text-royal-bg text-xs px-4 py-2 font-bold hover:brightness-115 flex items-center gap-1.5 transition">
-                                <i class="fa-solid fa-paper-plane animate-pulse"></i>Bulk Send Selected
-                            </button>
-                        </div>
-
-                        <!-- WhatsApp Contacts Toolbar (Visible on WhatsApp Tab) -->
-                        <div id="whatsapp-toolbar" class="hidden flex flex-wrap gap-2">
-                            <button onclick="syncWhatsAppContacts()" class="bg-royal-bg border border-gold/45 text-gold text-xs px-4 py-2 hover:bg-gold/10 font-bold flex items-center gap-1.5 transition">
-                                <i class="fa-solid fa-arrows-rotate mr-1.5"></i>Sync Contacts
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Filters & Search -->
-                <div class="flex flex-col sm:flex-row gap-4 mb-6">
-                    <div class="flex-1 relative">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gold/40 text-sm"></i>
-                        <input type="text" id="search-query" onkeyup="filterActiveTab()" placeholder="Search guests by name or phone..." class="w-full bg-royal-bg/80 border border-gold/20 rounded pl-10 pr-4 py-2.5 text-sm text-gold-light outline-none focus:border-gold transition">
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <select id="filter-status" onchange="filterGuests()" class="bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold outline-none focus:border-gold">
-                            <option value="all">-- All Status --</option>
-                            <option value="pending">Pending</option>
-                            <option value="sent">Sent</option>
-                        </select>
-                        <select id="filter-group" onchange="filterGuests()" class="bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold outline-none focus:border-gold">
-                            <option value="all">-- All Groups --</option>
-                            <!-- Groups loaded dynamically -->
-                        </select>
-                        <button onclick="clearSelectedGuests()" class="text-xs text-gold/60 border border-gold/15 px-3 py-2.5 hover:bg-gold/5">
-                            Clear Selection
+                <!-- Main Controls -->
+                <div class="flex flex-col gap-6 mb-8 pb-8 border-b border-gold/15">
+                    <!-- Tabs -->
+                    <div class="flex gap-4 border-b border-gold/10">
+                        <button id="tab-btn-directory" onclick="switchTab('directory')" class="royal-font text-xs sm:text-sm tracking-widest text-gold font-bold border-b-2 border-gold pb-3 px-2 transition uppercase">
+                            Directory
+                        </button>
+                        <button id="tab-btn-whatsapp" onclick="switchTab('whatsapp')" class="royal-font text-xs sm:text-sm tracking-widest text-gold/40 font-bold border-b-2 border-transparent pb-3 px-2 hover:text-gold/80 transition uppercase">
+                            WA Contacts
                         </button>
                     </div>
+
+                    <!-- Toolbar Actions -->
+                    <div class="flex flex-wrap items-center gap-3">
+                        <div id="directory-toolbar" class="flex flex-wrap gap-2 w-full">
+                            <button onclick="openAddGuestModal()" class="flex-1 sm:flex-none bg-gold hover:bg-gold-light text-royal-bg text-[10px] px-5 py-3 font-bold rounded uppercase tracking-widest transition shadow-lg">
+                                <i class="fa-solid fa-plus mr-1.5"></i>Add Guest
+                            </button>
+                            <label class="flex-1 sm:flex-none bg-royal-bg border border-gold/30 text-gold text-[10px] px-5 py-3 hover:bg-gold/10 font-bold rounded flex items-center justify-center gap-1.5 cursor-pointer transition uppercase tracking-widest">
+                                <i class="fa-solid fa-file-csv"></i>Import
+                                <input type="file" id="csv-input" accept=".csv" class="hidden" onchange="importCSV(this)">
+                            </label>
+                            <button onclick="triggerBulkSendModal()" class="w-full lg:w-auto lg:ml-auto bg-gradient-to-r from-yellow-500 to-gold text-royal-bg text-[10px] px-6 py-3 font-bold hover:brightness-110 rounded uppercase tracking-widest transition shadow-lg">
+                                <i class="fa-solid fa-paper-plane mr-1.5"></i>Bulk Send Selected
+                            </button>
+                        </div>
+                        <div id="whatsapp-toolbar" class="hidden w-full">
+                            <button onclick="syncWhatsAppContacts()" class="w-full bg-royal-bg border border-gold/30 text-gold text-[10px] px-5 py-3 hover:bg-gold/10 font-bold rounded uppercase tracking-widest transition">
+                                <i class="fa-solid fa-sync mr-1.5"></i>Sync WA Contacts
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- TAB 1: GUEST DIRECTORY -->
+                <!-- Search & Filter Block -->
+                <div class="bg-royal-bg/30 border border-gold/10 p-4 rounded-lg mb-8">
+                    <div class="flex flex-col lg:flex-row gap-4">
+                        <!-- Search -->
+                        <div class="flex-1 relative">
+                            <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gold/40 text-sm"></i>
+                            <input type="text" id="search-query" onkeyup="filterGuests()" placeholder="Search name or phone..." class="w-full bg-royal-bg/50 border border-gold/20 rounded pl-10 pr-4 py-3 text-xs text-gold-light outline-none focus:border-gold transition">
+                        </div>
+                        
+                        <!-- Dropdowns -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:flex items-center gap-3">
+                            <select id="filter-status" onchange="filterGuests()" class="bg-royal-bg border border-gold/20 rounded px-4 py-3 text-xs text-gold outline-none focus:border-gold">
+                                <option value="all">-- All Status --</option>
+                                <option value="pending">Pending</option>
+                                <option value="sent">Sent</option>
+                            </select>
+                            
+                            <select id="filter-group" onchange="filterGuests()" class="bg-royal-bg border border-gold/20 rounded px-4 py-3 text-xs text-gold outline-none focus:border-gold">
+                                <option value="all">-- All Groups --</option>
+                                <!-- Groups loaded dynamically -->
+                            </select>
+                            
+                            <div class="flex gap-2">
+                                <button onclick="selectAllVisible(true)" class="flex-1 bg-gold/10 border border-gold/30 text-gold text-[9px] uppercase font-bold px-3 py-3 rounded hover:bg-gold/20 transition whitespace-nowrap">
+                                    Select All
+                                </button>
+                                <button onclick="clearSelectedGuests()" class="flex-1 bg-royal-bg border border-gold/15 text-gold/40 text-[9px] uppercase font-bold px-3 py-3 rounded hover:bg-gold/5 transition">
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Area -->
                 <div id="tab-content-directory">
-                    <!-- Guests Table -->
-                    <div class="overflow-x-auto">
+                    <!-- Desktop Table -->
+                    <div class="hidden md:block overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr class="text-left text-gold/60 text-xs uppercase tracking-widest border-b border-gold/15">
-                                    <th class="py-3 px-4 w-12 text-center">
-                                        <input type="checkbox" id="select-all-checkbox" onclick="toggleSelectAll(this)" class="accent-gold h-4 w-4 rounded border-gray-300">
+                                <tr class="text-left text-gold/40 text-[9px] uppercase tracking-[0.2em] border-b border-gold/15">
+                                    <th class="py-4 px-4 w-12 text-center">
+                                        <input type="checkbox" id="select-all-checkbox" onclick="toggleSelectAll(this)" class="accent-gold h-4 w-4 rounded">
                                     </th>
-                                    <th class="py-3 px-4">Guest Name</th>
-                                    <th class="py-3 px-4">WhatsApp</th>
-                                    <th class="py-3 px-4">Group</th>
-                                    <th class="py-3 px-4 text-center">Status</th>
-                                    <th class="py-3 px-4">Last Sent</th>
-                                    <th class="py-3 px-4 text-center">Actions</th>
+                                    <th class="py-4 px-4">Guest</th>
+                                    <th class="py-4 px-4">WhatsApp</th>
+                                    <th class="py-4 px-4">Group</th>
+                                    <th class="py-4 px-4 text-center">Status</th>
+                                    <th class="py-4 px-4">Last Sent</th>
+                                    <th class="py-4 px-4 text-center">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="guests-list" class="divide-y divide-gold/10 text-sm">
+                            <tbody id="guests-list" class="divide-y divide-gold/10 text-xs">
                                 <!-- Loaded dynamically -->
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- Mobile Cards -->
+                    <div id="guests-list-mobile" class="md:hidden space-y-3">
+                        <!-- Loaded dynamically -->
                     </div>
 
                     <!-- Empty state -->
-                    <div id="no-guests-state" class="hidden py-16 text-center">
-                        <i class="fa-solid fa-user-slash text-gold/30 text-5xl mb-4"></i>
-                        <p class="text-gold/80 text-base font-semibold">No Guests in Directory</p>
-                        <p class="text-xs text-gold/50 mt-1">Add guests manually, import a guest list via CSV, or import from the WhatsApp Contacts tab to start sending invites.</p>
+                    <div id="no-guests-state" class="hidden py-20 text-center">
+                        <i class="fa-solid fa-users-slash text-gold/20 text-5xl mb-4"></i>
+                        <p class="text-gold/60 text-sm font-bold uppercase tracking-widest">No Guests Found</p>
                     </div>
                 </div>
 
-                <!-- TAB 2: WHATSAPP CONTACTS -->
                 <div id="tab-content-whatsapp" class="hidden">
-                    <!-- WhatsApp Contacts Table -->
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr class="border-b border-gold/20 text-gold/70 text-xs tracking-wider uppercase bg-royal-bg/40">
-                                    <th class="py-3 px-4">Contact Name</th>
-                                    <th class="py-3 px-4">WhatsApp Phone</th>
-                                    <th class="py-3 px-4 text-center">Address Book</th>
-                                    <th class="py-3 px-4 text-center">Action</th>
+                                <tr class="text-gold/40 text-[9px] uppercase tracking-[0.2em] border-b border-gold/15">
+                                    <th class="py-4 px-4">Contact</th>
+                                    <th class="py-4 px-4">Phone</th>
+                                    <th class="py-4 px-4 text-center">Action</th>
                                 </tr>
                             </thead>
-                            <tbody id="whatsapp-contacts-list" class="divide-y divide-gold/10 text-sm">
+                            <tbody id="whatsapp-contacts-list" class="divide-y divide-gold/10 text-xs">
                                 <!-- Loaded dynamically -->
                             </tbody>
                         </table>
                     </div>
-
-                    <!-- WhatsApp Disconnected state -->
-                    <div id="wa-contacts-disconnected-state" class="py-16 text-center">
-                        <i class="fa-brands fa-whatsapp text-gold/30 text-5xl mb-4"></i>
-                        <p class="text-gold/80 text-base font-semibold">WhatsApp Not Connected</p>
-                        <p class="text-xs text-gold/50 mt-1">Please scan the QR code and connect your WhatsApp account first to view your contact list.</p>
+                    <div id="wa-contacts-disconnected-state" class="py-20 text-center">
+                        <i class="fa-brands fa-whatsapp text-gold/20 text-5xl mb-4"></i>
+                        <p class="text-gold/60 text-sm font-bold uppercase tracking-widest">Not Connected</p>
                     </div>
-
-                    <!-- Loading state -->
-                    <div id="wa-contacts-loading-state" class="hidden py-16 text-center">
-                        <i class="fa-solid fa-spinner animate-spin text-gold text-4xl mb-4"></i>
-                        <p class="text-sm font-semibold tracking-wider">Fetching Contacts from Phone...</p>
-                        <p class="text-xs text-gold/50 mt-1">This retrieves your entire WhatsApp contact list. It may take up to 10 seconds.</p>
-                    </div>
-
-                    <!-- Empty contacts state -->
-                    <div id="wa-contacts-empty-state" class="hidden py-16 text-center">
-                        <i class="fa-solid fa-users-slash text-gold/30 text-5xl mb-4"></i>
-                        <p class="text-gold/80 text-base font-semibold">No Contacts Found</p>
-                        <p class="text-xs text-gold/50 mt-1">Could not find any contacts on the connected WhatsApp device.</p>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Group Editor Card -->
-            <div class="bg-royal-card gold-border-glow p-6 rounded-lg transition duration-300">
-                <div class="flex justify-between items-center border-b border-gold/15 pb-4 mb-4">
-                    <h2 class="royal-font text-lg tracking-wider text-gold font-bold">
-                        <i class="fa-solid fa-layer-group mr-2"></i>Group Configurator
-                    </h2>
-                    <div class="flex gap-2">
-                        <button onclick="addNewGroup()" class="bg-royal-bg border border-gold/40 text-gold text-xs px-4 py-2 hover:bg-gold/10 font-bold rounded transition">
-                            <i class="fa-solid fa-plus mr-1.5"></i>Add Group
-                        </button>
-                        <button onclick="saveAllGroups()" class="bg-gold text-royal-bg text-xs px-4 py-2 hover:bg-gold-light font-bold rounded transition">
-                            <i class="fa-solid fa-floppy-disk mr-1.5"></i>Save Groups
-                        </button>
-                    </div>
-                </div>
-                <div id="groups-editor-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                    <!-- Dynamically loaded groups -->
                 </div>
             </div>
-
-            <!-- Templates Editor Card -->
-            <div class="bg-royal-card gold-border-glow p-6 rounded-lg transition duration-300">
-                <div class="flex justify-between items-center border-b border-gold/15 pb-4 mb-4">
-                    <h2 class="royal-font text-lg tracking-wider text-gold font-bold">
-                        <i class="fa-solid fa-edit mr-2"></i>Template Configurator
-                    </h2>
-                    <div class="flex gap-2">
-                        <button onclick="addNewTemplate()" class="bg-royal-bg border border-gold/40 text-gold text-xs px-4 py-2 hover:bg-gold/10 font-bold rounded transition">
-                            <i class="fa-solid fa-plus mr-1.5"></i>Add Template
-                        </button>
-                        <button onclick="saveAllTemplates()" class="bg-gold text-royal-bg text-xs px-4 py-2 hover:bg-gold-light font-bold rounded transition">
-                            <i class="fa-solid fa-floppy-disk mr-1.5"></i>Save All Changes
-                        </button>
-                    </div>
-                </div>
-                <div id="templates-editor-container" class="flex flex-col gap-6">
-                    <!-- Dynamically loaded templates -->
-                </div>
-            </div>
-
         </div>
-
     </main>
 
     <!-- ── MODAL: ADD GUEST ── -->
     <div id="modal-add-guest" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
         <div class="bg-royal-card border border-gold/40 rounded-lg w-full max-w-md p-6 relative">
-            <button onclick="closeAddGuestModal()" class="absolute top-4 right-4 text-gold/60 hover:text-gold text-lg focus:outline-none">
+            <button onclick="closeAddGuestModal()" class="absolute top-4 right-4 text-gold/60 hover:text-gold text-lg">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-            <h3 class="royal-font text-lg text-gold mb-6 font-bold uppercase tracking-wider">Add New Guest</h3>
+            <h3 class="royal-font text-lg text-gold mb-6 font-bold uppercase tracking-wider">New Guest</h3>
             <form id="add-guest-form" onsubmit="submitAddGuest(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">Guest Name</label>
-                    <input type="text" id="add-guest-name" required placeholder="e.g. Ramesh Kumar" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold-light outline-none focus:border-gold">
+                    <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Full Name</label>
+                    <input type="text" id="add-guest-name" required placeholder="Guest Name" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold-light outline-none focus:border-gold">
                 </div>
                 <div>
-                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">WhatsApp Phone</label>
-                    <input type="text" id="add-guest-phone" required placeholder="e.g. 919876543210 (include country code)" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold-light outline-none focus:border-gold">
-                    <p class="text-[10px] text-gold/50 mt-1">Recommendation: Prepend 91 for Indian mobile numbers without spaces or +.</p>
+                    <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">WhatsApp Number</label>
+                    <input type="text" id="add-guest-phone" required placeholder="91XXXXXXXXXX" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold-light outline-none focus:border-gold">
                 </div>
                 <div>
-                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">Assign to Group</label>
-                    <select id="add-guest-group" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold outline-none focus:border-gold">
+                    <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Assign Group</label>
+                    <select id="add-guest-group" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold outline-none focus:border-gold">
                         <option value="">-- No Group --</option>
-                        <!-- Loaded dynamically -->
                     </select>
                 </div>
-                <button type="submit" class="w-full bg-gold hover:bg-gold-light text-royal-bg font-bold py-3 text-xs tracking-wider uppercase transition mt-6">
-                    Add Guest To Directory
+                <button type="submit" class="w-full bg-gold hover:bg-gold-light text-royal-bg font-bold py-4 text-xs tracking-widest uppercase transition mt-6 rounded shadow-lg">
+                    Add Guest
                 </button>
             </form>
         </div>
@@ -442,93 +377,67 @@
     <!-- ── MODAL: EDIT GUEST ── -->
     <div id="modal-edit-guest" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
         <div class="bg-royal-card border border-gold/40 rounded-lg w-full max-w-md p-6 relative">
-            <button onclick="closeEditGuestModal()" class="absolute top-4 right-4 text-gold/60 hover:text-gold text-lg focus:outline-none">
+            <button onclick="closeEditGuestModal()" class="absolute top-4 right-4 text-gold/60 hover:text-gold text-lg">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-            <h3 class="royal-font text-lg text-gold mb-6 font-bold uppercase tracking-wider">Edit Guest Info</h3>
+            <h3 class="royal-font text-lg text-gold mb-6 font-bold uppercase tracking-wider text-center">Edit Details</h3>
             <form id="edit-guest-form" onsubmit="submitEditGuest(event)" class="space-y-4">
                 <input type="hidden" id="edit-guest-id">
                 <div>
-                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">Guest Name</label>
-                    <input type="text" id="edit-guest-name" required class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold-light outline-none focus:border-gold">
+                    <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Name</label>
+                    <input type="text" id="edit-guest-name" required class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold-light outline-none focus:border-gold">
                 </div>
                 <div>
-                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">WhatsApp Phone</label>
-                    <input type="text" id="edit-guest-phone" required class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold-light outline-none focus:border-gold">
+                    <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Phone</label>
+                    <input type="text" id="edit-guest-phone" required class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold-light outline-none focus:border-gold">
                 </div>
                 <div>
-                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">Assign to Group</label>
-                    <select id="edit-guest-group" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold outline-none focus:border-gold">
+                    <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Group</label>
+                    <select id="edit-guest-group" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold outline-none focus:border-gold">
                         <option value="">-- No Group --</option>
-                        <!-- Loaded dynamically -->
                     </select>
                 </div>
-                <button type="submit" class="w-full bg-gold hover:bg-gold-light text-royal-bg font-bold py-3 text-xs tracking-wider uppercase transition mt-6">
-                    Update Guest Details
+                <button type="submit" class="w-full bg-gold hover:bg-gold-light text-royal-bg font-bold py-4 text-xs tracking-widest uppercase transition mt-6 rounded shadow-lg">
+                    Update Guest
                 </button>
             </form>
         </div>
     </div>
+
+    <!-- ── MODAL: BULK SEND ── -->
     <div id="modal-bulk-send" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
         <div class="bg-royal-card border border-gold/40 rounded-lg w-full max-w-lg p-6 relative">
-            <button onclick="closeBulkSendModal()" class="absolute top-4 right-4 text-gold/60 hover:text-gold text-lg focus:outline-none">
+            <button onclick="closeBulkSendModal()" class="absolute top-4 right-4 text-gold/60 hover:text-gold text-lg">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-            <h3 class="royal-font text-lg text-gold mb-4 font-bold uppercase tracking-wider">Broadcast Options</h3>
-            <p class="text-xs text-gold/60 mb-6">Configure delay rules and templates to protect your WhatsApp account against account suspension.</p>
-            
+            <h3 class="royal-font text-lg text-gold mb-4 font-bold uppercase tracking-wider">Broadcast Settings</h3>
             <div class="space-y-4">
+                <div class="bg-royal-bg/60 p-4 rounded border border-gold/10">
+                    <p class="text-[10px] text-gold/40 uppercase font-bold mb-1">Recipients</p>
+                    <p id="bulk-selection-count" class="text-sm font-bold text-gold">0 guests selected</p>
+                </div>
                 <div>
-                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">Select by Group (Auto-Check)</label>
-                    <select id="bulk-select-group" onchange="selectGuestsByGroup(this.value)" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold outline-none focus:border-gold">
-                        <option value="">-- Manual Selection --</option>
-                        <!-- Loaded dynamically -->
+                    <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Message Template</label>
+                    <select id="bulk-select-tmpl" onchange="updateBulkPreview()" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold outline-none focus:border-gold">
+                        <option value="">-- Select Template --</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">Selected Contacts count</label>
-                    <div class="bg-royal-bg border border-gold/10 p-3 text-sm font-semibold text-center text-gold" id="bulk-selection-count">
-                        0 contacts selected
+                    <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Custom Message (Overrides Template)</label>
+                    <textarea id="bulk-custom-msg" onkeyup="updateBulkPreview()" rows="3" class="w-full bg-royal-bg border border-gold/20 rounded p-4 text-sm text-gold-light outline-none focus:border-gold font-sans"></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Min Delay (s)</label>
+                        <input type="number" id="bulk-delay-min" value="6" min="2" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Max Delay (s)</label>
+                        <input type="number" id="bulk-delay-max" value="12" min="3" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold outline-none">
                     </div>
                 </div>
-                <div>
-                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">Select Message Template</label>
-                    <select id="bulk-select-tmpl" onchange="updateBulkPreview()" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold outline-none focus:border-gold">
-                        <!-- Loaded dynamically -->
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">OR Write Custom Message</label>
-                    <textarea id="bulk-custom-msg" onkeyup="updateBulkPreview()" rows="3" placeholder="If you type here, the template above will be ignored..." class="w-full bg-royal-bg border border-gold/20 rounded p-3 text-sm text-gold-light outline-none focus:border-gold font-sans"></textarea>
-                    <p class="text-[10px] text-gold/40 mt-1">You can use {name} for personalization.</p>
-                </div>
-                <div>
-                    <div class="flex justify-between items-center mb-2">
-                        <label class="block text-xs text-gold/70 uppercase tracking-wider">Anti-Suspension Delay Window</label>
-                        <span class="text-[10px] text-green-400 font-semibold uppercase">Highly Recommended</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="flex items-center bg-royal-bg border border-gold/20 rounded px-3">
-                            <span class="text-xs text-gold/50 mr-2">Min:</span>
-                            <input type="number" id="bulk-delay-min" value="6" min="2" class="w-full bg-transparent border-none py-2 text-sm text-gold-light outline-none">
-                            <span class="text-xs text-gold/50 ml-1">sec</span>
-                        </div>
-                        <div class="flex items-center bg-royal-bg border border-gold/20 rounded px-3">
-                            <span class="text-xs text-gold/50 mr-2">Max:</span>
-                            <input type="number" id="bulk-delay-max" value="12" min="3" class="w-full bg-transparent border-none py-2 text-sm text-gold-light outline-none">
-                            <span class="text-xs text-gold/50 ml-1">sec</span>
-                        </div>
-                    </div>
-                    <p class="text-[9px] text-gold/40 mt-1.5">Note: The system applies random delays in this range between each dispatch to simulate human behavior.</p>
-                </div>
-                <div>
-                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">Message Live Preview (Mock format for first contact)</label>
-                    <div id="bulk-msg-preview" class="bg-royal-bg/70 border border-gold/15 p-4 rounded text-xs text-gold/80 h-36 overflow-y-auto whitespace-pre-wrap font-sans">
-                        No template selected
-                    </div>
-                </div>
-                <button onclick="startBulkBroadcast()" class="w-full bg-gradient-to-r from-yellow-500 to-gold hover:brightness-110 text-royal-bg font-bold py-4 text-xs tracking-wider uppercase transition mt-6">
-                    <i class="fa-solid fa-paper-plane mr-2"></i>Initiate Bulk Broadcast
+                <button onclick="startBulkBroadcast()" class="w-full bg-gradient-to-r from-yellow-500 to-gold text-royal-bg font-bold py-4 text-xs tracking-widest uppercase transition mt-4 rounded shadow-lg">
+                    Start Broadcast
                 </button>
             </div>
         </div>
@@ -537,34 +446,73 @@
     <!-- ── MODAL: CUSTOM MESSAGE INDIVIDUAL ── -->
     <div id="modal-custom-msg" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
         <div class="bg-royal-card border border-gold/40 rounded-lg w-full max-w-lg p-6 relative">
-            <button onclick="closeCustomMsgModal()" class="absolute top-4 right-4 text-gold/60 hover:text-gold text-lg focus:outline-none">
+            <button onclick="closeCustomMsgModal()" class="absolute top-4 right-4 text-gold/60 hover:text-gold text-lg">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-            <h3 class="royal-font text-lg text-gold mb-2 font-bold uppercase tracking-wider">Send Custom Message</h3>
-            <p class="text-xs text-gold/60 mb-6" id="custom-msg-recipient">To: -</p>
-            
+            <h3 class="royal-font text-lg text-gold mb-2 font-bold uppercase tracking-wider">Send Message</h3>
+            <p class="text-[10px] text-gold/50 mb-6 uppercase tracking-widest font-bold" id="custom-msg-recipient">To: -</p>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">Template Shortcuts</label>
-                    <div class="flex flex-wrap gap-2" id="custom-msg-templates">
-                        <!-- Loaded dynamically -->
-                    </div>
+                    <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Quick Templates</label>
+                    <div class="flex flex-wrap gap-2" id="custom-msg-templates"></div>
                 </div>
                 <div>
-                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">Message Text</label>
+                    <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Message Body</label>
                     <textarea id="custom-msg-body" rows="6" class="w-full bg-royal-bg border border-gold/20 rounded p-4 text-sm text-gold-light outline-none focus:border-gold font-sans"></textarea>
                 </div>
-                <button onclick="sendIndividualCustomMessage()" class="w-full bg-gold hover:bg-gold-light text-royal-bg font-bold py-3.5 text-xs tracking-wider uppercase transition mt-6">
-                    <i class="fa-solid fa-paper-plane mr-1.5"></i>Send Message Now
+                <button onclick="sendIndividualCustomMessage()" class="w-full bg-gold hover:bg-gold-light text-royal-bg font-bold py-4 text-xs tracking-widest uppercase transition mt-6 rounded shadow-lg">
+                    Send Now
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- ── SYSTEM NOTIFICATIONS (TOASTS) ── -->
-    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2"></div>
+    <!-- ── TOASTS ── -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-[60] flex flex-col gap-2 pointer-events-none"></div>
 
-    <!-- ── SCRIPTS ── -->
+    <!-- ── CONFIGS SECTION (HIDDEN BY DEFAULT) ── -->
+    <div class="mt-20 space-y-8">
+        <!-- Group Configurator -->
+        <div class="bg-royal-card gold-border-glow p-6 rounded-lg">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 border-b border-gold/15 pb-4 mb-6">
+                <h2 class="royal-font text-base tracking-widest text-gold font-bold uppercase">
+                    <i class="fa-solid fa-layer-group mr-2"></i>Group Manager
+                </h2>
+                <div class="flex gap-2 w-full sm:w-auto">
+                    <button onclick="addNewGroup()" class="flex-1 bg-royal-bg border border-gold/30 text-gold text-[10px] px-4 py-2 hover:bg-gold/10 font-bold uppercase tracking-widest rounded transition">
+                        Add Group
+                    </button>
+                    <button onclick="saveAllGroups()" class="flex-1 bg-gold text-royal-bg text-[10px] px-4 py-2 hover:bg-gold-light font-bold uppercase tracking-widest rounded transition">
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+            <div id="groups-editor-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+
+        <!-- Templates Configurator -->
+        <div class="bg-royal-card gold-border-glow p-6 rounded-lg">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 border-b border-gold/15 pb-4 mb-6">
+                <h2 class="royal-font text-base tracking-widest text-gold font-bold uppercase">
+                    <i class="fa-solid fa-edit mr-2"></i>Message Templates
+                </h2>
+                <div class="flex gap-2 w-full sm:w-auto">
+                    <button onclick="addNewTemplate()" class="flex-1 bg-royal-bg border border-gold/30 text-gold text-[10px] px-4 py-2 hover:bg-gold/10 font-bold uppercase tracking-widest rounded transition">
+                        Add Template
+                    </button>
+                    <button onclick="saveAllTemplates()" class="flex-1 bg-gold text-royal-bg text-[10px] px-4 py-2 hover:bg-gold-light font-bold uppercase tracking-widest rounded transition">
+                        Save All
+                    </button>
+                </div>
+            </div>
+            <div id="templates-editor-container" class="flex flex-col gap-6">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+    </div>
+    
     <script>
         let contacts = [];
         let templates = [];
@@ -575,387 +523,55 @@
         let whatsappContacts = [];
         let currentSessionId = 'default';
 
-        // Global error catcher for debugging
-        window.onerror = function(msg, url, lineNo, columnNo, error) {
-            console.error('JS Error:', msg, lineNo, columnNo);
-            if (typeof showToast === 'function') showToast(`Page Error: ${msg} (Line ${lineNo})`, 'error');
-            return false;
-        };
-        window.onunhandledrejection = function(event) {
-            console.error('Promise Rejection:', event.reason);
-            if (typeof showToast === 'function') showToast(`System Error: ${event.reason}`, 'error');
-        };
+        // ════════════════ INITIALIZATION ════════════════
+        async function initialLoad() {
+            try {
+                await Promise.all([
+                    loadContacts(),
+                    loadTemplates(),
+                    fetchGroups()
+                ]);
+                checkWhatsAppStatus();
+                setInterval(checkWhatsAppStatus, 10000);
+                setInterval(checkBulkSendStatus, 3000);
+                console.log('Dashboard Ready');
+            } catch (err) {
+                console.error('Initial load error:', err);
+                showToast('Failed to load initial data', 'error');
+            }
+        }
 
+        // ════════════════ NAVIGATION ════════════════
         function switchTab(tab) {
             activeTab = tab;
-            
             const btnDir = document.getElementById('tab-btn-directory');
             const btnWA = document.getElementById('tab-btn-whatsapp');
             const contentDir = document.getElementById('tab-content-directory');
             const contentWA = document.getElementById('tab-content-whatsapp');
             const toolbarDir = document.getElementById('directory-toolbar');
             const toolbarWA = document.getElementById('whatsapp-toolbar');
-            const filtersDir = document.getElementById('directory-filters');
-            const searchQuery = document.getElementById('search-query');
 
             if (tab === 'directory') {
-                btnDir.className = 'royal-font text-base sm:text-lg tracking-wider text-gold font-bold border-b-2 border-gold pb-2 px-2 focus:outline-none transition';
-                btnWA.className = 'royal-font text-base sm:text-lg tracking-wider text-gold/50 font-semibold border-b-2 border-transparent pb-2 px-2 hover:text-gold/80 focus:outline-none transition';
+                btnDir.className = 'royal-font text-xs sm:text-sm tracking-widest text-gold font-bold border-b-2 border-gold pb-3 px-2 transition uppercase';
+                btnWA.className = 'royal-font text-xs sm:text-sm tracking-widest text-gold/40 font-bold border-b-2 border-transparent pb-3 px-2 hover:text-gold/80 transition uppercase';
                 contentDir.classList.remove('hidden');
                 contentWA.classList.add('hidden');
                 toolbarDir.classList.remove('hidden');
                 toolbarWA.classList.add('hidden');
-                filtersDir.classList.remove('hidden');
-                searchQuery.placeholder = 'Search guests by name or phone...';
-                searchQuery.value = '';
-                filterGuests();
+                renderGuests();
             } else {
-                btnWA.className = 'royal-font text-base sm:text-lg tracking-wider text-gold font-bold border-b-2 border-gold pb-2 px-2 focus:outline-none transition';
-                btnDir.className = 'royal-font text-base sm:text-lg tracking-wider text-gold/50 font-semibold border-b-2 border-transparent pb-2 px-2 hover:text-gold/80 focus:outline-none transition';
+                btnWA.className = 'royal-font text-xs sm:text-sm tracking-widest text-gold font-bold border-b-2 border-gold pb-3 px-2 transition uppercase';
+                btnDir.className = 'royal-font text-xs sm:text-sm tracking-widest text-gold/40 font-bold border-b-2 border-transparent pb-3 px-2 hover:text-gold/80 transition uppercase';
                 contentWA.classList.remove('hidden');
                 contentDir.classList.add('hidden');
                 toolbarWA.classList.remove('hidden');
                 toolbarDir.classList.add('hidden');
-                filtersDir.classList.add('hidden');
-                searchQuery.placeholder = 'Search WhatsApp contacts...';
-                searchQuery.value = '';
-                
-                if (whatsappContacts.length === 0) {
-                    syncWhatsAppContacts();
-                } else {
-                    renderWhatsAppContacts();
-                }
+                if (whatsappContacts.length === 0) syncWhatsAppContacts();
+                else renderWhatsAppContacts();
             }
         }
 
-        async function syncWhatsAppContacts() {
-            const listContainer = document.getElementById('whatsapp-contacts-list');
-            const discState = document.getElementById('wa-contacts-disconnected-state');
-            const loadingState = document.getElementById('wa-contacts-loading-state');
-            const emptyState = document.getElementById('wa-contacts-empty-state');
-
-            listContainer.innerHTML = '';
-            discState.classList.add('hidden');
-            loadingState.classList.add('hidden');
-            emptyState.classList.add('hidden');
-
-            try {
-                const statusRes = await fetch(`/api/status?session=${currentSessionId}`);
-                const statusData = await statusRes.json();
-                if (statusData.status !== 'ready') {
-                    discState.classList.remove('hidden');
-                    return;
-                }
-
-                loadingState.classList.remove('hidden');
-
-                const res = await fetch(`/api/whatsapp-contacts?session=${currentSessionId}`);
-                if (!res.ok) {
-                    const errData = await res.json();
-                    throw new Error(errData.error || 'Failed to fetch contacts');
-                }
-                
-                whatsappContacts = await res.json();
-                loadingState.classList.add('hidden');
-
-                if (whatsappContacts.length === 0) {
-                    emptyState.classList.remove('hidden');
-                } else {
-                    renderWhatsAppContacts();
-                }
-            } catch (err) {
-                loadingState.classList.add('hidden');
-                showToast(err.message, 'error');
-                discState.classList.remove('hidden');
-            }
-        }
-
-        function renderWhatsAppContacts(listToRender = whatsappContacts) {
-            const tbody = document.getElementById('whatsapp-contacts-list');
-            tbody.innerHTML = '';
-
-            const guestPhones = contacts.map(c => c.phone.replace(/\D/g, ''));
-
-            listToRender.forEach(c => {
-                const cleanedPhone = c.phone.replace(/\D/g, '');
-                const isSaved = guestPhones.includes(cleanedPhone);
-                
-                const actionButton = isSaved
-                    ? `<span class="px-3 py-1 rounded text-xs font-bold bg-green-950 text-green-400 border border-green-500/20 uppercase tracking-wider"><i class="fa-solid fa-check mr-1"></i>Saved</span>`
-                    : `<button onclick="saveContactAsGuest('${c.name.replace(/'/g, "\\'")}', '${c.phone}')" class="bg-gold hover:bg-gold-light text-royal-bg text-xs px-3 py-1.5 font-bold rounded transition">
-                        <i class="fa-solid fa-user-plus mr-1"></i>Save Guest
-                       </button>`;
-
-                const inBook = c.isMyContact
-                    ? `<span class="text-green-400 text-xs"><i class="fa-solid fa-address-book mr-1.5"></i>Yes</span>`
-                    : `<span class="text-gold/40 text-xs">No (Recent Chat)</span>`;
-
-                const row = document.createElement('tr');
-                row.className = 'hover:bg-royal-bg/30 transition border-b border-gold/5';
-                row.innerHTML = `
-                    <td class="py-3 px-4 font-semibold text-gold-light">${c.name}</td>
-                    <td class="py-3 px-4 text-xs font-mono text-gold/80">+${c.phone}</td>
-                    <td class="py-3 px-4 text-center">${inBook}</td>
-                    <td class="py-3 px-4 text-center">${actionButton}</td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        async function saveContactAsGuest(name, phone) {
-            let groupId = '';
-            if (groups.length > 0) {
-                const groupList = groups.map((g, i) => `[${i+1}] ${g.name}`).join('\n');
-                const choice = prompt(`Assign ${name} to a group?\n\nType the number or leave empty for no group:\n\n${groupList}`);
-                if (choice) {
-                    const idx = parseInt(choice) - 1;
-                    if (groups[idx]) groupId = groups[idx].id;
-                }
-            }
-
-            try {
-                const res = await fetch('/api/contacts', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, phone, groupId })
-                });
-                const data = await res.json();
-                
-                if (data.error) {
-                    showToast(data.error, 'error');
-                } else {
-                    showToast(`Saved ${name} as a guest!`);
-                    await loadContacts();
-                    renderWhatsAppContacts();
-                }
-            } catch (err) {
-                showToast(err.message, 'error');
-            }
-        }
-
-        function filterActiveTab() {
-            const query = document.getElementById('search-query').value.toLowerCase();
-            if (activeTab === 'directory') {
-                filterGuests();
-            } else {
-                const filtered = whatsappContacts.filter(c => 
-                    c.name.toLowerCase().includes(query) || c.phone.toString().includes(query)
-                );
-                renderWhatsAppContacts(filtered);
-            }
-        }
-
-        // ════════════════ PAGE INIT & LOOPS ════════════════
-        document.addEventListener('DOMContentLoaded', () => {
-            loadContacts();
-            loadTemplates();
-            
-            // Start state sync timers (Fast poll when sending, slower when quiet)
-            setInterval(checkWhatsAppStatus, 3000);
-            setInterval(checkBulkSendStatus, 1000);
-
-            // Run initial syncs
-            checkWhatsAppStatus();
-            checkBulkSendStatus();
-        });
-
-        // ════════════════ NOTIFICATIONS ════════════════
-        function showToast(message, type = 'success') {
-            const toast = document.createElement('div');
-            const bgClass = type === 'success' ? 'bg-green-950/90 border-green-500' : 'bg-red-950/90 border-red-500';
-            const textClass = type === 'success' ? 'text-green-300' : 'text-red-300';
-            const icon = type === 'success' ? 'fa-circle-check' : 'fa-triangle-exclamation';
-
-            toast.className = `flex items-center gap-3 border px-5 py-3.5 rounded shadow-lg backdrop-blur-md transition-all duration-300 translate-y-2 opacity-0 ${bgClass} ${textClass}`;
-            toast.innerHTML = `
-                <i class="fa-solid ${icon}"></i>
-                <span class="text-xs font-semibold tracking-wide">${message}</span>
-            `;
-            document.getElementById('toast-container').appendChild(toast);
-            
-            // Trigger animation
-            setTimeout(() => {
-                toast.classList.remove('translate-y-2', 'opacity-0');
-            }, 10);
-
-            // Clear toast
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-[-10px]');
-                setTimeout(() => toast.remove(), 300);
-            }, 4000);
-        }
-
-        // ════════════════ WHATSAPP CLIENT ACTIONS ════════════════
-        function onSessionChange() {
-            currentSessionId = document.getElementById('session-select').value;
-            checkWhatsAppStatus();
-            if (activeTab === 'whatsapp') {
-                syncWhatsAppContacts();
-            }
-        }
-
-        async function addNewSession() {
-            const name = prompt("Enter profile name (e.g., Brother, Sister, Planner):");
-            if (!name) return;
-            const cleanName = name.trim().replace(/[^a-zA-Z0-9_-]/g, "");
-            if (!cleanName) {
-                alert("Invalid name. Use letters, numbers, dashes and underscores only.");
-                return;
-            }
-            try {
-                const res = await fetch('/api/create-session', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: cleanName })
-                });
-                const data = await res.json();
-                if (res.ok) {
-                    showToast(`Created profile '${cleanName}' successfully!`);
-                    currentSessionId = cleanName.toLowerCase();
-                    checkWhatsAppStatus();
-                } else {
-                    showToast(data.error || 'Failed to create profile', 'error');
-                }
-            } catch (err) {
-                showToast(err.message, 'error');
-            }
-        }
-
-        function updateSessionDropdown(allSessions, activeSession) {
-            const select = document.getElementById('session-select');
-            if (!select) return;
-            
-            const existingIds = Array.from(select.options).map(opt => opt.value);
-            const newIds = allSessions.map(s => s.id);
-            const isMatch = existingIds.length === newIds.length && existingIds.every((v, i) => v === newIds[i]);
-            
-            if (!isMatch) {
-                select.innerHTML = '';
-                allSessions.forEach(s => {
-                    const opt = document.createElement('option');
-                    opt.value = s.id;
-                    opt.textContent = `${s.label} (${s.status === 'ready' ? 'Connected' : s.status})`;
-                    select.appendChild(opt);
-                });
-                select.value = activeSession;
-            } else {
-                allSessions.forEach((s, idx) => {
-                    select.options[idx].textContent = `${s.label} (${s.status === 'ready' ? 'Connected' : s.status})`;
-                });
-            }
-        }
-
-        async function checkWhatsAppStatus() {
-            try {
-                const res = await fetch(`/api/status?session=${currentSessionId}`);
-                const data = await res.json();
-                console.log('WA Status:', data);
-                
-                // Keep selector synced
-                updateSessionDropdown(data.allSessions, data.activeSession);
-                
-                const badge = document.getElementById('conn-badge');
-                const disPanel = document.getElementById('wa-disconnected');
-                const connPanel = document.getElementById('wa-connecting');
-                const readyPanel = document.getElementById('wa-connected');
-                const qrLoading = document.getElementById('qr-loading');
-                const qrImg = document.getElementById('qr-image');
-
-                if (data.status === 'ready') {
-                    badge.textContent = 'CONNECTED';
-                    badge.className = 'px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-green-950/50 text-green-400 border border-green-500/30';
-                    disPanel.classList.add('hidden');
-                    connPanel.classList.add('hidden');
-                    readyPanel.classList.remove('hidden');
-
-                    if (data.info) {
-                        document.getElementById('connected-user').textContent = `Linked: ${data.info.pushname || 'Admin Session'}`;
-                        document.getElementById('connected-phone').textContent = `Number: +${data.info.wid.user}`;
-                    }
-                } else if (data.status === 'connecting') {
-                    badge.textContent = 'CONNECTING';
-                    badge.className = 'px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-yellow-950/50 text-yellow-400 border border-yellow-500/30';
-                    disPanel.classList.add('hidden');
-                    connPanel.classList.remove('hidden');
-                    readyPanel.classList.add('hidden');
-                } else {
-                    badge.textContent = 'DISCONNECTED';
-                    badge.className = 'px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-red-950/50 text-red-400 border border-red-500/30';
-                    disPanel.classList.remove('hidden');
-                    connPanel.classList.add('hidden');
-                    readyPanel.classList.add('hidden');
-
-                    if (data.qrCode) {
-                        qrLoading.classList.add('hidden');
-                        qrImg.src = data.qrCode;
-                        qrImg.classList.remove('hidden');
-                    } else {
-                        qrLoading.classList.remove('hidden');
-                        qrImg.classList.add('hidden');
-                    }
-                }
-            } catch (err) {
-                console.error('Failed to sync WhatsApp status:', err);
-            }
-        }
-
-        async function logoutAdmin() {
-            if (!confirm('Are you sure you want to end your administrator session?')) return;
-            try {
-                const res = await fetch('/api/logout-admin', { method: 'POST' });
-                const data = await res.json();
-                if (data.success) {
-                    showToast('Logged out of Admin Portal');
-                    setTimeout(() => {
-                        window.location.href = '/login.html';
-                    }, 500);
-                } else {
-                    showToast('Failed to logout', 'error');
-                }
-            } catch (err) {
-                showToast(err.message, 'error');
-            }
-        }
-
-        async function logoutWA() {
-            if (!confirm(`Are you sure you want to disconnect the '${currentSessionId}' WhatsApp session?`)) return;
-            try {
-                const res = await fetch('/api/logout', { 
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ session: currentSessionId })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    showToast(`Logged out session '${currentSessionId}'`);
-                    checkWhatsAppStatus();
-                } else {
-                    showToast(data.error || 'Failed to logout', 'error');
-                }
-            } catch (err) {
-                showToast(err.message, 'error');
-            }
-        }
-
-        async function restartClient() {
-            if (!confirm(`This will restart the Puppeteer process for '${currentSessionId}'. Do you want to continue?`)) return;
-            try {
-                const res = await fetch('/api/restart', { 
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ session: currentSessionId })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    showToast(`WhatsApp client '${currentSessionId}' is restarting...`);
-                    checkWhatsAppStatus();
-                }
-            } catch (err) {
-                showToast(err.message, 'error');
-            }
-        }
-
-        // ════════════════ CONTACTS DATA MANAGEMENT ════════════════
+        // ════════════════ DATA FETCHING ════════════════
         async function loadContacts() {
             try {
                 const res = await fetch('/api/contacts');
@@ -965,612 +581,6 @@
             } catch (err) {
                 showToast('Failed to load guest directory', 'error');
             }
-        }
-
-        function updateStats() {
-            const total = contacts.length;
-            const sent = contacts.filter(c => c.status === 'sent').length;
-            const pending = total - sent;
-            const percent = total > 0 ? Math.round((sent / total) * 100) : 0;
-
-            document.getElementById('stat-total').textContent = total;
-            document.getElementById('stat-sent').textContent = sent;
-            document.getElementById('stat-pending').textContent = pending;
-            document.getElementById('stat-percent').textContent = `${percent}%`;
-        }
-
-        function renderGuests(listToRender = contacts) {
-            const tbody = document.getElementById('guests-list');
-            const noGuests = document.getElementById('no-guests-state');
-            tbody.innerHTML = '';
-
-            if (listToRender.length === 0) {
-                noGuests.classList.remove('hidden');
-                return;
-            }
-            noGuests.classList.add('hidden');
-
-            listToRender.forEach(g => {
-                const statusBadge = g.status === 'sent' 
-                    ? '<span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider bg-green-950/65 text-green-400 border border-green-500/25">Sent</span>'
-                    : '<span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider bg-yellow-950/40 text-yellow-500 border border-yellow-500/20">Pending</span>';
-
-                const sentDate = g.sentAt 
-                    ? new Date(g.sentAt).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })
-                    : '-';
-
-                // Build template buttons dynamically based on templates config
-                 const lastSent = g.sentAt ? new Date(g.sentAt).toLocaleString('en-IN', { dateStyle: 'short', timeStyle: 'short' }) : 'Never';
-                const groupName = groups.find(gr => gr.id === g.groupId)?.name || '-';
-                
-                let templateButtonsHtml = '';
-                const templatesToShow = templates.filter(t => t.isQuickAction);
-                
-                templatesToShow.forEach(t => {
-                    // Extract first real word (skipping emojis/icons)
-                    const words = t.title.split(' ');
-                    const firstWord = words.find(w => /[a-zA-Z0-9]/.test(w)) || 'Send';
-                    
-                    templateButtonsHtml += `
-                        <button onclick="sendTemplateInIndividualMsg('${g.id}', '${t.id}')" 
-                                class="bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 text-[10px] px-2 py-1 rounded border border-yellow-500/20 transition flex items-center gap-1">
-                            <i class="fa-solid fa-paper-plane text-[9px]"></i>
-                            ${firstWord}
-                        </button>
-                    `;
-                });
-
-                const row = document.createElement('tr');
-                row.className = 'border-b border-gold/5 hover:bg-gold/[0.02] transition group';
-                row.innerHTML = `
-                    <td class="py-4 px-4 text-center">
-                        <input type="checkbox" data-id="${g.id}" onchange="updateBulkUI()" class="guest-selector accent-gold h-4 w-4 rounded border-gray-300">
-                    </td>
-                    <td class="py-4 px-4">
-                        <div class="flex flex-col">
-                            <span class="text-sm font-semibold text-gold-light">${g.name}</span>
-                            ${g.type === 'rsvp' ? '<span class="text-[9px] text-green-400 font-bold uppercase tracking-tighter">via RSVP</span>' : ''}
-                        </div>
-                    </td>
-                    <td class="py-4 px-4 text-sm text-gold/80">${g.phone || '-'}</td>
-                    <td class="py-4 px-4 text-xs text-gold/60 font-medium">${groupName}</td>
-                    <td class="py-4 px-4 text-center">
-                        <span class="px-2 py-1 rounded-full text-[10px] font-bold uppercase ${g.status === 'sent' ? 'bg-green-500/10 text-green-400' : 'bg-yellow-500/10 text-yellow-400'}">
-                            ${g.status}
-                        </span>
-                    </td>
-                    <td class="py-4 px-4 text-xs text-gold/40">${lastSent}</td>
-                    <td class="py-4 px-4">
-                        <div class="flex items-center justify-center gap-2">
-                            ${templateButtonsHtml}
-                            <button onclick="openCustomMsgModal('${g.id}', '${g.name.replace(/'/g, "\\'")}', '${g.phone}')" title="Custom message" class="text-gold/60 hover:text-gold px-2 py-1 text-xs transition">
-                                <i class="fa-solid fa-comment-dots"></i>
-                            </button>
-                            <button onclick="openEditGuestModal('${g.id}')" title="Edit guest" class="text-gold/60 hover:text-gold px-2 py-1 text-xs transition">
-                                <i class="fa-solid fa-user-pen"></i>
-                            </button>
-                            <button onclick="deleteGuest('${g.id}')" title="Delete guest" class="text-red-400 hover:text-red-300 px-2 py-1 text-xs transition">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        function filterGuests() {
-            const query = document.getElementById('search-query').value.toLowerCase();
-            const status = document.getElementById('filter-status').value;
-            const group = document.getElementById('filter-group').value;
-            
-            const filtered = contacts.filter(g => {
-                const matchSearch = g.name.toLowerCase().includes(query) || g.phone.includes(query);
-                const matchStatus = status === 'all' || g.status === status;
-                const matchGroup = group === 'all' || g.groupId === group;
-                return matchSearch && matchStatus && matchGroup;
-            });
-            renderGuests(filtered);
-        }
-
-        // ════════════════ GUEST CRUD INTERACTION ════════════════
-        function openAddGuestModal() {
-            document.getElementById('modal-add-guest').classList.remove('hidden');
-            document.getElementById('modal-add-guest').classList.add('flex');
-        }
-
-        function closeAddGuestModal() {
-            document.getElementById('modal-add-guest').classList.add('hidden');
-            document.getElementById('modal-add-guest').classList.remove('flex');
-            document.getElementById('add-guest-form').reset();
-        }
-
-        async function submitAddGuest(e) {
-            e.preventDefault();
-            const name = document.getElementById('add-guest-name').value;
-            const phone = document.getElementById('add-guest-phone').value;
-            const groupId = document.getElementById('add-guest-group').value;
-
-            try {
-                const res = await fetch('/api/contacts', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, phone, groupId })
-                });
-                const data = await res.json();
-                if (data.error) {
-                    showToast(data.error, 'error');
-                } else {
-                    showToast('Guest added successfully!');
-                    document.getElementById('add-guest-form').reset();
-                    await loadContacts();
-                    renderGuests();
-                    closeAddGuestModal();
-                }
-            } catch (err) {
-                showToast('Network error', 'error');
-            }
-        }
-
-        async function deleteGuest(id) {
-            if (!confirm('Are you sure you want to remove this guest?')) return;
-            try {
-                const res = await fetch(`/api/contacts/${id}`, { method: 'DELETE' });
-                const data = await res.json();
-                if (data.success) {
-                    showToast('Guest removed');
-                    loadContacts();
-                }
-            } catch (err) {
-                showToast(err.message, 'error');
-            }
-        }
-
-        // CSV Import
-        async function importCSV(input) {
-            if (!input.files || input.files.length === 0) return;
-            const file = input.files[0];
-            const formData = new FormData();
-            formData.append('file', file);
-
-            showToast('Uploading and parsing CSV...');
-
-            try {
-                const res = await fetch('/api/contacts/import', {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await res.json();
-
-                if (data.success) {
-                    showToast(`Imported ${data.added} new guests!`);
-                    loadContacts();
-                } else {
-                    showToast(data.error || 'Failed to import CSV', 'error');
-                }
-            } catch (err) {
-                showToast(err.message, 'error');
-            }
-            // Reset input
-            input.value = '';
-        }
-
-        // Table Selection checkboxes
-        function toggleSelectAll(master) {
-            const selectors = document.querySelectorAll('.guest-selector');
-            selectors.forEach(s => {
-                // Only select/deselect if the row is visible
-                const row = s.closest('tr');
-                if (row && row.offsetParent !== null) {
-                    s.checked = master.checked;
-                }
-            });
-            updateBulkUI();
-        }
-
-        function getSelectedGuestIds() {
-            const selectors = document.querySelectorAll('.guest-selector:checked');
-            return Array.from(selectors).map(s => s.getAttribute('data-id'));
-        }
-
-        function clearSelectedGuests() {
-            document.getElementById('select-all-checkbox').checked = false;
-            toggleSelectAll({ checked: false });
-        }
-
-        // ════════════════ TEMPLATES CONFIG ════════════════
-        async function loadTemplates() {
-            try {
-                const res = await fetch('/api/templates');
-                templates = await res.json();
-                renderTemplatesEditor();
-                renderTemplatesSelectorList(); // Sidebar list
-                populateTemplateDropdowns();
-                renderGuests();
-            } catch (err) {
-                showToast('Failed to load templates config', 'error');
-            }
-        }
-
-        function renderTemplatesSelectorList() {
-            const container = document.getElementById('templates-selector-list');
-            if (!container) return;
-            container.innerHTML = '';
-
-            const quickTemplates = templates.filter(t => t.isQuickAction);
-            const toRender = quickTemplates.length > 0 ? quickTemplates : templates.slice(0, 3);
-
-            toRender.forEach(tmpl => {
-                const item = document.createElement('div');
-                item.className = 'bg-royal-bg/40 border border-gold/10 p-3 rounded flex flex-col gap-2 hover:border-gold/30 transition';
-                item.innerHTML = `
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs font-bold text-gold truncate">${tmpl.title}</span>
-                        <span class="text-[9px] px-1.5 py-0.5 rounded bg-gold/10 text-gold/60 border border-gold/10">Active</span>
-                    </div>
-                    <p class="text-[10px] text-gold/50 line-clamp-2 italic">"${tmpl.body.substring(0, 60)}..."</p>
-                `;
-                container.appendChild(item);
-            });
-            
-            if (toRender.length === 0) {
-                container.innerHTML = '<p class="text-[10px] text-gold/40 text-center py-4">No quick templates selected</p>';
-            }
-        }
-
-        function renderTemplatesEditor() {
-            const container = document.getElementById('templates-editor-container');
-            container.innerHTML = '';
-
-            templates.forEach((tmpl, idx) => {
-                const card = document.createElement('div');
-                card.className = 'bg-royal-card gold-border-glow p-4 rounded space-y-3 relative';
-                card.innerHTML = `
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center gap-3 w-3/4">
-                            <input type="text" value="${tmpl.title}" id="tmpl-title-${tmpl.id}" class="bg-transparent border-b border-gold/20 font-semibold text-sm text-gold py-1 outline-none focus:border-gold w-full">
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <label class="flex items-center gap-1.5 cursor-pointer group">
-                                <input type="checkbox" id="tmpl-quick-${tmpl.id}" ${tmpl.isQuickAction ? 'checked' : ''} class="accent-gold h-3.5 w-3.5 rounded">
-                                <span class="text-[10px] text-gold/60 group-hover:text-gold transition">Quick Action</span>
-                            </label>
-                            <button onclick="deleteTemplate('${tmpl.id}')" title="Delete Template" class="text-red-500/50 hover:text-red-400 transition ml-2">
-                                <i class="fa-solid fa-trash-can text-xs"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div>
-                        <textarea id="tmpl-body-${tmpl.id}" rows="5" class="w-full bg-royal-bg border border-gold/15 rounded p-3 text-xs text-gold-light outline-none focus:border-gold font-sans">${tmpl.body}</textarea>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function addNewTemplate() {
-            const newId = Date.now().toString();
-            templates.push({
-                id: newId,
-                title: 'New Invitation Template',
-                body: 'Dear {name}, \n\nYou are cordially invited to...',
-                isQuickAction: false
-            });
-            renderTemplatesEditor();
-            showToast('New template added to list. Remember to save changes!');
-        }
-
-        function deleteTemplate(id) {
-            if (templates.length <= 1) {
-                showToast('You must keep at least one template.', 'error');
-                return;
-            }
-            if (confirm('Are you sure you want to delete this template?')) {
-                templates = templates.filter(t => t.id !== id);
-                renderTemplatesEditor();
-                showToast('Template removed from list. Remember to save changes!');
-            }
-        }
-
-        function populateTemplateDropdowns() {
-            // Bulk Send Dropdown
-            const select = document.getElementById('bulk-select-tmpl');
-            select.innerHTML = '<option value="">-- Choose Wedding Invite Template --</option>';
-            templates.forEach(tmpl => {
-                select.innerHTML += `<option value="${tmpl.id}">${tmpl.title}</option>`;
-            });
-        }
-
-        async function saveAllTemplates() {
-            const updated = templates.map(t => {
-                return {
-                    id: t.id,
-                    title: document.getElementById(`tmpl-title-${t.id}`).value,
-                    body: document.getElementById(`tmpl-body-${t.id}`).value,
-                    isQuickAction: document.getElementById(`tmpl-quick-${t.id}`).checked
-                };
-            });
-
-            try {
-                const res = await fetch('/api/templates', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ templates: updated })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    showToast('Templates configurations saved!');
-                    templates = updated;
-                    populateTemplateDropdowns();
-                    renderTemplatesSelectorList();
-                    renderGuests();
-                }
-            } catch (err) {
-                showToast(err.message, 'error');
-            }
-        }
-
-        // ════════════════ INDIVIDUAL MESSAGE ACTIONS ════════════════
-        async function sendTemplateInvite(id, phone, name, templateId) {
-            const tmpl = templates.find(t => t.id === templateId);
-            if (!tmpl) {
-                return showToast('No templates configured', 'error');
-            }
-            
-            const personalized = tmpl.body.replace(/{name}/g, name);
-            showToast(`Queueing '${tmpl.title.split(' ')[0]}' invite to ${name}...`);
-
-            try {
-                const res = await fetch('/api/send-message', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contactId: id,
-                        phone: phone,
-                        message: personalized,
-                        session: currentSessionId
-                    })
-                });
-                const data = await res.json();
-                
-                if (data.error) {
-                    showToast(data.error, 'error');
-                } else {
-                    showToast(`Sent '${tmpl.title.split(' ')[0]}' invite to ${name}!`);
-                    loadContacts(); // Reload to update status badge
-                }
-            } catch (err) {
-                showToast(err.message, 'error');
-            }
-        }
-
-        function openCustomMsgModal(id, name, phone) {
-            selectedRecipientId = id;
-            document.getElementById('custom-msg-recipient').textContent = `Recipient: ${name} (+${phone})`;
-            
-            // Build template shortcut buttons
-            const shortcuts = document.getElementById('custom-msg-templates');
-            shortcuts.innerHTML = '';
-            
-            templates.forEach(t => {
-                const btn = document.createElement('button');
-                btn.className = 'bg-royal-bg border border-gold/25 hover:bg-gold/15 text-[10px] px-2.5 py-1.5 text-gold tracking-wide rounded';
-                btn.textContent = t.title.split(' ')[0] + ' ' + t.title.split(' ').slice(1).join(' ').slice(0, 10) + '...';
-                btn.onclick = () => {
-                    const text = t.body.replace(/{name}/g, name);
-                    document.getElementById('custom-msg-body').value = text;
-                };
-                shortcuts.appendChild(btn);
-            });
-
-            document.getElementById('custom-msg-body').value = `Dear ${name},\n\n`;
-            
-            document.getElementById('modal-custom-msg').classList.remove('hidden');
-            document.getElementById('modal-custom-msg').classList.add('flex');
-        }
-
-        function closeCustomMsgModal() {
-            document.getElementById('modal-custom-msg').classList.add('hidden');
-            document.getElementById('modal-custom-msg').classList.remove('flex');
-            selectedRecipientId = null;
-        }
-
-        async function sendIndividualCustomMessage() {
-            const text = document.getElementById('custom-msg-body').value.trim();
-            const recipientObj = contacts.find(c => c.id === selectedRecipientId);
-            
-            if (!recipientObj) return showToast('Invalid recipient selection', 'error');
-            if (!text) return showToast('Please write a message body', 'error');
-
-            showToast(`Sending message to ${recipientObj.name}...`);
-            closeCustomMsgModal();
-
-            try {
-                const res = await fetch('/api/send-message', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contactId: recipientObj.id,
-                        phone: recipientObj.phone,
-                        message: text,
-                        session: currentSessionId
-                    })
-                });
-                const data = await res.json();
-                
-                if (data.error) {
-                    showToast(data.error, 'error');
-                } else {
-                    showToast(`Custom message sent to ${recipientObj.name}!`);
-                    loadContacts();
-                }
-            } catch (err) {
-                showToast(err.message, 'error');
-            }
-        }
-
-        // ════════════════ BULK BROADCAST ENGINE ════════════════
-        function triggerBulkSendModal() {
-            const selectedIds = getSelectedGuestIds();
-            if (selectedIds.length === 0) {
-                showToast('Please select at least one guest from the list.', 'error');
-                return;
-            }
-            
-            document.getElementById('bulk-selection-count').textContent = `${selectedIds.length} guest(s) selected`;
-            document.getElementById('modal-bulk-send').classList.remove('hidden');
-            document.getElementById('modal-bulk-send').classList.add('flex');
-            
-            // Reset fields
-            document.getElementById('bulk-select-tmpl').value = '';
-            document.getElementById('bulk-custom-msg').value = '';
-            updateBulkPreview();
-        }
-
-        function closeBulkSendModal() {
-            document.getElementById('modal-bulk-send').classList.add('hidden');
-            document.getElementById('modal-bulk-send').classList.remove('flex');
-        }
-
-        function updateBulkUI() {
-            const selectedIds = getSelectedGuestIds();
-            const countEl = document.getElementById('bulk-selection-count');
-            if (countEl) {
-                countEl.textContent = `${selectedIds.length} guest(s) selected`;
-            }
-        }
-
-        function updateBulkPreview() {
-            const tmplId = document.getElementById('bulk-select-tmpl').value;
-            const customMsg = document.getElementById('bulk-custom-msg').value;
-            const previewBox = document.getElementById('bulk-msg-preview');
-            
-            let body = '';
-            if (customMsg.trim()) {
-                body = customMsg;
-            } else if (tmplId) {
-                const tmpl = templates.find(t => t.id === tmplId);
-                if (tmpl) body = tmpl.body;
-            } else {
-                previewBox.textContent = 'Please select a template or write a custom message...';
-                return;
-            }
-
-            // Preview with a mock name
-            const mockName = "Guest Name";
-            previewBox.textContent = body.replace(/{name}/g, mockName);
-        }
-
-        async function startBulkBroadcast() {
-            const selectedIds = getSelectedGuestIds();
-            const templateId = document.getElementById('bulk-select-tmpl').value;
-            const customMessage = document.getElementById('bulk-custom-msg').value;
-            const minDelay = document.getElementById('bulk-delay-min').value;
-            const maxDelay = document.getElementById('bulk-delay-max').value;
-
-            if (!customMessage.trim() && !templateId) {
-                showToast('Please select a template or write a custom message.', 'error');
-                return;
-            }
-
-            try {
-                const res = await fetch('/api/bulk-send', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contactIds: selectedIds,
-                        templateId: customMessage.trim() ? null : templateId,
-                        customMessage: customMessage.trim() || null,
-                        minDelay: parseInt(minDelay),
-                        maxDelay: parseInt(maxDelay),
-                        session: currentSessionId
-                    })
-                });
-                
-                const data = await res.json();
-                if (data.success) {
-                    showToast('Bulk broadcast initialized! Check the progress bar.');
-                    closeBulkSendModal();
-                    clearSelectedGuests();
-                    activeBulkJob = true;
-                    document.getElementById('bulk-progress-panel').classList.remove('hidden');
-                } else {
-                    showToast(data.error || 'Failed to start broadcast', 'error');
-                }
-            } catch (err) {
-                showToast(err.message, 'error');
-            }
-        }
-
-        async function checkBulkSendStatus() {
-            try {
-                const res = await fetch('/api/bulk-status');
-                const data = await res.json();
-
-                const progressPanel = document.getElementById('bulk-progress-panel');
-                
-                if (data.sending) {
-                    activeBulkJob = true;
-                    progressPanel.classList.remove('hidden');
-                    
-                    // Calc progress percent
-                    const total = data.total;
-                    const sent = data.sent;
-                    const failed = data.failed;
-                    const done = sent + failed;
-                    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-
-                    document.getElementById('bulk-progress-bar').style.width = `${pct}%`;
-                    document.getElementById('bulk-numbers').textContent = `Sent: ${sent} | Failed: ${failed} | Total: ${total} (${pct}% complete)`;
-                    document.getElementById('bulk-current-contact').innerHTML = `<i class="fa-solid fa-spinner animate-spin text-sky-400 mr-1.5"></i>Sending to: <span class="font-bold text-gold">${data.currentContact || '-'}</span>`;
-
-                    // Handle errors displaying
-                    const errorsContainer = document.getElementById('bulk-errors-container');
-                    if (data.errors.length > 0) {
-                        errorsContainer.classList.remove('hidden');
-                        document.getElementById('bulk-error-count').textContent = data.errors.length;
-                        
-                        const errorsList = document.getElementById('bulk-errors-list');
-                        errorsList.innerHTML = data.errors.map(e => `<div>• Failed sending to [${e.name}]: ${e.error}</div>`).join('');
-                    } else {
-                        errorsContainer.classList.add('hidden');
-                    }
-                } else {
-                    // If it was active and just stopped
-                    if (activeBulkJob) {
-                        activeBulkJob = false;
-                        showToast(`Bulk broadcast completed. Sent: ${data.sent}, Failed: ${data.failed}`);
-                        loadContacts(); // reload directory status badges
-                        
-                        // Hide panel after a short delay so user can read complete status
-                        setTimeout(() => {
-                            if (!activeBulkJob) { // Check if a new job hasn't started
-                                progressPanel.classList.add('hidden');
-                            }
-                        }, 8000);
-                    }
-                }
-            } catch (err) {
-                console.error('Failed to sync bulk sending status:', err);
-            }
-        }
-
-        async function cancelBulkSend() {
-            if (!confirm('Are you sure you want to stop the active broadcast? Messages already sent cannot be unsent.')) return;
-            try {
-                const res = await fetch('/api/bulk-cancel', { method: 'POST' });
-                const data = await res.json();
-                if (data.success) {
-                    showToast('Cancellation request submitted.');
-                }
-            } catch (err) {
-                showToast(err.message, 'error');
-            }
-        }
-
-        function toggleBulkErrors() {
-            const list = document.getElementById('bulk-errors-list');
-            list.classList.toggle('hidden');
         }
 
         async function fetchGroups() {
@@ -1584,105 +594,426 @@
             }
         }
 
-        function populateGroupDropdowns() {
-            const filterGroup = document.getElementById('filter-group');
-            const addGuestGroup = document.getElementById('add-guest-group');
-            const editGuestGroup = document.getElementById('edit-guest-group');
-            const bulkGroup = document.getElementById('bulk-select-group');
-            
-            if (!filterGroup || !addGuestGroup) return;
-
-            // Clear existing except first option
-            filterGroup.innerHTML = '<option value="all">-- All Groups --</option>';
-            addGuestGroup.innerHTML = '<option value="">-- No Group --</option>';
-            if (editGuestGroup) editGuestGroup.innerHTML = '<option value="">-- No Group --</option>';
-            if (bulkGroup) bulkGroup.innerHTML = '<option value="">-- Manual Selection --</option>';
-            
-            groups.forEach(g => {
-                const opt1 = document.createElement('option');
-                opt1.value = g.id;
-                opt1.textContent = g.name;
-                filterGroup.appendChild(opt1);
-                
-                const opt2 = document.createElement('option');
-                opt2.value = g.id;
-                opt2.textContent = g.name;
-                addGuestGroup.appendChild(opt2);
-
-                if (editGuestGroup) {
-                    const optEdit = document.createElement('option');
-                    optEdit.value = g.id;
-                    optEdit.textContent = g.name;
-                    editGuestGroup.appendChild(optEdit);
-                }
-
-                if (bulkGroup) {
-                    const opt3 = document.createElement('option');
-                    opt3.value = g.id;
-                    opt3.textContent = g.name;
-                    bulkGroup.appendChild(opt3);
-                }
-            });
-        }
-
-        function selectGuestsByGroup(groupId) {
-            const checkboxes = document.querySelectorAll('.guest-selector');
-            checkboxes.forEach(cb => {
-                const guestId = cb.getAttribute('data-id');
-                const guest = contacts.find(g => g.id === guestId);
-                if (guest) {
-                    cb.checked = (groupId === '' ? false : guest.groupId === groupId);
-                }
-            });
-            updateBulkUI();
-        }
-
-        function renderGroupsEditor() {
-            const container = document.getElementById('groups-editor-container');
-            if (!container) return;
-            container.innerHTML = '';
-            
-            groups.forEach((g, idx) => {
-                const groupEl = document.createElement('div');
-                groupEl.className = 'bg-royal-bg border border-gold/15 p-4 rounded flex flex-col gap-3 relative group';
-                groupEl.innerHTML = `
-                    <div class="flex justify-between items-center">
-                        <span class="text-[10px] text-gold/40 font-bold uppercase tracking-widest">Group #${idx + 1}</span>
-                        <button onclick="removeGroup('${g.id}')" class="text-red-400/50 hover:text-red-400 transition-colors text-xs">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
-                    <input type="text" value="${g.name}" placeholder="Group Name" onchange="updateGroupTitle('${g.id}', this.value)" 
-                        class="w-full bg-transparent border-b border-gold/10 py-1 text-sm text-gold-light outline-none focus:border-gold">
-                `;
-                container.appendChild(groupEl);
-            });
-            
-            if (groups.length === 0) {
-                container.innerHTML = '<div class="col-span-full py-8 text-center text-gold/30 italic text-sm">No groups defined yet. Click "Add Group" to begin.</div>';
+        async function loadTemplates() {
+            try {
+                const res = await fetch('/api/templates');
+                templates = await res.json();
+                renderTemplatesEditor();
+                renderTemplatesSelectorList();
+                populateTemplateDropdowns();
+            } catch (err) {
+                showToast('Failed to load templates', 'error');
             }
         }
 
-        function addNewGroup() {
-            const newId = Date.now().toString();
-            groups.push({
-                id: newId,
-                name: 'New Group'
+        // ════════════════ RENDERING ════════════════
+        function renderGuests(listToRender = null) {
+            const data = listToRender || contacts;
+            const desktopTbody = document.getElementById('guests-list');
+            const mobileContainer = document.getElementById('guests-list-mobile');
+            const emptyState = document.getElementById('no-guests-state');
+
+            desktopTbody.innerHTML = '';
+            mobileContainer.innerHTML = '';
+
+            if (data.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            data.forEach(g => {
+                const groupName = groups.find(gr => gr.id === g.groupId)?.name || '-';
+                const lastSent = g.sentAt ? new Date(g.sentAt).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) : 'Never';
+                const isSent = g.status === 'sent';
+                
+                // Desktop Row
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-gold/5 hover:bg-gold/[0.02] transition';
+                tr.innerHTML = `
+                    <td class="py-4 px-4 text-center">
+                        <input type="checkbox" data-id="${g.id}" onchange="updateBulkUI()" class="guest-selector accent-gold h-4 w-4 rounded">
+                    </td>
+                    <td class="py-4 px-4 font-bold text-gold-light">${g.name}</td>
+                    <td class="py-4 px-4 text-gold/60">${g.phone}</td>
+                    <td class="py-4 px-4 text-[10px] uppercase tracking-tighter text-gold/40">${groupName}</td>
+                    <td class="py-4 px-4 text-center">
+                        <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase ${isSent ? 'bg-green-500/10 text-green-400' : 'bg-yellow-500/10 text-yellow-400'}">
+                            ${g.status}
+                        </span>
+                    </td>
+                    <td class="py-4 px-4 text-gold/30 text-[10px]">${lastSent}</td>
+                    <td class="py-4 px-4 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <button onclick="openCustomMsgModal('${g.id}', '${g.name.replace(/'/g, "\\'")}', '${g.phone}')" class="text-gold/60 hover:text-gold transition"><i class="fa-solid fa-comment-dots"></i></button>
+                            <button onclick="openEditGuestModal('${g.id}')" class="text-gold/60 hover:text-gold transition"><i class="fa-solid fa-user-pen"></i></button>
+                            <button onclick="deleteGuest('${g.id}')" class="text-red-400/50 hover:text-red-400 transition"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </td>
+                `;
+                desktopTbody.appendChild(tr);
+
+                // Mobile Card
+                const card = document.createElement('div');
+                card.className = 'bg-royal-bg/60 border border-gold/15 p-4 rounded-lg flex gap-4 items-start shadow-md';
+                card.innerHTML = `
+                    <div class="pt-1">
+                        <input type="checkbox" data-id="${g.id}" onchange="updateBulkUI()" class="guest-selector accent-gold h-5 w-5 rounded">
+                    </div>
+                    <div class="flex-1 space-y-2">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-sm font-bold text-gold-light">${g.name}</h4>
+                                <p class="text-[10px] text-gold/40 uppercase tracking-widest">${groupName}</p>
+                            </div>
+                            <span class="px-2 py-0.5 rounded text-[8px] font-bold uppercase ${isSent ? 'bg-green-500/10 text-green-400' : 'bg-yellow-500/10 text-yellow-400'}">
+                                ${g.status}
+                            </span>
+                        </div>
+                        <div class="flex items-center text-xs text-gold/60 gap-2">
+                            <i class="fa-brands fa-whatsapp text-green-500"></i> ${g.phone}
+                        </div>
+                        <div class="flex justify-between items-center pt-2 border-t border-gold/5">
+                            <span class="text-[9px] text-gold/30 uppercase">Sent: ${lastSent}</span>
+                            <div class="flex gap-4">
+                                <button onclick="openCustomMsgModal('${g.id}', '${g.name.replace(/'/g, "\\'")}', '${g.phone}')" class="text-gold/60 text-sm"><i class="fa-solid fa-comment-dots"></i></button>
+                                <button onclick="openEditGuestModal('${g.id}')" class="text-gold/60 text-sm"><i class="fa-solid fa-user-pen"></i></button>
+                                <button onclick="deleteGuest('${g.id}')" class="text-red-400/50 text-sm"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                mobileContainer.appendChild(card);
             });
-            renderGroupsEditor();
         }
 
-        function updateGroupTitle(id, val) {
-            const idx = groups.findIndex(g => g.id === id);
-            if (idx !== -1) groups[idx].name = val;
+        // ════════════════ FILTERS & SELECTION ════════════════
+        function filterGuests() {
+            const query = document.getElementById('search-query').value.toLowerCase();
+            const status = document.getElementById('filter-status').value;
+            const group = document.getElementById('filter-group').value;
+            
+            const filtered = contacts.filter(g => {
+                const matchSearch = g.name.toLowerCase().includes(query) || g.phone.includes(query);
+                const matchStatus = status === 'all' || g.status === status;
+                const matchGroup = group === 'all' || g.groupId === group;
+                return matchSearch && matchStatus && matchGroup;
+            });
+            renderGuests(filtered);
+            
+            // Auto-update bulk UI count
+            updateBulkUI();
         }
 
-        function removeGroup(id) {
-            if (!confirm('Are you sure you want to remove this group? Guests in this group will be unassigned.')) return;
-            groups = groups.filter(g => g.id !== id);
-            renderGroupsEditor();
+        function selectAllVisible(state) {
+            const checkboxes = document.querySelectorAll('.guest-selector');
+            checkboxes.forEach(cb => {
+                const row = cb.closest('tr') || cb.closest('.bg-royal-bg');
+                if (row && row.offsetParent !== null) {
+                    cb.checked = state;
+                }
+            });
+            updateBulkUI();
+            
+            // Sync the master checkbox if on desktop
+            const master = document.getElementById('select-all-checkbox');
+            if (master) master.checked = state;
         }
 
+        function toggleSelectAll(master) {
+            selectAllVisible(master.checked);
+        }
+
+        function clearSelectedGuests() {
+            selectAllVisible(false);
+        }
+
+        function updateBulkUI() {
+            const selectedCount = document.querySelectorAll('.guest-selector:checked').length;
+            const countEl = document.getElementById('bulk-selection-count');
+            if (countEl) countEl.textContent = `${selectedCount} guest(s) selected`;
+        }
+
+        function getSelectedGuestIds() {
+            const selectors = document.querySelectorAll('.guest-selector:checked');
+            return Array.from(selectors).map(s => s.getAttribute('data-id'));
+        }
+
+        // ════════════════ MODALS ════════════════
+        function openAddGuestModal() {
+            document.getElementById('modal-add-guest').classList.remove('hidden');
+            document.getElementById('modal-add-guest').classList.add('flex');
+        }
+        function closeAddGuestModal() {
+            document.getElementById('modal-add-guest').classList.add('hidden');
+            document.getElementById('modal-add-guest').classList.remove('flex');
+            document.getElementById('add-guest-form').reset();
+        }
+
+        async function submitAddGuest(e) {
+            e.preventDefault();
+            const name = document.getElementById('add-guest-name').value;
+            const phone = document.getElementById('add-guest-phone').value;
+            const groupId = document.getElementById('add-guest-group').value;
+            try {
+                const res = await fetch('/api/contacts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, phone, groupId })
+                });
+                const data = await res.json();
+                if (data.error) showToast(data.error, 'error');
+                else {
+                    showToast('Guest Added!');
+                    await loadContacts();
+                    closeAddGuestModal();
+                }
+            } catch (err) { showToast('Error adding guest', 'error'); }
+        }
+
+        function openEditGuestModal(id) {
+            const guest = contacts.find(g => g.id === id);
+            if (!guest) return;
+            document.getElementById('edit-guest-id').value = guest.id;
+            document.getElementById('edit-guest-name').value = guest.name;
+            document.getElementById('edit-guest-phone').value = guest.phone;
+            document.getElementById('edit-guest-group').value = guest.groupId || '';
+            document.getElementById('modal-edit-guest').classList.remove('hidden');
+            document.getElementById('modal-edit-guest').classList.add('flex');
+        }
+        function closeEditGuestModal() {
+            document.getElementById('modal-edit-guest').classList.add('hidden');
+            document.getElementById('modal-edit-guest').classList.remove('flex');
+        }
+
+        async function submitEditGuest(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-guest-id').value;
+            const name = document.getElementById('edit-guest-name').value;
+            const phone = document.getElementById('edit-guest-phone').value;
+            const groupId = document.getElementById('edit-guest-group').value;
+            try {
+                const res = await fetch(`/api/contacts/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, phone, groupId })
+                });
+                const data = await res.json();
+                if (data.error) showToast(data.error, 'error');
+                else {
+                    showToast('Guest Updated!');
+                    await loadContacts();
+                    closeEditGuestModal();
+                }
+            } catch (err) { showToast('Error updating guest', 'error'); }
+        }
+
+        async function deleteGuest(id) {
+            if (!confirm('Remove this guest?')) return;
+            try {
+                const res = await fetch(`/api/contacts/${id}`, { method: 'DELETE' });
+                if (res.ok) { showToast('Guest Removed'); loadContacts(); }
+            } catch (err) { showToast('Error removing guest', 'error'); }
+        }
+
+        // ════════════════ BROADCAST ════════════════
+        function triggerBulkSendModal() {
+            const selectedIds = getSelectedGuestIds();
+            if (selectedIds.length === 0) return showToast('Select guests first!', 'error');
+            updateBulkUI();
+            document.getElementById('modal-bulk-send').classList.remove('hidden');
+            document.getElementById('modal-bulk-send').classList.add('flex');
+            document.getElementById('bulk-select-tmpl').value = '';
+            document.getElementById('bulk-custom-msg').value = '';
+        }
+        function closeBulkSendModal() {
+            document.getElementById('modal-bulk-send').classList.add('hidden');
+            document.getElementById('modal-bulk-send').classList.remove('flex');
+        }
+
+        async function startBulkBroadcast() {
+            const selectedIds = getSelectedGuestIds();
+            const templateId = document.getElementById('bulk-select-tmpl').value;
+            const customMessage = document.getElementById('bulk-custom-msg').value;
+            if (!customMessage.trim() && !templateId) return showToast('Select a message', 'error');
+
+            try {
+                const res = await fetch('/api/bulk-send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contactIds: selectedIds,
+                        templateId: customMessage.trim() ? null : templateId,
+                        customMessage: customMessage.trim() || null,
+                        minDelay: parseInt(document.getElementById('bulk-delay-min').value),
+                        maxDelay: parseInt(document.getElementById('bulk-delay-max').value),
+                        session: currentSessionId
+                    })
+                });
+                if (res.ok) {
+                    showToast('Broadcast Started!');
+                    closeBulkSendModal();
+                    clearSelectedGuests();
+                    activeBulkJob = true;
+                    document.getElementById('bulk-progress-panel').classList.remove('hidden');
+                }
+            } catch (err) { showToast('Error starting broadcast', 'error'); }
+        }
+
+        async function checkBulkSendStatus() {
+            if (!activeBulkJob) return;
+            try {
+                const res = await fetch('/api/bulk-status');
+                const data = await res.json();
+                if (data.sending) {
+                    const pct = data.total > 0 ? Math.round(((data.sent + data.failed) / data.total) * 100) : 0;
+                    document.getElementById('bulk-progress-bar').style.width = `${pct}%`;
+                    document.getElementById('bulk-numbers').textContent = `Sent: ${data.sent} | Fail: ${data.failed} | Total: ${data.total}`;
+                    document.getElementById('bulk-current-contact').textContent = `To: ${data.currentContact || '-'}`;
+                } else if (activeBulkJob) {
+                    activeBulkJob = false;
+                    showToast('Broadcast Finished');
+                    loadContacts();
+                    setTimeout(() => document.getElementById('bulk-progress-panel').classList.add('hidden'), 5000);
+                }
+            } catch (e) {}
+        }
+
+        // ════════════════ WHATSAPP ════════════════
+        async function checkWhatsAppStatus() {
+            try {
+                const res = await fetch(`/api/status?session=${currentSessionId}`);
+                const data = await res.json();
+                updateSessionDropdown(data.allSessions, data.activeSession);
+                const badge = document.getElementById('conn-badge');
+                if (data.status === 'ready') {
+                    badge.textContent = 'CONNECTED';
+                    badge.className = 'px-3 py-1 rounded-full text-[10px] font-bold bg-green-950/50 text-green-400 border border-green-500/30';
+                    document.getElementById('wa-connected').classList.remove('hidden');
+                    document.getElementById('wa-disconnected').classList.add('hidden');
+                    document.getElementById('connected-user').textContent = data.info?.pushname || 'Linked';
+                } else {
+                    badge.textContent = 'DISCONNECTED';
+                    badge.className = 'px-3 py-1 rounded-full text-[10px] font-bold bg-red-950/50 text-red-400 border border-red-500/30';
+                    document.getElementById('wa-disconnected').classList.remove('hidden');
+                    document.getElementById('wa-connected').classList.add('hidden');
+                    if (data.qrCode) {
+                        document.getElementById('qr-image').src = data.qrCode;
+                        document.getElementById('qr-image').classList.remove('hidden');
+                        document.getElementById('qr-loading').classList.add('hidden');
+                    }
+                }
+            } catch (e) {}
+        }
+
+        // ════════════════ HELPERS ════════════════
+        function showToast(msg, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `p-4 rounded-lg text-xs font-bold uppercase tracking-widest shadow-2xl transition transform translate-y-10 opacity-0 pointer-events-auto ${type === 'error' ? 'bg-red-900 text-red-100 border border-red-500' : 'bg-gold text-royal-bg border border-white/20'}`;
+            toast.textContent = msg;
+            document.getElementById('toast-container').appendChild(toast);
+            setTimeout(() => { toast.classList.remove('translate-y-10', 'opacity-0'); }, 100);
+            setTimeout(() => { toast.classList.add('opacity-0'); setTimeout(() => toast.remove(), 500); }, 3000);
+        }
+
+        function populateGroupDropdowns() {
+            const dropdowns = ['filter-group', 'add-guest-group', 'edit-guest-group'];
+            dropdowns.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const firstOpt = el.options[0].outerHTML;
+                el.innerHTML = firstOpt + groups.map(g => `<option value="${g.id}">${g.name}</option>`).join('');
+            });
+        }
+
+        function updateStats() {
+            const total = contacts.length;
+            const sent = contacts.filter(c => c.status === 'sent').length;
+            const pending = total - sent;
+            const pct = total > 0 ? Math.round((sent / total) * 100) : 0;
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-sent').textContent = sent;
+            document.getElementById('stat-pending').textContent = pending;
+            document.getElementById('stat-percent').textContent = `${pct}%`;
+        }
+
+        function filterByTemplate(templateId) {
+            const tmpl = templates.find(t => t.id === templateId);
+            if (!tmpl) return;
+            showToast(`Quick Action: ${tmpl.title}`);
+            // This is just a UI shortcut to show the template is active
+        }
+
+        function updateSessionDropdown(allSessions, activeSession) {
+            const select = document.getElementById('session-select');
+            if (!select) return;
+            currentSessionId = activeSession;
+            select.value = activeSession;
+        }
+
+        async function syncWhatsAppContacts() {
+            const list = document.getElementById('whatsapp-contacts-list');
+            if (!list) return;
+            list.innerHTML = '<tr><td colspan="3" class="py-12 text-center"><i class="fa-solid fa-spinner animate-spin text-gold text-2xl mb-2"></i><p class="text-[10px] text-gold/40 uppercase font-bold tracking-widest">Fetching WhatsApp Contacts...</p></td></tr>';
+            try {
+                const res = await fetch(`/api/whatsapp-contacts?session=${currentSessionId}`);
+                whatsappContacts = await res.json();
+                renderWhatsAppContacts();
+            } catch (e) {
+                showToast('Failed to sync contacts', 'error');
+            }
+        }
+
+        function renderWhatsAppContacts() {
+            const list = document.getElementById('whatsapp-contacts-list');
+            if (!list) return;
+            list.innerHTML = whatsappContacts.map(c => `
+                <tr class="border-b border-gold/5">
+                    <td class="py-4 px-4 font-bold text-gold-light">${c.name}</td>
+                    <td class="py-4 px-4 text-gold/60">${c.phone}</td>
+                    <td class="py-4 px-4 text-center">
+                        <button onclick="saveContactAsGuest('${c.name.replace(/'/g, "\\'")}', '${c.phone}')" class="bg-gold/10 hover:bg-gold/25 text-gold text-[10px] px-3 py-1.5 rounded border border-gold/30 uppercase font-bold transition">
+                            Save as Guest
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+            document.getElementById('wa-contacts-disconnected-state').classList.add('hidden');
+        }
+
+        async function saveContactAsGuest(name, phone) {
+            const groupId = prompt('Assign to Group Number?\n' + groups.map((g, i) => `${i+1}: ${g.name}`).join('\n') + '\n(Leave blank for no group)');
+            let gId = '';
+            if (groupId && !isNaN(groupId)) {
+                const idx = parseInt(groupId) - 1;
+                if (groups[idx]) gId = groups[idx].id;
+            }
+            try {
+                const res = await fetch('/api/contacts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, phone, groupId: gId })
+                });
+                if (res.ok) { showToast('Saved to Directory!'); loadContacts(); }
+                else showToast('Error saving contact', 'error');
+            } catch (e) { showToast('Network error', 'error'); }
+        }
+
+        // ════════════════ CONFIGURATORS ════════════════
+        function renderGroupsEditor() {
+            const container = document.getElementById('groups-editor-container');
+            if (!container) return;
+            container.innerHTML = groups.map((g, i) => `
+                <div class="bg-royal-bg/60 border border-gold/15 p-4 rounded flex gap-2">
+                    <input type="text" value="${g.name}" onchange="updateGroupData(${i}, this.value)" class="flex-1 bg-royal-bg border border-gold/20 rounded px-3 py-2 text-xs text-gold outline-none">
+                    <button onclick="removeGroup(${i})" class="text-red-400 hover:text-red-300 px-2"><i class="fa-solid fa-trash-can text-sm"></i></button>
+                </div>
+            `).join('');
+        }
+        function updateGroupData(idx, name) { groups[idx].name = name; }
+        function addNewGroup() { groups.push({ id: 'group_' + Date.now(), name: 'New Group' }); renderGroupsEditor(); }
+        function removeGroup(idx) { groups.splice(idx, 1); renderGroupsEditor(); }
         async function saveAllGroups() {
             try {
                 const res = await fetch('/api/groups', {
@@ -1690,40 +1021,89 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ groups })
                 });
-                const data = await res.json();
-                if (data.success) {
-                    showToast('Groups saved successfully!');
-                    populateGroupDropdowns();
-                    loadContacts();
-                }
-            } catch (err) {
-                showToast('Failed to save groups', 'error');
-            }
+                if (res.ok) { showToast('Groups Saved!'); fetchGroups(); }
+            } catch (e) { showToast('Error saving groups', 'error'); }
         }
 
-        async function initialLoad() {
+        function renderTemplatesEditor() {
+            const container = document.getElementById('templates-editor-container');
+            if (!container) return;
+            container.innerHTML = templates.map((t, i) => `
+                <div class="bg-royal-bg/40 border border-gold/15 p-5 rounded-lg space-y-4">
+                    <div class="flex justify-between items-center">
+                        <input type="text" value="${t.title}" onchange="updateTemplateField(${i}, 'title', this.value)" class="bg-transparent text-gold font-bold text-sm outline-none border-b border-gold/20 focus:border-gold px-1 py-1 w-full max-w-md">
+                        <div class="flex items-center gap-4">
+                            <label class="flex items-center gap-2 text-[10px] text-gold/60 uppercase font-bold cursor-pointer">
+                                <input type="checkbox" ${t.isQuickAction ? 'checked' : ''} onchange="updateTemplateField(${i}, 'isQuickAction', this.checked)" class="accent-gold">
+                                Quick Action
+                            </label>
+                            <button onclick="removeTemplate(${i})" class="text-red-400/50 hover:text-red-400"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <textarea onchange="updateTemplateField(${i}, 'body', this.value)" rows="4" class="w-full bg-royal-bg/80 border border-gold/10 rounded p-4 text-xs text-gold-light outline-none focus:border-gold font-sans">${t.body}</textarea>
+                </div>
+            `).join('');
+        }
+        function updateTemplateField(idx, field, val) { templates[idx][field] = val; }
+        function addNewTemplate() { templates.push({ id: 'tmpl_' + Date.now(), title: 'New Template', body: 'Hello {name}, ', isQuickAction: true }); renderTemplatesEditor(); }
+        function removeTemplate(idx) { templates.splice(idx, 1); renderTemplatesEditor(); }
+        async function saveAllTemplates() {
             try {
-                // Initial data fetch
-                await Promise.all([
-                    loadContacts(),
-                    loadTemplates(),
-                    fetchGroups()
-                ]);
-                
-                // Start status sync
+                const res = await fetch('/api/templates', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ templates })
+                });
+                if (res.ok) { showToast('Templates Saved!'); loadTemplates(); }
+            } catch (e) { showToast('Error saving templates', 'error'); }
+        }
+
+        function populateTemplateDropdowns() {
+            const el = document.getElementById('bulk-select-tmpl');
+            if (!el) return;
+            const firstOpt = el.options[0].outerHTML;
+            el.innerHTML = firstOpt + templates.map(t => `<option value="${t.id}">${t.title}</option>`).join('');
+        }
+
+        function updateBulkPreview() {
+            // Optional: Show preview of first selected guest
+        }
+
+        async function restartClient() {
+            if (!confirm('Restart WhatsApp Client?')) return;
+            await fetch(`/api/restart?session=${currentSessionId}`, { method: 'POST' });
+            showToast('Restarting...', 'error');
+        }
+
+        async function logoutAdmin() {
+            localStorage.removeItem('admin_auth');
+            window.location.href = 'index.html';
+        }
+
+        async function logoutWA() {
+            if (!confirm('Logout WhatsApp?')) return;
+            await fetch(`/api/logout?session=${currentSessionId}`, { method: 'POST' });
+            showToast('Logged out');
+        }
+
+        async function addNewSession() {
+            const name = prompt('Enter Profile Name (e.g. Brother, Sister):');
+            if (name) {
+                currentSessionId = name.toLowerCase().replace(/\s+/g, '_');
+                showToast(`Switched to ${name}`);
                 checkWhatsAppStatus();
-                setInterval(checkWhatsAppStatus, 10000);
-                setInterval(checkBulkSendStatus, 3000);
-                
-                console.log('Admin Dashboard Initialized');
-            } catch (err) {
-                console.error('Initial load error:', err);
-                showToast('Failed to load initial data', 'error');
             }
         }
 
-        // Run on startup
+        function onSessionChange() {
+            currentSessionId = document.getElementById('session-select').value;
+            checkWhatsAppStatus();
+            if (activeTab === 'whatsapp') syncWhatsAppContacts();
+        }
+
+        // Start App
         initialLoad();
     </script>
 </body>
 </html>
+" ,Description:
