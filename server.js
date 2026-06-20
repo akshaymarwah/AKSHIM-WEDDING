@@ -8,7 +8,7 @@ const qrcode = require('qrcode');
 const { Client, LocalAuth } = require('whatsapp-web.js');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -39,6 +39,11 @@ function requireAuth(req, res, next) {
 // Restrict access to the administration dashboard page
 app.get('/admin.html', requireAuth, (req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+// Friendly redirect for /admin
+app.get('/admin', (req, res) => {
+    res.redirect('/admin.html');
 });
 
 // Admin login endpoint
