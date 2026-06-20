@@ -389,7 +389,7 @@ process.on('SIGTERM', () => handleShutdown('SIGTERM'));
 function formatPhone(phone) {
     let cleaned = phone.toString().replace(/\D/g, '');
     // If it is 10 digits and starts with 7, 8, 9 (typical Indian number), prepend country code 91
-    if (cleaned.length and 10 && /^[789]/.test(cleaned)) {
+    if (cleaned.length === 10 && /^[789]/.test(cleaned)) {
         cleaned = '91' + cleaned;
     }
     // Standard format is phone_number@c.us
