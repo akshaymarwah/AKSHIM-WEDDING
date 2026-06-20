@@ -928,10 +928,14 @@
                 const templatesToShow = quickTemplates.length > 0 ? quickTemplates : templates.slice(0, 3);
 
                 templatesToShow.forEach(t => {
-                    const shortTitle = t.title.split(' ')[0].replace(/[^\w\s]/gi, ''); // Clean title
+                    // Extract first real word (skipping emojis/icons)
+                    const words = t.title.split(' ');
+                    const firstWord = words.find(w => /[a-zA-Z0-9]/.test(w)) || 'Send';
+                    const shortTitle = firstWord.replace(/[^\w\s]/gi, ''); 
+                    
                     templateButtonsHtml += `
-                        <button onclick="sendTemplateInvite('${g.id}', '${g.phone}', '${g.name}', '${t.id}')" title="Send message: ${t.title}" class="bg-gold hover:bg-gold-light text-royal-bg px-2 py-1 text-[10px] rounded transition font-bold whitespace-nowrap min-w-[60px]">
-                            <i class="fa-solid fa-paper-plane mr-1 text-[8px]"></i>${shortTitle}
+                        <button onclick="sendTemplateInvite('${g.id}', '${g.phone}', '${g.name}', '${t.id}')" title="${t.title}" class="bg-gold hover:bg-gold-light text-royal-bg px-2.5 py-1 text-[10px] rounded transition font-bold whitespace-nowrap min-w-[75px] shadow-sm">
+                            <i class="fa-solid fa-paper-plane mr-1.5 text-[8px]"></i>${shortTitle}
                         </button>
                     `;
                 });
