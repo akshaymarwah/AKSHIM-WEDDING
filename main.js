@@ -343,17 +343,22 @@ const runPreloader = () => {
 };
 
 // ════════════════ UTILITIES ════════════════
-function openLogin() { 
+function openLogin() {
     const modal = document.getElementById('loginModal');
     if (modal) {
+        document.body.classList.add('overflow-hidden');
         modal.classList.remove('hidden');
         modal.classList.add('flex');
     }
 }
 
 function closeLogin() {
+    // Only allow closing if guest is logged in (Failsafe)
+    if (!G.guest) return;
+    
     const modal = document.getElementById('loginModal');
     if (modal) {
+        document.body.classList.remove('overflow-hidden');
         modal.classList.add('hidden');
         modal.classList.remove('flex');
     }
@@ -466,12 +471,25 @@ async function checkGuestStatus() {
         if (data.loggedIn) {
             G.guest = data.guest;
             updateGuestUI();
+        } else {
+            // FAILSAFE: Force open the login portal if not logged in
+            openLogin();
         }
-    } catch (e) {}
+    } catch (e) {
+        console.error("Status Check Error:", e);
+    }
 }
 
 function updateGuestUI() {
     if (!G.guest) return;
+
+    // Lift Lockdown
+    document.body.classList.remove('overflow-hidden');
+    const modal = document.getElementById('loginModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
 
     // Update Nav
     const navBtn = document.getElementById('guest-login-btn');
