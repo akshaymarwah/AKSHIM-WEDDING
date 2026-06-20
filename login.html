@@ -6,6 +6,7 @@
     <title>AKSHIM Admin — Secure Authentication</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -18,7 +19,7 @@
                         },
                         royal: {
                             bg: '#050010',
-                            card: '#0a011a',
+                            card: 'rgba(10, 1, 26, 0.8)',
                             border: 'rgba(212, 175, 55, 0.25)'
                         }
                     }
@@ -28,68 +29,175 @@
     </script>
     <style>
         body {
-            background-color: #050010;
+            background-color: #020008;
             color: #fdf2cf;
             font-family: 'Montserrat', sans-serif;
-            background-image: radial-gradient(circle at 50% 50%, rgba(37, 3, 77, 0.2) 0%, transparent 80%);
+            overflow: hidden;
         }
+
+        /* ── ANIMATED BACKGROUND ── */
+        .bg-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at 50% 50%, rgba(60, 10, 110, 0.15) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/black-paper.png');
+            opacity: 0.3;
+            z-index: -2;
+        }
+
         .royal-font {
             font-family: 'Cinzel', serif;
         }
-        .gold-border-glow {
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.08);
-            border: 1px solid rgba(212, 175, 55, 0.25);
+
+        /* ── GLASSMORPHISM ── */
+        .glass-card {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
+
+        .gold-border-glow {
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.05);
+            transition: all 0.4s ease;
+        }
+
         .gold-border-glow:focus-within {
-            box-shadow: 0 0 25px rgba(212, 175, 55, 0.25);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
             border-color: rgba(212, 175, 55, 0.6);
+            transform: translateY(-2px);
+        }
+
+        /* ── BUTTON METALLIC GLOW ── */
+        .btn-gold {
+            background: linear-gradient(135deg, #fdf2cf 0%, #D4AF37 50%, #946b1a 100%);
+            background-size: 200% auto;
+            transition: 0.5s;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .btn-gold:hover {
+            background-position: right center;
+            box-shadow: 0 6px 25px rgba(212, 175, 55, 0.4);
+            transform: scale(1.02);
+        }
+
+        /* ── AUTOFILL FIX ── */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 40px #0a011a inset !important;
+            -webkit-text-fill-color: #fdf2cf !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        /* ── ANIMATIONS ── */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fadeInDown 1.2s ease-out;
+        }
+
+        .mandala-bg {
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: url('images/akshim_logo.png');
+            background-size: contain;
+            opacity: 0.03;
+            filter: grayscale(1) brightness(2);
+            pointer-events: none;
+            animation: spin 60s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
 
+    <div class="bg-glow"></div>
+    <div class="bg-pattern"></div>
+    <div class="mandala-bg"></div>
+
     <!-- ── LOGIN CARD ── -->
-    <div class="w-full max-w-md bg-royal-card gold-border-glow p-8 rounded-lg text-center transition duration-300">
+    <div class="w-full max-w-md glass-card bg-royal-card p-10 rounded-2xl text-center animate-fade-in relative overflow-hidden">
+        
+        <!-- Top Glow Decoration -->
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gold to-transparent opacity-50"></div>
+
         <!-- Logo -->
-        <img src="images/akshim_logo.png" alt="AKSHIM Logo" class="w-24 h-24 mx-auto mb-6 object-contain">
+        <div class="relative inline-block mb-8">
+            <div class="absolute inset-0 bg-gold blur-2xl opacity-20 animate-pulse"></div>
+            <img src="images/akshim_logo.png" alt="AKSHIM Logo" class="w-24 h-24 mx-auto object-contain relative z-10">
+        </div>
         
-        <h1 class="royal-font text-2xl tracking-widest text-gold uppercase mb-2">Akshim Union</h1>
-        <p class="text-xs text-gold/60 tracking-wider mb-8 uppercase">Secure Admin Access Portal</p>
+        <h1 class="royal-font text-3xl tracking-[0.2em] text-gold uppercase mb-3">Akshim Union</h1>
+        <p class="text-[10px] text-gold/40 tracking-[0.3em] mb-10 uppercase font-light">Secure Administrative Portal</p>
         
-        <form onsubmit="handleLogin(event)" class="space-y-6 text-left">
-            <div>
-                <label class="block text-[10px] text-gold/70 uppercase tracking-widest mb-2 font-semibold">Username</label>
-                <div class="relative flex items-center bg-royal-bg border border-gold/25 rounded overflow-hidden px-3">
-                    <i class="fa-solid fa-user text-gold/40 text-sm mr-2.5"></i>
-                    <input type="text" id="admin-username" required placeholder="Enter Username" class="w-full bg-transparent py-3 text-sm text-gold-light outline-none">
+        <form onsubmit="handleLogin(event)" class="space-y-8 text-left">
+            <div class="space-y-2">
+                <label class="block text-[9px] text-gold/60 uppercase tracking-[0.2em] ml-1 font-bold">Identity</label>
+                <div class="relative flex items-center bg-royal-bg/50 border border-gold/20 rounded-xl overflow-hidden px-4 gold-border-glow">
+                    <i class="fa-solid fa-user-shield text-gold/30 text-sm mr-3"></i>
+                    <input type="text" id="admin-username" required placeholder="Enter Username" 
+                        class="w-full bg-transparent py-4 text-sm text-gold-light outline-none placeholder:text-gold/20">
                 </div>
             </div>
 
-            <div>
-                <label class="block text-[10px] text-gold/70 uppercase tracking-widest mb-2 font-semibold">Administrator Password</label>
-                <div class="relative flex items-center bg-royal-bg border border-gold/25 rounded overflow-hidden px-3">
-                    <i class="fa-solid fa-lock text-gold/40 text-sm mr-2.5"></i>
-                    <input type="password" id="admin-password" required placeholder="••••••••••••" class="w-full bg-transparent py-3 text-sm text-gold-light outline-none">
-                    <button type="button" onclick="togglePasswordVisibility()" class="text-gold/40 hover:text-gold text-sm focus:outline-none ml-2">
+            <div class="space-y-2">
+                <label class="block text-[9px] text-gold/60 uppercase tracking-[0.2em] ml-1 font-bold">Access Key</label>
+                <div class="relative flex items-center bg-royal-bg/50 border border-gold/20 rounded-xl overflow-hidden px-4 gold-border-glow">
+                    <i class="fa-solid fa-key text-gold/30 text-sm mr-3"></i>
+                    <input type="password" id="admin-password" required placeholder="••••••••••••" 
+                        class="w-full bg-transparent py-4 text-sm text-gold-light outline-none placeholder:text-gold/20">
+                    <button type="button" onclick="togglePasswordVisibility()" class="text-gold/30 hover:text-gold text-sm focus:outline-none ml-2 transition">
                         <i id="eye-icon" class="fa-solid fa-eye"></i>
                     </button>
                 </div>
             </div>
             
-            <div id="error-message" class="hidden text-xs text-red-400 border border-red-500/20 bg-red-950/20 px-3 py-2 rounded text-center">
-                <i class="fa-solid fa-circle-xmark mr-1.5"></i>Incorrect Administrator Password.
+            <div id="error-message" class="hidden text-[10px] text-red-400 border border-red-500/20 bg-red-950/20 px-4 py-3 rounded-lg text-center font-bold tracking-widest uppercase">
+                <i class="fa-solid fa-circle-xmark mr-2"></i>Access Denied
             </div>
 
-            <button type="submit" id="submit-btn" class="w-full bg-gold hover:bg-gold-light text-royal-bg font-bold py-3.5 text-xs tracking-wider uppercase transition flex items-center justify-center gap-2 rounded">
+            <button type="submit" id="submit-btn" class="w-full btn-gold text-royal-bg font-black py-4.5 text-[11px] tracking-[0.2em] uppercase rounded-xl transition flex items-center justify-center gap-3">
                 <span id="btn-text">Authenticate Session</span>
                 <i id="btn-icon" class="fa-solid fa-shield-halved"></i>
             </button>
         </form>
+
+        <div class="mt-8 pt-8 border-t border-gold/5">
+            <p class="text-[8px] text-gold/20 tracking-[0.4em] uppercase">Encrypted Protocol v4.0</p>
+        </div>
     </div>
 
     <!-- ── FOOTER ── -->
     <footer class="absolute bottom-6 text-center w-full">
-        <p class="text-[10px] text-gold/40 tracking-wider">SECURED VIA HTTPS COOKIES & SAME-SITE VALIDATION</p>
+        <p class="text-[9px] text-gold/30 tracking-[0.2em] uppercase font-light">
+            Crafted for <span class="font-bold text-gold/60">Akshay & Himanshi</span>
+        </p>
     </footer>
 
     <!-- ── SCRIPTS ── -->
@@ -120,7 +228,7 @@
             // Reset UI state
             errorMsg.classList.add('hidden');
             submitBtn.disabled = true;
-            btnText.textContent = "Verifying Credentials...";
+            btnText.textContent = "Verifying...";
             btnIcon.className = "fa-solid fa-spinner animate-spin";
 
             try {
@@ -134,9 +242,8 @@
 
                 if (res.ok) {
                     btnText.textContent = "Access Granted";
-                    btnIcon.className = "fa-solid fa-circle-check text-green-400 animate-pulse";
+                    btnIcon.className = "fa-solid fa-circle-check text-royal-bg animate-pulse";
                     
-                    // Store user info for dashboard greeting
                     localStorage.setItem('admin_user', JSON.stringify(data.user));
                     
                     setTimeout(() => {

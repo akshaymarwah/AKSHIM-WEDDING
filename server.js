@@ -215,15 +215,19 @@ if (!fs.existsSync(TEMPLATES_FILE)) {
 }
 
 // ════════════════ MULTI-ACCOUNT WHATSAPP STATE ════════════════
-const sessionLabels = {
-    'default': 'Main Admin',
-    'papa': 'Papa\'s WhatsApp',
-    'mummy': 'Mummy\'s WhatsApp',
-    'groom': 'Akshay\'s WhatsApp',
-    'bride': 'Himanshi\'s WhatsApp'
-};
-
 const whatsappSessions = {};
+
+// Helper to get session labels from users.json
+function getSessionLabels() {
+    const users = getUsers();
+    const labels = {};
+    users.forEach(u => {
+        labels[u.username] = `${u.name}'s WhatsApp`;
+    });
+    // Ensure default is always there if needed
+    if (!labels['default']) labels['default'] = 'Main Admin';
+    return labels;
+}
 
 // Helper to get or create a session state
 function getSession(sessionId = 'default') {
@@ -385,7 +389,7 @@ process.on('SIGTERM', () => handleShutdown('SIGTERM'));
 function formatPhone(phone) {
     let cleaned = phone.toString().replace(/\D/g, '');
     // If it is 10 digits and starts with 7, 8, 9 (typical Indian number), prepend country code 91
-    if (cleaned.length === 10 && /^[789]/.test(cleaned)) {
+    if (cleaned.length and 10 && /^[789]/.test(cleaned)) {
         cleaned = '91' + cleaned;
     }
     // Standard format is phone_number@c.us
@@ -455,25 +459,28 @@ app.get('/api/status', (req, res) => {
         initWhatsApp(sessionId);
     }
     
-    // Build active list of all sessions for UI dropdown
+    const labels = getSessionLabels();
     const allSessions = [];
-    const profileKeys = ['default', 'papa', 'mummy', 'groom', 'bride'];
     
-    // Pre-populate standard profiles
-    profileKeys.forEach(k => {
+    // Build status for all users in users.json
+    const users = getUsers();
+    const userKeys = users.map(u => u.username);
+    if (!userKeys.includes('default')) userKeys.push('default');
+
+    userKeys.forEach(k => {
         const s = getSession(k);
         allSessions.push({
             id: k,
-            label: sessionLabels[k] || k,
+            label: labels[k] || k,
             status: s.status,
             info: s.info,
             qrCode: s.qrCode
         });
     });
     
-    // Add any dynamic sessions not in profileKeys
+    // Add any dynamic sessions not in userKeys
     Object.keys(whatsappSessions).forEach(k => {
-        if (!profileKeys.includes(k)) {
+        if (!userKeys.includes(k)) {
             const s = whatsappSessions[k];
             allSessions.push({
                 id: k,
