@@ -1256,6 +1256,57 @@
             el.innerHTML = firstOpt + templates.map(t => `<option value="${t.id}">${t.title}</option>`).join('');
         }
 
+        function renderTemplatesSelectorList() {
+            const container = document.getElementById('templates-selector-list');
+            if (!container) return;
+            
+            const quickActions = templates.filter(t => t.isQuickAction);
+            if (quickActions.length === 0) {
+                container.innerHTML = '<p class="text-[10px] text-gold/20 text-center py-4 italic uppercase">No quick actions set</p>';
+                return;
+            }
+
+            container.innerHTML = quickActions.map(t => `
+                <button onclick="sendQuickTemplate('${t.id}')" class="w-full flex items-center justify-between bg-gold/5 border border-gold/15 p-4 rounded-lg hover:bg-gold/10 hover:border-gold/30 transition group text-left">
+                    <div>
+                        <p class="text-[10px] font-bold text-gold uppercase tracking-widest mb-1">${t.title}</p>
+                        <p class="text-[8px] text-gold/40 line-clamp-1 italic">${t.body.substring(0, 50)}...</p>
+                    </div>
+                    <i class="fa-solid fa-paper-plane text-gold/20 group-hover:text-gold transition text-xs"></i>
+                </button>
+            `).join('');
+        }
+
+        async function sendQuickTemplate(tmplId) {
+            const selectedIds = getSelectedGuestIds();
+            if (selectedIds.length === 0) return showToast('Select guests first!', 'error');
+            
+            const tmpl = templates.find(t => t.id === tmplId);
+            if (!tmpl) return;
+
+            if (!confirm(`Send "${tmpl.title}" to ${selectedIds.length} guests?`)) return;
+
+            // Start bulk send with this template
+            try {
+                const res = await fetch('/api/bulk-send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: currentSessionId,
+                        recipientIds: selectedIds,
+                        templateId: tmplId
+                    })
+                });
+                if (res.ok) {
+                    showToast('Quick Broadcast Started!');
+                    // Optionally open progress panel
+                    document.getElementById('bulk-progress-panel').classList.remove('hidden');
+                }
+            } catch (err) {
+                showToast('Quick Action failed', 'error');
+            }
+        }
+
         function updateBulkPreview() {
             // Optional: Show preview of first selected guest
         }

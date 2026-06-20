@@ -308,28 +308,46 @@
     <canvas id="warp-canvas" class="fixed inset-0 z-[500] pointer-events-none opacity-0"></canvas>
 
     <!-- ── LOGIN MODAL ── -->
-    <div id="loginModal" class="fixed inset-0 z-[2000] bg-[#050010]/98 backdrop-blur-[40px] hidden items-center justify-center p-6">
-        <div class="max-w-[450px] w-full p-10 sm:p-16 text-center bg-[#0a0020] border border-[#D4AF37]/30 shadow-2xl relative overflow-hidden">
+    <div id="loginModal" class="fixed inset-0 z-[2000] bg-[#050010]/98 backdrop-blur-[40px] hidden items-center justify-center p-4">
+        <div class="max-w-[500px] w-full p-8 sm:p-12 text-center bg-[#0a0020] border border-[#D4AF37]/30 shadow-2xl relative overflow-hidden rounded-lg">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent opacity-50"></div>
             
-            <button onclick="closeLogin()" class="absolute top-6 right-6 text-[#D4AF37]/40 hover:text-[#D4AF37] transition-all"><i class="fa-solid fa-times text-xl"></i></button>
+            <button onclick="closeLogin()" class="absolute top-4 right-4 text-[#D4AF37]/40 hover:text-[#D4AF37] transition-all"><i class="fa-solid fa-times text-xl"></i></button>
             
-            <img src="images/akshim_logo.png" alt="Logo" class="w-20 h-20 mx-auto mb-8 opacity-80">
-            <h3 class="royal-head text-2xl gold-metallic mb-3 uppercase tracking-widest">Guest Access</h3>
-            <p class="font-cormorant italic text-[#fdf2cf]/50 text-base mb-10">Enter your registered phone number to access your personalized invitation</p>
+            <img src="images/akshim_logo.png" alt="Logo" class="w-16 h-16 mx-auto mb-6 opacity-80">
+            <h3 class="royal-head text-2xl gold-metallic mb-2 uppercase tracking-[0.3em]">Guest Access</h3>
+            <p class="font-cormorant italic text-[#fdf2cf]/70 text-base mb-8">Kindly enter your details to access the celebration</p>
             
-            <div class="space-y-8">
-                <div class="relative">
-                    <input type="tel" id="lP" placeholder="Phone Number (e.g. 9876543210)" class="w-full bg-transparent border-b border-[#D4AF37]/30 py-4 text-center outline-none font-montserrat tracking-[0.2em] text-lg text-[#fdf2cf] placeholder:text-[#fdf2cf]/10 focus:border-[#D4AF37] transition-all">
-                    <div id="login-error" class="hidden text-red-400 text-[10px] mt-3 uppercase tracking-widest font-bold">Account not found</div>
+            <div class="space-y-6 text-left">
+                <div>
+                    <label class="block text-[10px] text-[#D4AF37]/60 uppercase tracking-widest mb-2 font-bold ml-1">Full Name</label>
+                    <input type="text" id="lN" placeholder="Your Name" class="w-full bg-royal-bg/40 border border-[#D4AF37]/20 rounded px-4 py-4 text-sm outline-none font-montserrat text-[#fdf2cf] focus:border-[#D4AF37] transition-all">
+                </div>
+
+                <div>
+                    <label class="block text-[10px] text-[#D4AF37]/60 uppercase tracking-widest mb-2 font-bold ml-1">Mobile Number</label>
+                    <input type="tel" id="lP" placeholder="e.g. 9876543210" class="w-full bg-royal-bg/40 border border-[#D4AF37]/20 rounded px-4 py-4 text-sm outline-none font-montserrat text-[#fdf2cf] focus:border-[#D4AF37] transition-all">
+                    <div id="login-error" class="hidden text-red-400 text-[10px] mt-2 uppercase tracking-widest font-bold">Error encountered</div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] text-[#D4AF37]/60 uppercase tracking-widest mb-2 font-bold ml-1">Your Photo (Optional)</label>
+                    <div class="relative group">
+                        <input type="file" id="lPic" accept="image/*" class="hidden" onchange="updateFileName(this)">
+                        <label for="lPic" class="flex items-center justify-between w-full bg-royal-bg/40 border border-[#D4AF37]/20 rounded px-4 py-4 text-sm cursor-pointer hover:border-[#D4AF37]/50 transition-all">
+                            <span id="pic-name" class="text-[#fdf2cf]/30 font-montserrat truncate">Choose an image...</span>
+                            <i class="fa-solid fa-camera text-[#D4AF37]/40 group-hover:text-[#D4AF37]"></i>
+                        </label>
+                    </div>
+                    <p class="text-[9px] text-[#D4AF37]/40 mt-2 italic">* Uploading your image will enable automatic tagging in photos.</p>
                 </div>
                 
-                <button id="login-submit-btn" class="w-full royal-head text-[10px] tracking-[0.4em] border border-[#D4AF37]/30 py-5 hover:bg-[#D4AF37] hover:text-[#050010] transition-all uppercase font-bold" onclick="doLogin()">
+                <button id="login-submit-btn" class="w-full bg-gold text-[#050010] font-bold py-5 mt-4 text-[10px] tracking-[0.4em] uppercase hover:brightness-110 transition-all rounded shadow-[0_0_20px_rgba(212,175,55,0.2)]" onclick="doLogin()">
                     Enter Celebration
                 </button>
             </div>
             
-            <p class="font-cinzel text-[8px] tracking-[0.3em] text-[#D4AF37]/20 mt-12 uppercase">Marwah & Patel Families</p>
+            <p class="font-cinzel text-[8px] tracking-[0.3em] text-[#D4AF37]/20 mt-10 uppercase">Marwah & Patel Families</p>
         </div>
     </div>
 

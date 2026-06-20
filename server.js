@@ -175,7 +175,7 @@ app.get('/api/guest/status', (req, res) => {
 });
 
 app.post('/api/guest/login', (req, res) => {
-    const { phone } = req.body;
+    const { phone, name } = req.body;
     if (!phone) return res.status(400).json({ error: 'Phone number is required' });
 
     const cleanPhone = phone.replace(/\D/g, '');
@@ -200,7 +200,7 @@ app.post('/api/guest/login', (req, res) => {
         // Create a new entry for uninvited guests
         const newGuest = {
             id: 'uninvited_' + Date.now(),
-            name: 'New Guest', // Generic name, admin can update later
+            name: name || 'New Guest', // Generic name, admin can update later
             phone: cleanPhone,
             status: 'uninvited',
             sentAt: null,
