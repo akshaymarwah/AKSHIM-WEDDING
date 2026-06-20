@@ -124,6 +124,10 @@ app.use((req, res, next) => {
 
 app.use(express.static(__dirname)); // Serve client files (index.html, admin.html, main.js, index.css, images)
 
+// Explicitly serve index.html for the root route
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 // Paths for persistent data
 const CONTACTS_FILE = path.join(__dirname, 'contacts.json');
 const TEMPLATES_FILE = path.join(__dirname, 'templates.json');
