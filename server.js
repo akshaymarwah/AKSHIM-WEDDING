@@ -205,6 +205,7 @@ function initWhatsApp(sessionId = 'default') {
         takeoverTimeoutMs: 0,
         puppeteer: {
             headless: true,
+            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
@@ -774,4 +775,7 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log(`🔑 Admin Password: ${ADMIN_PASSWORD}`);
     console.log(`💡 Note: Change the password using ADMIN_PASSWORD env variable.`);
     console.log(`=============================================================`);
+    
+    // Auto-initialize default WhatsApp session on startup
+    initWhatsApp('default');
 });
