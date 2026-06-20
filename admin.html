@@ -365,9 +365,14 @@
                     <h2 class="royal-font text-lg tracking-wider text-gold font-bold">
                         <i class="fa-solid fa-edit mr-2"></i>Template Configurator
                     </h2>
-                    <button onclick="saveAllTemplates()" class="bg-gold text-royal-bg text-xs px-4 py-2 hover:bg-gold-light font-bold rounded transition">
-                        <i class="fa-solid fa-floppy-disk mr-1.5"></i>Save All Changes
-                    </button>
+                    <div class="flex gap-2">
+                        <button onclick="addNewTemplate()" class="bg-royal-bg border border-gold/40 text-gold text-xs px-4 py-2 hover:bg-gold/10 font-bold rounded transition">
+                            <i class="fa-solid fa-plus mr-1.5"></i>Add Template
+                        </button>
+                        <button onclick="saveAllTemplates()" class="bg-gold text-royal-bg text-xs px-4 py-2 hover:bg-gold-light font-bold rounded transition">
+                            <i class="fa-solid fa-floppy-disk mr-1.5"></i>Save All Changes
+                        </button>
+                    </div>
                 </div>
                 <div id="templates-editor-container" class="flex flex-col gap-6">
                     <!-- Dynamically loaded templates -->
@@ -423,6 +428,11 @@
                     <select id="bulk-select-tmpl" onchange="updateBulkPreview()" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold outline-none focus:border-gold">
                         <!-- Loaded dynamically -->
                     </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">OR Write Custom Message</label>
+                    <textarea id="bulk-custom-msg" onkeyup="updateBulkPreview()" rows="3" placeholder="If you type here, the template above will be ignored..." class="w-full bg-royal-bg border border-gold/20 rounded p-3 text-sm text-gold-light outline-none focus:border-gold font-sans"></textarea>
+                    <p class="text-[10px] text-gold/40 mt-1">You can use {name} for personalization.</p>
                 </div>
                 <div>
                     <div class="flex justify-between items-center mb-2">
@@ -1064,11 +1074,16 @@
 
             templates.forEach((tmpl, idx) => {
                 const card = document.createElement('div');
-                card.className = 'bg-royal-bg/50 border border-gold/10 p-4 rounded space-y-3';
+                card.className = 'bg-royal-bg/50 border border-gold/10 p-4 rounded space-y-3 relative';
                 card.innerHTML = `
                     <div class="flex justify-between items-center">
                         <input type="text" value="${tmpl.title}" id="tmpl-title-${tmpl.id}" class="bg-transparent border-b border-gold/20 font-semibold text-sm text-gold py-1 outline-none focus:border-gold w-3/4">
-                        <span class="text-[10px] font-mono text-gold/40">ID: ${tmpl.id}</span>
+                        <div class="flex items-center gap-3">
+                            <span class="text-[10px] font-mono text-gold/40">ID: ${tmpl.id}</span>
+                            <button onclick="deleteTemplate('${tmpl.id}')" title="Delete Template" class="text-red-500/50 hover:text-red-400 transition">
+                                <i class="fa-solid fa-trash-can text-xs"></i>
+                            </button>
+                        </div>
                     </div>
                     <div>
                         <textarea id="tmpl-body-${tmpl.id}" rows="5" class="w-full bg-royal-bg border border-gold/15 rounded p-3 text-xs text-gold-light outline-none focus:border-gold font-sans">${tmpl.body}</textarea>
@@ -1076,6 +1091,29 @@
                 `;
                 container.appendChild(card);
             });
+        }
+
+        function addNewTemplate() {
+            const newId = Date.now().toString();
+            templates.push({
+                id: newId,
+                title: 'New Invitation Template',
+                body: 'Dear {name}, \n\nYou are cordially invited to...'
+            });
+            renderTemplatesEditor();
+            showToast('New template added to list. Remember to save changes!');
+        }
+
+        function deleteTemplate(id) {
+            if (templates.length <= 1) {
+                showToast('You must keep at least one template.', 'error');
+                return;
+            }
+            if (confirm('Are you sure you want to delete this template?')) {
+                templates = templates.filter(t => t.id !== id);
+                renderTemplatesEditor();
+                showToast('Template removed from list. Remember to save changes!');
+            }
         }
 
         function populateTemplateDropdowns() {
@@ -1225,11 +1263,6 @@
             // Reset fields
             document.getElementById('bulk-select-tmpl').value = '1'; // Default to first template
             updateBulkPreview();
-
-            document.getElementById('modal-bulk-send').classList.remove('hidden');
-            document.getElementById('modal-bulk-send').classList.add('flex');
-        }
-
         function closeBulkSendModal() {
             document.getElementById('modal-bulk-send').classList.add('hidden');
             document.getElementById('modal-bulk-send').classList.remove('flex');
@@ -1237,35 +1270,49 @@
 
         function updateBulkPreview() {
             const tmplId = document.getElementById('bulk-select-tmpl').value;
-            const selectedIds = getSelectedGuestIds();
-            if (selectedIds.length === 0) return;
-
-            // Target first contact in selection to show mock preview
-            const firstContact = contacts.find(c => c.id === selectedIds[0]);
+            const customMsg = document.getElementById('bulk-custom-msg').value;
             const previewBox = document.getElementById('bulk-msg-preview');
-
-            if (!tmplId) {
-                previewBox.textContent = 'No template selected';
+            
+            let body = '';
+            if (customMsg.trim()) {
+                body = customMsg;
+            } else if (tmplId) {
+                const tmpl = templates.find(t => t.id === tmplId);
+                if (tmpl) body = tmpl.body;
+            } else {
+                previewBox.textContent = 'Please select a template or write a custom message...';
                 return;
             }
 
-            const tmpl = templates.find(t => t.id === tmplId);
-            if (tmpl && firstContact) {
-                previewBox.textContent = tmpl.body.replace(/{name}/g, firstContact.name);
+            // Preview with a mock name
+            const mockName = "Guest Name";
+            previewBox.textContent = body.replace(/{name}/g, mockName);
+        }
+
+        function triggerBulkSendModal() {
+            const selectedIds = getSelectedGuestIds();
+            if (selectedIds.length === 0) {
+                showToast('Please select at least one guest from the list.', 'error');
+                return;
             }
+            
+            document.getElementById('bulk-selection-count').textContent = `${selectedIds.length} guest(s) selected`;
+            document.getElementById('modal-bulk-send').classList.remove('hidden');
+            document.getElementById('modal-bulk-send').classList.add('flex');
+            updateBulkPreview();
         }
 
         async function startBulkBroadcast() {
             const selectedIds = getSelectedGuestIds();
             const templateId = document.getElementById('bulk-select-tmpl').value;
-            const delayMin = parseInt(document.getElementById('bulk-delay-min').value) || 6;
-            const delayMax = parseInt(document.getElementById('bulk-delay-max').value) || 12;
+            const customMessage = document.getElementById('bulk-custom-msg').value;
+            const minDelay = document.getElementById('bulk-delay-min').value;
+            const maxDelay = document.getElementById('bulk-delay-max').value;
 
-            if (!templateId) return showToast('Please select a template to send', 'error');
-            if (delayMin < 1 || delayMax < delayMin) return showToast('Invalid delay range config', 'error');
-
-            showToast('Starting bulk sending broadcast in background...');
-            closeBulkSendModal();
+            if (!customMessage.trim() && !templateId) {
+                showToast('Please select a template or write a custom message.', 'error');
+                return;
+            }
 
             try {
                 const res = await fetch('/api/bulk-send', {

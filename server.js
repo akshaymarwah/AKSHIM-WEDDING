@@ -389,6 +389,12 @@ app.get('/api/status', (req, res) => {
     const sessionId = req.query.session || 'default';
     const session = getSession(sessionId);
     
+    // Auto-initialize if session is selected but not active
+    if (!session.client && session.status === 'disconnected') {
+        console.log(`[WhatsApp] [${sessionId}] Status requested but not initialized. Starting now...`);
+        initWhatsApp(sessionId);
+    }
+    
     // Build active list of all sessions for UI dropdown
     const allSessions = [];
     const profileKeys = ['default', 'papa', 'mummy', 'groom', 'bride'];
