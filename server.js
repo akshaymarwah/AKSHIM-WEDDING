@@ -38,7 +38,8 @@ function requireAuth(req, res, next) {
         req.user = sessions.get(token); // Attach user info to request
         return next();
     }
-    if (req.path.startsWith('/api/')) {
+    // If it's an API request, return 401 instead of redirecting
+    if (req.originalUrl.startsWith('/api/')) {
         return res.status(401).json({ error: 'Unauthorized. Please login.' });
     }
     res.redirect('/login.html');
