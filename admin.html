@@ -297,7 +297,7 @@
                             <thead>
                                 <tr class="text-left text-gold/60 text-xs uppercase tracking-widest border-b border-gold/15">
                                     <th class="py-3 px-4 w-12 text-center">
-                                        <input type="checkbox" id="select-all-guests" onclick="toggleSelectAllGuests(this.checked)" class="accent-gold h-4 w-4 rounded border-gray-300">
+                                        <input type="checkbox" id="select-all-checkbox" onclick="toggleSelectAll(this)" class="accent-gold h-4 w-4 rounded border-gray-300">
                                     </th>
                                     <th class="py-3 px-4">Guest Name</th>
                                     <th class="py-3 px-4">WhatsApp</th>
@@ -439,7 +439,36 @@
         </div>
     </div>
 
-    <!-- ── MODAL: BULK SEND OPTIONS ── -->
+    <!-- ── MODAL: EDIT GUEST ── -->
+    <div id="modal-edit-guest" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-royal-card border border-gold/40 rounded-lg w-full max-w-md p-6 relative">
+            <button onclick="closeEditGuestModal()" class="absolute top-4 right-4 text-gold/60 hover:text-gold text-lg focus:outline-none">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="royal-font text-lg text-gold mb-6 font-bold uppercase tracking-wider">Edit Guest Info</h3>
+            <form id="edit-guest-form" onsubmit="submitEditGuest(event)" class="space-y-4">
+                <input type="hidden" id="edit-guest-id">
+                <div>
+                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">Guest Name</label>
+                    <input type="text" id="edit-guest-name" required class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold-light outline-none focus:border-gold">
+                </div>
+                <div>
+                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">WhatsApp Phone</label>
+                    <input type="text" id="edit-guest-phone" required class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold-light outline-none focus:border-gold">
+                </div>
+                <div>
+                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">Assign to Group</label>
+                    <select id="edit-guest-group" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold outline-none focus:border-gold">
+                        <option value="">-- No Group --</option>
+                        <!-- Loaded dynamically -->
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-gold hover:bg-gold-light text-royal-bg font-bold py-3 text-xs tracking-wider uppercase transition mt-6">
+                    Update Guest Details
+                </button>
+            </form>
+        </div>
+    </div>
     <div id="modal-bulk-send" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
         <div class="bg-royal-card border border-gold/40 rounded-lg w-full max-w-lg p-6 relative">
             <button onclick="closeBulkSendModal()" class="absolute top-4 right-4 text-gold/60 hover:text-gold text-lg focus:outline-none">
@@ -995,7 +1024,7 @@
                 row.className = 'border-b border-gold/5 hover:bg-gold/[0.02] transition group';
                 row.innerHTML = `
                     <td class="py-4 px-4 text-center">
-                        <input type="checkbox" data-id="${g.id}" onchange="updateBulkUI()" class="accent-gold h-4 w-4 rounded border-gray-300">
+                        <input type="checkbox" data-id="${g.id}" onchange="updateBulkUI()" class="guest-selector accent-gold h-4 w-4 rounded border-gray-300">
                     </td>
                     <td class="py-4 px-4">
                         <div class="flex flex-col">
@@ -1014,8 +1043,11 @@
                     <td class="py-4 px-4">
                         <div class="flex items-center justify-center gap-2">
                             ${templateButtonsHtml}
-                            <button onclick="openCustomMsgModal('${g.id}')" title="Custom message" class="text-gold/60 hover:text-gold px-2 py-1 text-xs transition">
+                            <button onclick="openCustomMsgModal('${g.id}', '${g.name.replace(/'/g, "\\'")}', '${g.phone}')" title="Custom message" class="text-gold/60 hover:text-gold px-2 py-1 text-xs transition">
                                 <i class="fa-solid fa-comment-dots"></i>
+                            </button>
+                            <button onclick="openEditGuestModal('${g.id}')" title="Edit guest" class="text-gold/60 hover:text-gold px-2 py-1 text-xs transition">
+                                <i class="fa-solid fa-user-pen"></i>
                             </button>
                             <button onclick="deleteGuest('${g.id}')" title="Delete guest" class="text-red-400 hover:text-red-300 px-2 py-1 text-xs transition">
                                 <i class="fa-solid fa-trash"></i>
@@ -1126,7 +1158,14 @@
         // Table Selection checkboxes
         function toggleSelectAll(master) {
             const selectors = document.querySelectorAll('.guest-selector');
-            selectors.forEach(s => s.checked = master.checked);
+            selectors.forEach(s => {
+                // Only select/deselect if the row is visible
+                const row = s.closest('tr');
+                if (row && row.offsetParent !== null) {
+                    s.checked = master.checked;
+                }
+            });
+            updateBulkUI();
         }
 
         function getSelectedGuestIds() {
@@ -1548,6 +1587,7 @@
         function populateGroupDropdowns() {
             const filterGroup = document.getElementById('filter-group');
             const addGuestGroup = document.getElementById('add-guest-group');
+            const editGuestGroup = document.getElementById('edit-guest-group');
             const bulkGroup = document.getElementById('bulk-select-group');
             
             if (!filterGroup || !addGuestGroup) return;
@@ -1555,6 +1595,7 @@
             // Clear existing except first option
             filterGroup.innerHTML = '<option value="all">-- All Groups --</option>';
             addGuestGroup.innerHTML = '<option value="">-- No Group --</option>';
+            if (editGuestGroup) editGuestGroup.innerHTML = '<option value="">-- No Group --</option>';
             if (bulkGroup) bulkGroup.innerHTML = '<option value="">-- Manual Selection --</option>';
             
             groups.forEach(g => {
@@ -1568,6 +1609,13 @@
                 opt2.textContent = g.name;
                 addGuestGroup.appendChild(opt2);
 
+                if (editGuestGroup) {
+                    const optEdit = document.createElement('option');
+                    optEdit.value = g.id;
+                    optEdit.textContent = g.name;
+                    editGuestGroup.appendChild(optEdit);
+                }
+
                 if (bulkGroup) {
                     const opt3 = document.createElement('option');
                     opt3.value = g.id;
@@ -1578,7 +1626,7 @@
         }
 
         function selectGuestsByGroup(groupId) {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"][data-id]');
+            const checkboxes = document.querySelectorAll('.guest-selector');
             checkboxes.forEach(cb => {
                 const guestId = cb.getAttribute('data-id');
                 const guest = contacts.find(g => g.id === guestId);
