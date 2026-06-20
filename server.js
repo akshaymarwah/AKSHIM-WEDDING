@@ -23,8 +23,7 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 // ════════════════ SECURE ADMIN AUTHENTICATION ════════════════
-const sessions = new Set();
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'AkshimWedding2026';
+const sessions = new Map(); // token -> { userId, username, name, role }
 
 // Helper to parse cookies manually
 function getSessionToken(req) {
@@ -36,6 +35,7 @@ function getSessionToken(req) {
 function requireAuth(req, res, next) {
     const token = getSessionToken(req);
     if (token && sessions.has(token)) {
+        req.user = sessions.get(token); // Attach user info to request
         return next();
     }
     if (req.path.startsWith('/api/')) {
@@ -56,14 +56,24 @@ app.get('/admin', (req, res) => {
 
 // Admin login endpoint
 app.post('/api/login', (req, res) => {
-    const { password } = req.body;
-    if (password === ADMIN_PASSWORD) {
+    const { username, password } = req.body;
+    const users = getUsers();
+    
+    // Find user by username AND password
+    const user = users.find(u => u.username === username && u.password === password);
+    
+    if (user) {
         const token = Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
-        sessions.add(token);
+        sessions.set(token, {
+            id: user.id,
+            username: user.username,
+            name: user.name,
+            role: user.role
+        });
         res.setHeader('Set-Cookie', `session_token=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=86400`); // 1 day
-        res.json({ success: true });
+        res.json({ success: true, user: { name: user.name, role: user.role } });
     } else {
-        res.status(401).json({ error: 'Incorrect administrator password' });
+        res.status(401).json({ error: 'Invalid username or password' });
     }
 });
 
@@ -360,6 +370,13 @@ function formatPhone(phone) {
 }
 
 // Helper to load contacts
+function getUsers() {
+    try {
+        if (!fs.existsSync('users.json')) return [];
+        return JSON.parse(fs.readFileSync('users.json', 'utf8'));
+    } catch (e) { return []; }
+}
+
 function getContacts() {
     return JSON.parse(fs.readFileSync(CONTACTS_FILE, 'utf8'));
 }
@@ -819,8 +836,8 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log(`👑 AKSHIM WEDDING ROYAL INVITE SERVER RUNNING 👑`);
     console.log(`🔗 Admin Panel URL: http://localhost:${PORT}/admin.html`);
     console.log(`🔗 Wedding Invite Card URL: http://localhost:${PORT}`);
-    console.log(`🔑 Admin Password: ${ADMIN_PASSWORD}`);
-    console.log(`💡 Note: Change the password using ADMIN_PASSWORD env variable.`);
+    console.log(`🚀 Akshim Wedding Server running at http://localhost:${PORT}`);
+    console.log(`💡 Note: Manage users in users.json.`);
     console.log(`=============================================================`);
     
     // Auto-initialize default WhatsApp session on startup

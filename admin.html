@@ -525,6 +525,13 @@
 
         // ════════════════ INITIALIZATION ════════════════
         async function initialLoad() {
+            // Personalize Dashboard
+            const userData = JSON.parse(localStorage.getItem('admin_user') || '{}');
+            if (userData.name) {
+                const subTitle = document.querySelector('header p.text-xs');
+                if (subTitle) subTitle.textContent = `Welcome, ${userData.name} — Wedding Control Center`;
+            }
+
             try {
                 await Promise.all([
                     loadContacts(),
@@ -1076,8 +1083,8 @@
         }
 
         async function logoutAdmin() {
-            localStorage.removeItem('admin_auth');
-            window.location.href = 'index.html';
+            localStorage.removeItem('admin_user');
+            window.location.href = 'login.html';
         }
 
         async function logoutWA() {

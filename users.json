@@ -1,0 +1,23 @@
+[
+    {
+        "id": "admin",
+        "username": "admin",
+        "password": "AkshimWedding2026",
+        "name": "Main Administrator",
+        "role": "superadmin"
+    },
+    {
+        "id": "person1",
+        "username": "akshay",
+        "password": "AkshimWedding2026",
+        "name": "Akshay",
+        "role": "admin"
+    },
+    {
+        "id": "person2",
+        "username": "himanshi",
+        "password": "AkshimWedding2026",
+        "name": "Himanshi",
+        "role": "admin"
+    }
+]
