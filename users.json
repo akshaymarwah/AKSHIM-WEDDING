@@ -1,17 +1,10 @@
 [
     {
         "id": "admin",
-        "username": "admin",
-        "password": "AkshimWedding2026",
-        "name": "Main Administrator",
-        "role": "superadmin"
-    },
-    {
-        "id": "person1",
         "username": "akshay",
-        "password": "AkshimWedding2026",
-        "name": "Akshay",
-        "role": "admin"
+        "password": "Trail@9416",
+        "name": "Super Admin",
+        "role": "superadmin"
     },
     {
         "id": "person2",

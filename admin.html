@@ -78,6 +78,9 @@
             <a href="index.html" target="_blank" class="royal-font text-[10px] tracking-widest border border-gold/40 px-4 py-2 hover:bg-gold/15 transition w-[48%] sm:w-auto text-center uppercase font-bold">
                 <i class="fa-solid fa-eye mr-1.5"></i>Live Site
             </a>
+            <button onclick="openChangePasswordModal()" class="royal-font text-[10px] tracking-widest bg-gold/10 border border-gold/30 text-gold px-4 py-2 hover:bg-gold/20 transition w-[48%] sm:w-auto uppercase font-bold">
+                <i class="fa-solid fa-key mr-1.5"></i>Password
+            </button>
             <button onclick="logoutAdmin()" class="royal-font text-[10px] tracking-widest bg-red-950/40 border border-red-500/30 text-red-300 px-4 py-2 hover:bg-red-500/20 transition w-[48%] sm:w-auto uppercase font-bold">
                 <i class="fa-solid fa-power-off mr-1.5"></i>Logout
             </button>
@@ -510,6 +513,28 @@
             <div id="templates-editor-container" class="flex flex-col gap-6">
                 <!-- Loaded dynamically -->
             </div>
+        </div>
+    </div>
+
+    <!-- ── CHANGE PASSWORD MODAL ── -->
+    <div id="modal-change-password" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-royal-card border border-gold/30 w-full max-w-md p-8 rounded-lg shadow-2xl relative">
+            <button onclick="closeChangePasswordModal()" class="absolute top-4 right-4 text-gold/40 hover:text-gold"><i class="fa-solid fa-times text-xl"></i></button>
+            <h3 class="royal-font text-xl text-gold mb-6 uppercase tracking-widest border-b border-gold/10 pb-4">Change Password</h3>
+            
+            <form id="change-password-form" onsubmit="submitChangePassword(event)" class="space-y-6">
+                <div>
+                    <label class="block text-[10px] text-gold/60 uppercase tracking-widest mb-2 font-bold">New Password</label>
+                    <input type="password" id="new-password" required minlength="4" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold-light outline-none focus:border-gold transition">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gold/60 uppercase tracking-widest mb-2 font-bold">Confirm New Password</label>
+                    <input type="password" id="confirm-new-password" required minlength="4" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold-light outline-none focus:border-gold transition">
+                </div>
+                <button type="submit" class="w-full bg-gold text-royal-bg font-bold py-4 text-xs tracking-widest uppercase hover:bg-gold-light transition rounded shadow-lg">
+                    Update Password
+                </button>
+            </form>
         </div>
     </div>
     
@@ -1106,6 +1131,45 @@
             currentSessionId = document.getElementById('session-select').value;
             checkWhatsAppStatus();
             if (activeTab === 'whatsapp') syncWhatsAppContacts();
+        }
+
+        // ════════════════ SECURITY ════════════════
+        function openChangePasswordModal() {
+            document.getElementById('modal-change-password').classList.remove('hidden');
+            document.getElementById('modal-change-password').classList.add('flex');
+        }
+
+        function closeChangePasswordModal() {
+            document.getElementById('modal-change-password').classList.add('hidden');
+            document.getElementById('modal-change-password').classList.remove('flex');
+            document.getElementById('change-password-form').reset();
+        }
+
+        async function submitChangePassword(e) {
+            e.preventDefault();
+            const newPwd = document.getElementById('new-password').value;
+            const confirmPwd = document.getElementById('confirm-new-password').value;
+
+            if (newPwd !== confirmPwd) {
+                return showToast('Passwords do not match', 'error');
+            }
+
+            try {
+                const res = await fetch('/api/change-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ newPassword: newPwd })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    showToast('Password Updated Successfully!');
+                    closeChangePasswordModal();
+                } else {
+                    showToast(data.error || 'Failed to update password', 'error');
+                }
+            } catch (err) {
+                showToast('Network error', 'error');
+            }
         }
 
         // Start App

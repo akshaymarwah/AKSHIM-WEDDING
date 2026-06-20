@@ -87,6 +87,32 @@ app.post('/api/logout-admin', (req, res) => {
     res.json({ success: true });
 });
 
+// Change password endpoint
+app.post('/api/change-password', requireAuth, (req, res) => {
+    const { newPassword } = req.body;
+    if (!newPassword || newPassword.length < 4) {
+        return res.status(400).json({ error: 'Password must be at least 4 characters' });
+    }
+
+    const users = getUsers();
+    const userIdx = users.findIndex(u => u.id === req.user.id);
+    
+    if (userIdx === -1) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    users[userIdx].password = newPassword;
+    saveUsers(users);
+    
+    // Update active session info
+    sessions.set(getSessionToken(req), {
+        ...sessions.get(getSessionToken(req)),
+        password: newPassword // Note: we don't usually store password in session, but just in case
+    });
+
+    res.json({ success: true, message: 'Password updated successfully' });
+});
+
 // Public RSVP endpoint (No authentication required)
 app.post('/api/rsvp', (req, res) => {
     const { name, souls, message } = req.body;
@@ -375,6 +401,10 @@ function getUsers() {
         if (!fs.existsSync('users.json')) return [];
         return JSON.parse(fs.readFileSync('users.json', 'utf8'));
     } catch (e) { return []; }
+}
+
+function saveUsers(users) {
+    fs.writeFileSync('users.json', JSON.stringify(users, null, 2));
 }
 
 function getContacts() {
