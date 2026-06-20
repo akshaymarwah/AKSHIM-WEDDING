@@ -14,6 +14,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Handle process-level errors to prevent crashes in cloud environments
+process.on('uncaughtException', (err) => {
+    console.error('CRITICAL ERROR: Uncaught Exception:', err);
+});
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('CRITICAL ERROR: Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
 // ════════════════ SECURE ADMIN AUTHENTICATION ════════════════
 const sessions = new Set();
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'AkshimWedding2026';
@@ -122,12 +130,10 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(express.static(__dirname)); // Serve client files (index.html, admin.html, main.js, index.css, images)
-
-// Explicitly serve index.html for the root route
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
+
 // Paths for persistent data
 const CONTACTS_FILE = path.join(__dirname, 'contacts.json');
 const TEMPLATES_FILE = path.join(__dirname, 'templates.json');

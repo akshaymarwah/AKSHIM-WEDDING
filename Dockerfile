@@ -1,5 +1,5 @@
-# Use an official Node.js runtime as the base image
-FROM node:20-slim
+# Use the full Node.js runtime to ensure all system libraries are present
+FROM node:20
 
 # Install dependencies for Chromium (needed for WhatsApp Web)
 RUN apt-get update && apt-get install -y \
