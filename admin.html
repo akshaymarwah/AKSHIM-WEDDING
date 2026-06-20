@@ -506,6 +506,17 @@
         let whatsappContacts = [];
         let currentSessionId = 'default';
 
+        // Global error catcher for debugging
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            console.error('JS Error:', msg, lineNo, columnNo);
+            if (typeof showToast === 'function') showToast(`Page Error: ${msg} (Line ${lineNo})`, 'error');
+            return false;
+        };
+        window.onunhandledrejection = function(event) {
+            console.error('Promise Rejection:', event.reason);
+            if (typeof showToast === 'function') showToast(`System Error: ${event.reason}`, 'error');
+        };
+
         function switchTab(tab) {
             activeTab = tab;
             
@@ -759,6 +770,7 @@
             try {
                 const res = await fetch(`/api/status?session=${currentSessionId}`);
                 const data = await res.json();
+                console.log('WA Status:', data);
                 
                 // Keep selector synced
                 updateSessionDropdown(data.allSessions, data.activeSession);
@@ -1255,14 +1267,20 @@
         function triggerBulkSendModal() {
             const selectedIds = getSelectedGuestIds();
             if (selectedIds.length === 0) {
-                return showToast('Please select at least one guest in the directory', 'error');
+                showToast('Please select at least one guest from the list.', 'error');
+                return;
             }
-
-            document.getElementById('bulk-selection-count').textContent = `${selectedIds.length} contacts selected for broadcast`;
+            
+            document.getElementById('bulk-selection-count').textContent = `${selectedIds.length} guest(s) selected`;
+            document.getElementById('modal-bulk-send').classList.remove('hidden');
+            document.getElementById('modal-bulk-send').classList.add('flex');
             
             // Reset fields
-            document.getElementById('bulk-select-tmpl').value = '1'; // Default to first template
+            document.getElementById('bulk-select-tmpl').value = '';
+            document.getElementById('bulk-custom-msg').value = '';
             updateBulkPreview();
+        }
+
         function closeBulkSendModal() {
             document.getElementById('modal-bulk-send').classList.add('hidden');
             document.getElementById('modal-bulk-send').classList.remove('flex');
@@ -1289,19 +1307,6 @@
             previewBox.textContent = body.replace(/{name}/g, mockName);
         }
 
-        function triggerBulkSendModal() {
-            const selectedIds = getSelectedGuestIds();
-            if (selectedIds.length === 0) {
-                showToast('Please select at least one guest from the list.', 'error');
-                return;
-            }
-            
-            document.getElementById('bulk-selection-count').textContent = `${selectedIds.length} guest(s) selected`;
-            document.getElementById('modal-bulk-send').classList.remove('hidden');
-            document.getElementById('modal-bulk-send').classList.add('flex');
-            updateBulkPreview();
-        }
-
         async function startBulkBroadcast() {
             const selectedIds = getSelectedGuestIds();
             const templateId = document.getElementById('bulk-select-tmpl').value;
@@ -1320,20 +1325,23 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         contactIds: selectedIds,
-                        templateId: templateId,
-                        minDelay: delayMin,
-                        maxDelay: delayMax,
+                        templateId: customMessage.trim() ? null : templateId,
+                        customMessage: customMessage.trim() || null,
+                        minDelay: parseInt(minDelay),
+                        maxDelay: parseInt(maxDelay),
                         session: currentSessionId
                     })
                 });
-                const data = await res.json();
                 
-                if (data.error) {
-                    showToast(data.error, 'error');
-                } else {
+                const data = await res.json();
+                if (data.success) {
+                    showToast('Bulk broadcast initialized! Check the progress bar.');
+                    closeBulkSendModal();
+                    clearSelectedGuests();
                     activeBulkJob = true;
                     document.getElementById('bulk-progress-panel').classList.remove('hidden');
-                    clearSelectedGuests(); // Reset selection checkboxes
+                } else {
+                    showToast(data.error || 'Failed to start broadcast', 'error');
                 }
             } catch (err) {
                 showToast(err.message, 'error');
