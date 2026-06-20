@@ -1,0 +1,23 @@
+[
+  {
+    "id": "1",
+    "name": "Papa (Mock Contact)",
+    "phone": "919999999999",
+    "status": "pending",
+    "sentAt": null
+  },
+  {
+    "id": "2",
+    "name": "Mummy (Mock Contact)",
+    "phone": "918888888888",
+    "status": "pending",
+    "sentAt": null
+  },
+  {
+    "id": "1781924669929",
+    "name": "Hinil Patel NBH",
+    "phone": "917874284978",
+    "status": "pending",
+    "sentAt": null
+  }
+]

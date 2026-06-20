@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AKSHIM Admin — Secure Authentication</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            light: '#fdf2cf',
+                            DEFAULT: '#D4AF37',
+                            dark: '#946b1a',
+                        },
+                        royal: {
+                            bg: '#050010',
+                            card: '#0a011a',
+                            border: 'rgba(212, 175, 55, 0.25)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #050010;
+            color: #fdf2cf;
+            font-family: 'Montserrat', sans-serif;
+            background-image: radial-gradient(circle at 50% 50%, rgba(37, 3, 77, 0.2) 0%, transparent 80%);
+        }
+        .royal-font {
+            font-family: 'Cinzel', serif;
+        }
+        .gold-border-glow {
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+        }
+        .gold-border-glow:focus-within {
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.25);
+            border-color: rgba(212, 175, 55, 0.6);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <!-- ── LOGIN CARD ── -->
+    <div class="w-full max-w-md bg-royal-card gold-border-glow p-8 rounded-lg text-center transition duration-300">
+        <!-- Logo -->
+        <img src="images/akshim_logo.png" alt="AKSHIM Logo" class="w-24 h-24 mx-auto mb-6 object-contain">
+        
+        <h1 class="royal-font text-2xl tracking-widest text-gold uppercase mb-2">Akshim Union</h1>
+        <p class="text-xs text-gold/60 tracking-wider mb-8 uppercase">Secure Admin Access Portal</p>
+        
+        <form onsubmit="handleLogin(event)" class="space-y-6 text-left">
+            <div>
+                <label class="block text-[10px] text-gold/70 uppercase tracking-widest mb-2 font-semibold">Administrator Password</label>
+                <div class="relative flex items-center bg-royal-bg border border-gold/25 rounded overflow-hidden px-3">
+                    <i class="fa-solid fa-lock text-gold/40 text-sm mr-2.5"></i>
+                    <input type="password" id="admin-password" required placeholder="••••••••••••" class="w-full bg-transparent py-3 text-sm text-gold-light outline-none">
+                    <button type="button" onclick="togglePasswordVisibility()" class="text-gold/40 hover:text-gold text-sm focus:outline-none ml-2">
+                        <i id="eye-icon" class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="error-message" class="hidden text-xs text-red-400 border border-red-500/20 bg-red-950/20 px-3 py-2 rounded text-center">
+                <i class="fa-solid fa-circle-xmark mr-1.5"></i>Incorrect Administrator Password.
+            </div>
+
+            <button type="submit" id="submit-btn" class="w-full bg-gold hover:bg-gold-light text-royal-bg font-bold py-3.5 text-xs tracking-wider uppercase transition flex items-center justify-center gap-2">
+                <span id="btn-text">Authenticate Session</span>
+                <i id="btn-icon" class="fa-solid fa-shield-halved"></i>
+            </button>
+        </form>
+    </div>
+
+    <!-- ── FOOTER ── -->
+    <footer class="absolute bottom-6 text-center w-full">
+        <p class="text-[10px] text-gold/40 tracking-wider">SECURED VIA HTTPS COOKIES & SAME-SITE VALIDATION</p>
+    </footer>
+
+    <!-- ── SCRIPTS ── -->
+    <script>
+        function togglePasswordVisibility() {
+            const input = document.getElementById('admin-password');
+            const icon = document.getElementById('eye-icon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const password = document.getElementById('admin-password').value;
+            const errorMsg = document.getElementById('error-message');
+            const submitBtn = document.getElementById('submit-btn');
+            const btnText = document.getElementById('btn-text');
+            const btnIcon = document.getElementById('btn-icon');
+
+            // Reset UI state
+            errorMsg.classList.add('hidden');
+            submitBtn.disabled = true;
+            btnText.textContent = "Verifying Credentials...";
+            btnIcon.className = "fa-solid fa-spinner animate-spin";
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                });
+
+                if (res.ok) {
+                    btnText.textContent = "Access Granted";
+                    btnIcon.className = "fa-solid fa-circle-check text-green-400 animate-pulse";
+                    setTimeout(() => {
+                        window.location.href = '/admin.html';
+                    }, 500);
+                } else {
+                    const data = await res.json();
+                    throw new Error(data.error || 'Authentication failed');
+                }
+            } catch (err) {
+                errorMsg.textContent = err.message;
+                errorMsg.classList.remove('hidden');
+                submitBtn.disabled = false;
+                btnText.textContent = "Authenticate Session";
+                btnIcon.className = "fa-solid fa-shield-halved";
+            }
+        }
+    </script>
+</body>
+</html>

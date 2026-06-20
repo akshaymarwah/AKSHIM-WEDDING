@@ -1,0 +1,17 @@
+[
+  {
+    "id": "1",
+    "title": "🌸 Official Invitation (Formal)",
+    "body": "🌸 *AKSHAY WEDS HIMANSHI* 🌸\n\nDear {name},\n\nWe cordially invite you and your family to grace the auspicious occasion of our wedding union.\n\n📅 *Date:* July 7th, 2026\n📍 *Venue:* Taj Palace, Chanakyapuri, New Delhi\n\nPlease find our digital invitation card with complete details, venue itinerary, and RSVP here:\n🔗 http://localhost:3000\n\nWe eagerly await your presence to bless us.\n\nWarm regards,\n*Akshay & Himanshi*"
+  },
+  {
+    "id": "2",
+    "title": "🕺 Sangeet Invitation (Friendly/Vibrant)",
+    "body": "✨ *Time to dance! Akshay & Himanshi Sangeet* ✨\n\nHey {name}!\n\nGet ready to put on your dancing shoes! We invite you to join us for our Sangeet Night full of music, dance, and celebration.\n\n📅 *Date:* July 6th, 2026 • 7:00 PM\n📍 *Venue:* Grand Ballroom, Taj Palace, New Delhi\n\nCheck out the full itinerary and add your favorite song to our Sangeet Playlist here:\n🔗 http://localhost:3000\n\nSee you there!\n*Akshay & Himanshi*"
+  },
+  {
+    "id": "3",
+    "title": "🥂 Reception Invitation (Elegant)",
+    "body": "🥂 *Akshay & Himanshi — Wedding Reception* 🥂\n\nDear {name},\n\nPlease join us to celebrate our first evening as husband and wife at our Wedding Reception.\n\n📅 *Date:* July 8th, 2026 • 7:30 PM onwards\n📍 *Venue:* The Mughal Gardens, Taj Palace, New Delhi\n\nDigital Invite & Venue Directions:\n🔗 http://localhost:3000\n\nLooking forward to celebrating with you!\n*Akshay & Himanshi*"
+  }
+]

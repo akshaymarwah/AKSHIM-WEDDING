@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AKSHIM Admin — Guest & Invitation Dashboard</title>
+    <link rel="stylesheet" href="index.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            light: '#fdf2cf',
+                            DEFAULT: '#D4AF37',
+                            dark: '#946b1a',
+                        },
+                        royal: {
+                            bg: '#050010',
+                            card: '#0a011a',
+                            border: 'rgba(212, 175, 55, 0.25)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #050010;
+            color: #fdf2cf;
+            font-family: 'Montserrat', sans-serif;
+            background-image: radial-gradient(circle at 50% 50%, rgba(37, 3, 77, 0.15) 0%, transparent 80%);
+        }
+        .royal-font {
+            font-family: 'Cinzel', serif;
+        }
+        .gold-border-glow {
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+        }
+        .gold-border-glow:hover {
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.18);
+            border-color: rgba(212, 175, 55, 0.5);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050010;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D4AF37;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8 min-h-screen">
+
+    <!-- ── HEADER ── -->
+    <header class="flex flex-col sm:flex-row items-center justify-between border-b border-gold/20 pb-6 mb-8 gap-4">
+        <div class="flex items-center gap-4">
+            <img src="images/akshim_logo.png" alt="AKSHIM Logo" class="w-16 h-16 object-contain">
+            <div>
+                <h1 class="royal-font text-2xl sm:text-3xl tracking-widest gold-metallic uppercase">Akshim Union</h1>
+                <p class="text-xs text-gold/60 tracking-wider">GUEST INVITATION & BROADCAST CONTROL CENTER</p>
+            </div>
+        </div>
+        <div class="flex flex-wrap gap-3">
+            <a href="index.html" target="_blank" class="royal-font text-xs tracking-wider border border-gold/40 px-4 py-2 hover:bg-gold/15 transition duration-300">
+                <i class="fa-solid fa-eye mr-2"></i>View Card Website
+            </a>
+            <button onclick="restartClient()" class="royal-font text-xs tracking-wider border border-red-500/40 text-red-400 px-4 py-2 hover:bg-red-500/10 transition duration-300">
+                <i class="fa-solid fa-sync mr-2"></i>Reset WhatsApp
+            </button>
+            <button onclick="logoutAdmin()" class="royal-font text-xs tracking-wider bg-red-950/40 border border-red-500/30 text-red-300 px-4 py-2 hover:bg-red-500/20 transition duration-300">
+                <i class="fa-solid fa-right-from-bracket mr-2"></i>Logout Admin
+            </button>
+        </div>
+    </header>
+
+    <!-- ── DASHBOARD GRID ── -->
+    <main class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- ── LEFT COLUMN (WHATSAPP CONN + STATS) ── -->
+        <div class="lg:col-span-4 flex flex-col gap-8">
+            
+            <!-- WhatsApp Connection Card -->
+            <div class="bg-royal-card gold-border-glow p-6 rounded-lg transition duration-300">
+                <div class="flex justify-between items-center mb-5">
+                    <h2 class="royal-font text-lg tracking-wider text-gold font-bold">
+                        <i class="fa-brands fa-whatsapp text-green-500 mr-2 text-xl align-middle"></i>WhatsApp Link
+                    </h2>
+                    <span id="conn-badge" class="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-red-950/50 text-red-400 border border-red-500/30">
+                        Disconnected
+                    </span>
+                </div>
+                
+                <!-- Account Selector -->
+                <div class="mb-5 border-b border-gold/10 pb-4">
+                    <label class="block text-[10px] text-gold/60 uppercase tracking-widest font-semibold mb-2">WhatsApp Profile</label>
+                    <div class="flex gap-2">
+                        <select id="session-select" onchange="onSessionChange()" class="w-full bg-royal-bg border border-gold/25 rounded px-3 py-2 text-xs text-gold-light outline-none focus:border-gold">
+                            <option value="default">Main Admin</option>
+                            <option value="papa">Papa's WhatsApp</option>
+                            <option value="mummy">Mummy's WhatsApp</option>
+                            <option value="groom">Akshay's WhatsApp</option>
+                            <option value="bride">Himanshi's WhatsApp</option>
+                        </select>
+                        <button onclick="addNewSession()" title="Add custom device" class="bg-gold/10 hover:bg-gold/25 border border-gold/30 text-gold px-3 rounded flex items-center justify-center transition">
+                            <i class="fa-solid fa-plus text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Disconnected State (QR Code) -->
+                <div id="wa-disconnected" class="flex flex-col items-center justify-center p-4">
+                    <p class="text-xs text-center text-gold/70 mb-4 max-w-[280px]">
+                        Scan this QR code from your phone's linked devices screen in WhatsApp to authenticate.
+                    </p>
+                    <div class="bg-white p-4 rounded-lg relative w-56 h-56 flex items-center justify-center border border-gold/30">
+                        <div id="qr-loading" class="absolute inset-0 bg-white/90 flex flex-col items-center justify-center text-black">
+                            <i class="fa-solid fa-spinner animate-spin text-gold text-3xl mb-2"></i>
+                            <span class="text-[10px] uppercase font-bold tracking-widest text-gray-500">Waiting for QR...</span>
+                        </div>
+                        <img id="qr-image" src="" alt="WhatsApp QR Code" class="w-full h-full hidden">
+                    </div>
+                </div>
+
+                <!-- Connecting State -->
+                <div id="wa-connecting" class="hidden flex flex-col items-center justify-center p-12 text-center">
+                    <i class="fa-solid fa-circle-notch animate-spin text-gold text-4xl mb-4"></i>
+                    <p class="text-sm font-semibold tracking-wider">Establishing Connection...</p>
+                    <p class="text-[10px] text-gold/60 mt-1">Starting Puppeteer headless instance. This may take a minute.</p>
+                </div>
+
+                <!-- Connected State -->
+                <div id="wa-connected" class="hidden flex flex-col items-center justify-center p-6 text-center">
+                    <div class="w-20 h-20 bg-green-500/10 border border-green-500/30 rounded-full flex items-center justify-center text-green-500 text-3xl mb-4 shadow-[0_0_20px_rgba(34,197,94,0.15)]">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <p class="text-base font-semibold tracking-wide text-green-400" id="connected-user">Successfully Connected!</p>
+                    <p class="text-xs text-gold/60 mt-2" id="connected-phone">Session Active</p>
+                    <button onclick="logoutWA()" class="mt-6 border border-red-500/40 text-red-400 text-xs px-6 py-2 hover:bg-red-500/15 rounded transition duration-300">
+                        Disconnect Session
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard Stats -->
+            <div class="bg-royal-card gold-border-glow p-6 rounded-lg transition duration-300">
+                <h2 class="royal-font text-lg tracking-wider text-gold mb-6 font-bold">
+                    <i class="fa-solid fa-chart-pie mr-2"></i>Statistics
+                </h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-royal-bg/50 border border-gold/15 p-4 rounded text-center">
+                        <p class="text-[10px] text-gold/60 tracking-wider uppercase">Total Guests</p>
+                        <p id="stat-total" class="text-3xl font-semibold text-gold mt-1">0</p>
+                    </div>
+                    <div class="bg-royal-bg/50 border border-gold/15 p-4 rounded text-center">
+                        <p class="text-[10px] text-gold/60 tracking-wider uppercase">Invites Sent</p>
+                        <p id="stat-sent" class="text-3xl font-semibold text-green-400 mt-1">0</p>
+                    </div>
+                    <div class="bg-royal-bg/50 border border-gold/15 p-4 rounded text-center">
+                        <p class="text-[10px] text-gold/60 tracking-wider uppercase">Pending Invites</p>
+                        <p id="stat-pending" class="text-3xl font-semibold text-yellow-500 mt-1">0</p>
+                    </div>
+                    <div class="bg-royal-bg/50 border border-gold/15 p-4 rounded text-center">
+                        <p class="text-[10px] text-gold/60 tracking-wider uppercase">Completion</p>
+                        <p id="stat-percent" class="text-3xl font-semibold text-sky-400 mt-1">0%</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Templates Manager -->
+            <div class="bg-royal-card gold-border-glow p-6 rounded-lg transition duration-300">
+                <h2 class="royal-font text-lg tracking-wider text-gold mb-6 font-bold">
+                    <i class="fa-solid fa-envelope-open-text mr-2"></i>Templates List
+                </h2>
+                <div id="templates-selector-list" class="flex flex-col gap-3 max-h-[300px] overflow-y-auto pr-1">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ── RIGHT COLUMN (TABLE + ACTIONS) ── -->
+        <div class="lg:col-span-8 flex flex-col gap-8">
+            
+            <!-- Bulk Send Dashboard (Active Broadcast overlay) -->
+            <div id="bulk-progress-panel" class="hidden bg-royal-card border border-sky-500/30 p-6 rounded-lg relative overflow-hidden shadow-[0_0_20px_rgba(14,165,233,0.1)]">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-sky-500/5 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="royal-font text-base text-sky-400 tracking-wider font-bold">
+                            <i class="fa-solid fa-paper-plane animate-bounce mr-2"></i>Bulk Broadcast in Progress
+                        </h3>
+                        <p class="text-xs text-gold/60 mt-1" id="bulk-status-text">Sending invitations to your guest list...</p>
+                    </div>
+                    <button onclick="cancelBulkSend()" class="bg-red-950/50 hover:bg-red-900 border border-red-500/35 text-red-400 text-xs px-3 py-1.5 rounded transition">
+                        <i class="fa-solid fa-ban mr-1.5"></i>Cancel Broadcast
+                    </button>
+                </div>
+                
+                <!-- Progress bar -->
+                <div class="w-full bg-royal-bg border border-gold/10 rounded-full h-3.5 mb-2 overflow-hidden">
+                    <div id="bulk-progress-bar" class="bg-gradient-to-r from-sky-500 to-indigo-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+                <div class="flex justify-between text-xs text-gold/70 mb-4">
+                    <span id="bulk-numbers">Sent: 0 / 0</span>
+                    <span id="bulk-current-contact">Preparing next contact...</span>
+                </div>
+
+                <!-- Errors expander -->
+                <div id="bulk-errors-container" class="hidden">
+                    <button onclick="toggleBulkErrors()" class="text-xs text-red-400 hover:text-red-300 font-semibold focus:outline-none mb-2">
+                        <i class="fa-solid fa-circle-exclamation mr-1.5"></i>View Sending Failures (<span id="bulk-error-count">0</span>)
+                    </button>
+                    <div id="bulk-errors-list" class="hidden bg-royal-bg/60 border border-red-500/20 p-3 rounded text-xs text-red-300 max-h-[120px] overflow-y-auto font-mono">
+                        <!-- Failed numbers list -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guest List Card -->
+            <div class="bg-royal-card gold-border-glow p-6 rounded-lg transition duration-300">
+                
+                <!-- Tabs and Toolbar -->
+                <div class="flex flex-col border-b border-gold/15 pb-4 mb-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
+                        <!-- Tab Buttons -->
+                        <div class="flex border-b border-gold/15 md:border-none gap-2 pb-2 md:pb-0">
+                            <button id="tab-btn-directory" onclick="switchTab('directory')" class="royal-font text-base sm:text-lg tracking-wider text-gold font-bold border-b-2 border-gold pb-2 px-2 focus:outline-none transition">
+                                <i class="fa-solid fa-users mr-2"></i>Guest Directory
+                            </button>
+                            <button id="tab-btn-whatsapp" onclick="switchTab('whatsapp')" class="royal-font text-base sm:text-lg tracking-wider text-gold/50 font-semibold border-b-2 border-transparent pb-2 px-2 hover:text-gold/80 focus:outline-none transition">
+                                <i class="fa-brands fa-whatsapp mr-2 text-green-500"></i>WhatsApp Contacts
+                            </button>
+                        </div>
+                        
+                        <!-- Guest Directory Toolbar (Visible on Guest Tab) -->
+                        <div id="directory-toolbar" class="flex flex-wrap gap-2">
+                            <!-- Add guest button -->
+                            <button onclick="openAddGuestModal()" class="bg-gold text-royal-bg text-xs px-4 py-2 hover:bg-gold-light font-bold flex items-center gap-1.5 transition">
+                                <i class="fa-solid fa-user-plus"></i>Add Guest
+                            </button>
+                            <!-- Import CSV button -->
+                            <label class="bg-royal-bg border border-gold/45 text-gold text-xs px-4 py-2 hover:bg-gold/10 font-bold flex items-center gap-1.5 cursor-pointer transition">
+                                <i class="fa-solid fa-file-csv"></i>Import CSV
+                                <input type="file" id="csv-input" accept=".csv" class="hidden" onchange="importCSV(this)">
+                            </label>
+                            <!-- Select all / action buttons -->
+                            <button onclick="triggerBulkSendModal()" class="bg-gradient-to-r from-yellow-500 to-gold text-royal-bg text-xs px-4 py-2 font-bold hover:brightness-115 flex items-center gap-1.5 transition">
+                                <i class="fa-solid fa-paper-plane animate-pulse"></i>Bulk Send Selected
+                            </button>
+                        </div>
+
+                        <!-- WhatsApp Contacts Toolbar (Visible on WhatsApp Tab) -->
+                        <div id="whatsapp-toolbar" class="hidden flex flex-wrap gap-2">
+                            <button onclick="syncWhatsAppContacts()" class="bg-royal-bg border border-gold/45 text-gold text-xs px-4 py-2 hover:bg-gold/10 font-bold flex items-center gap-1.5 transition">
+                                <i class="fa-solid fa-arrows-rotate mr-1.5"></i>Sync Contacts
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters & Search -->
+                <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                    <div class="flex-1 relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gold/40 text-sm"></i>
+                        <input type="text" id="search-query" onkeyup="filterActiveTab()" placeholder="Search guests by name or phone..." class="w-full bg-royal-bg/80 border border-gold/20 rounded pl-10 pr-4 py-2.5 text-sm text-gold-light outline-none focus:border-gold transition">
+                    </div>
+                    <div class="flex gap-2" id="directory-filters">
+                        <select id="filter-status" onchange="filterGuests()" class="bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold outline-none focus:border-gold">
+                            <option value="all">All Statuses</option>
+                            <option value="pending">Pending Invitations</option>
+                            <option value="sent">Sent Invitations</option>
+                        </select>
+                        <button onclick="clearSelectedGuests()" class="text-xs text-gold/60 border border-gold/15 px-3 py-2.5 hover:bg-gold/5">
+                            Clear Selection
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TAB 1: GUEST DIRECTORY -->
+                <div id="tab-content-directory">
+                    <!-- Guests Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-gold/20 text-gold/70 text-xs tracking-wider uppercase bg-royal-bg/40">
+                                    <th class="py-3 px-4 text-center w-12">
+                                        <input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll(this)" class="accent-gold h-4 w-4 rounded border-gray-300">
+                                    </th>
+                                    <th class="py-3 px-4">Guest Name</th>
+                                    <th class="py-3 px-4">WhatsApp Phone</th>
+                                    <th class="py-3 px-4 text-center">Status</th>
+                                    <th class="py-3 px-4">Sent Date</th>
+                                    <th class="py-3 px-4 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="guests-list" class="divide-y divide-gold/10 text-sm">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Empty state -->
+                    <div id="no-guests-state" class="hidden py-16 text-center">
+                        <i class="fa-solid fa-user-slash text-gold/30 text-5xl mb-4"></i>
+                        <p class="text-gold/80 text-base font-semibold">No Guests in Directory</p>
+                        <p class="text-xs text-gold/50 mt-1">Add guests manually, import a guest list via CSV, or import from the WhatsApp Contacts tab to start sending invites.</p>
+                    </div>
+                </div>
+
+                <!-- TAB 2: WHATSAPP CONTACTS -->
+                <div id="tab-content-whatsapp" class="hidden">
+                    <!-- WhatsApp Contacts Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-gold/20 text-gold/70 text-xs tracking-wider uppercase bg-royal-bg/40">
+                                    <th class="py-3 px-4">Contact Name</th>
+                                    <th class="py-3 px-4">WhatsApp Phone</th>
+                                    <th class="py-3 px-4 text-center">Address Book</th>
+                                    <th class="py-3 px-4 text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="whatsapp-contacts-list" class="divide-y divide-gold/10 text-sm">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- WhatsApp Disconnected state -->
+                    <div id="wa-contacts-disconnected-state" class="py-16 text-center">
+                        <i class="fa-brands fa-whatsapp text-gold/30 text-5xl mb-4"></i>
+                        <p class="text-gold/80 text-base font-semibold">WhatsApp Not Connected</p>
+                        <p class="text-xs text-gold/50 mt-1">Please scan the QR code and connect your WhatsApp account first to view your contact list.</p>
+                    </div>
+
+                    <!-- Loading state -->
+                    <div id="wa-contacts-loading-state" class="hidden py-16 text-center">
+                        <i class="fa-solid fa-spinner animate-spin text-gold text-4xl mb-4"></i>
+                        <p class="text-sm font-semibold tracking-wider">Fetching Contacts from Phone...</p>
+                        <p class="text-xs text-gold/50 mt-1">This retrieves your entire WhatsApp contact list. It may take up to 10 seconds.</p>
+                    </div>
+
+                    <!-- Empty contacts state -->
+                    <div id="wa-contacts-empty-state" class="hidden py-16 text-center">
+                        <i class="fa-solid fa-users-slash text-gold/30 text-5xl mb-4"></i>
+                        <p class="text-gold/80 text-base font-semibold">No Contacts Found</p>
+                        <p class="text-xs text-gold/50 mt-1">Could not find any contacts on the connected WhatsApp device.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Templates Editor Card -->
+            <div class="bg-royal-card gold-border-glow p-6 rounded-lg transition duration-300">
+                <div class="flex justify-between items-center border-b border-gold/15 pb-4 mb-4">
+                    <h2 class="royal-font text-lg tracking-wider text-gold font-bold">
+                        <i class="fa-solid fa-edit mr-2"></i>Template Configurator
+                    </h2>
+                    <button onclick="saveAllTemplates()" class="bg-gold text-royal-bg text-xs px-4 py-2 hover:bg-gold-light font-bold rounded transition">
+                        <i class="fa-solid fa-floppy-disk mr-1.5"></i>Save All Changes
+                    </button>
+                </div>
+                <div id="templates-editor-container" class="flex flex-col gap-6">
+                    <!-- Dynamically loaded templates -->
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- ── MODAL: ADD GUEST ── -->
+    <div id="modal-add-guest" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-royal-card border border-gold/40 rounded-lg w-full max-w-md p-6 relative">
+            <button onclick="closeAddGuestModal()" class="absolute top-4 right-4 text-gold/60 hover:text-gold text-lg focus:outline-none">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="royal-font text-lg text-gold mb-6 font-bold uppercase tracking-wider">Add New Guest</h3>
+            <form id="add-guest-form" onsubmit="submitAddGuest(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">Guest Name</label>
+                    <input type="text" id="add-guest-name" required placeholder="e.g. Ramesh Kumar" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold-light outline-none focus:border-gold">
+                </div>
+                <div>
+                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">WhatsApp Phone</label>
+                    <input type="text" id="add-guest-phone" required placeholder="e.g. 919876543210 (include country code)" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold-light outline-none focus:border-gold">
+                    <p class="text-[10px] text-gold/50 mt-1">Recommendation: Prepend 91 for Indian mobile numbers without spaces or +.</p>
+                </div>
+                <button type="submit" class="w-full bg-gold hover:bg-gold-light text-royal-bg font-bold py-3 text-xs tracking-wider uppercase transition mt-6">
+                    Add Guest To Directory
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ── MODAL: BULK SEND OPTIONS ── -->
+    <div id="modal-bulk-send" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-royal-card border border-gold/40 rounded-lg w-full max-w-lg p-6 relative">
+            <button onclick="closeBulkSendModal()" class="absolute top-4 right-4 text-gold/60 hover:text-gold text-lg focus:outline-none">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="royal-font text-lg text-gold mb-4 font-bold uppercase tracking-wider">Broadcast Options</h3>
+            <p class="text-xs text-gold/60 mb-6">Configure delay rules and templates to protect your WhatsApp account against account suspension.</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">Selected Contacts count</label>
+                    <div class="bg-royal-bg border border-gold/10 p-3 text-sm font-semibold text-center text-gold" id="bulk-selection-count">
+                        0 contacts selected
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">Select Message Template</label>
+                    <select id="bulk-select-tmpl" onchange="updateBulkPreview()" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-2.5 text-sm text-gold outline-none focus:border-gold">
+                        <!-- Loaded dynamically -->
+                    </select>
+                </div>
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-xs text-gold/70 uppercase tracking-wider">Anti-Suspension Delay Window</label>
+                        <span class="text-[10px] text-green-400 font-semibold uppercase">Highly Recommended</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex items-center bg-royal-bg border border-gold/20 rounded px-3">
+                            <span class="text-xs text-gold/50 mr-2">Min:</span>
+                            <input type="number" id="bulk-delay-min" value="6" min="2" class="w-full bg-transparent border-none py-2 text-sm text-gold-light outline-none">
+                            <span class="text-xs text-gold/50 ml-1">sec</span>
+                        </div>
+                        <div class="flex items-center bg-royal-bg border border-gold/20 rounded px-3">
+                            <span class="text-xs text-gold/50 mr-2">Max:</span>
+                            <input type="number" id="bulk-delay-max" value="12" min="3" class="w-full bg-transparent border-none py-2 text-sm text-gold-light outline-none">
+                            <span class="text-xs text-gold/50 ml-1">sec</span>
+                        </div>
+                    </div>
+                    <p class="text-[9px] text-gold/40 mt-1.5">Note: The system applies random delays in this range between each dispatch to simulate human behavior.</p>
+                </div>
+                <div>
+                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">Message Live Preview (Mock format for first contact)</label>
+                    <div id="bulk-msg-preview" class="bg-royal-bg/70 border border-gold/15 p-4 rounded text-xs text-gold/80 h-36 overflow-y-auto whitespace-pre-wrap font-sans">
+                        No template selected
+                    </div>
+                </div>
+                <button onclick="startBulkBroadcast()" class="w-full bg-gradient-to-r from-yellow-500 to-gold hover:brightness-110 text-royal-bg font-bold py-4 text-xs tracking-wider uppercase transition mt-6">
+                    <i class="fa-solid fa-paper-plane mr-2"></i>Initiate Bulk Broadcast
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── MODAL: CUSTOM MESSAGE INDIVIDUAL ── -->
+    <div id="modal-custom-msg" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-royal-card border border-gold/40 rounded-lg w-full max-w-lg p-6 relative">
+            <button onclick="closeCustomMsgModal()" class="absolute top-4 right-4 text-gold/60 hover:text-gold text-lg focus:outline-none">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="royal-font text-lg text-gold mb-2 font-bold uppercase tracking-wider">Send Custom Message</h3>
+            <p class="text-xs text-gold/60 mb-6" id="custom-msg-recipient">To: -</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">Template Shortcuts</label>
+                    <div class="flex flex-wrap gap-2" id="custom-msg-templates">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-gold/70 uppercase tracking-wider mb-2">Message Text</label>
+                    <textarea id="custom-msg-body" rows="6" class="w-full bg-royal-bg border border-gold/20 rounded p-4 text-sm text-gold-light outline-none focus:border-gold font-sans"></textarea>
+                </div>
+                <button onclick="sendIndividualCustomMessage()" class="w-full bg-gold hover:bg-gold-light text-royal-bg font-bold py-3.5 text-xs tracking-wider uppercase transition mt-6">
+                    <i class="fa-solid fa-paper-plane mr-1.5"></i>Send Message Now
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SYSTEM NOTIFICATIONS (TOASTS) ── -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2"></div>
+
+    <!-- ── SCRIPTS ── -->
+    <script>
+        let contacts = [];
+        let templates = [];
+        let activeBulkJob = false;
+        let selectedRecipientId = null;
+        let activeTab = 'directory';
+        let whatsappContacts = [];
+        let currentSessionId = 'default';
+
+        function switchTab(tab) {
+            activeTab = tab;
+            
+            const btnDir = document.getElementById('tab-btn-directory');
+            const btnWA = document.getElementById('tab-btn-whatsapp');
+            const contentDir = document.getElementById('tab-content-directory');
+            const contentWA = document.getElementById('tab-content-whatsapp');
+            const toolbarDir = document.getElementById('directory-toolbar');
+            const toolbarWA = document.getElementById('whatsapp-toolbar');
+            const filtersDir = document.getElementById('directory-filters');
+            const searchQuery = document.getElementById('search-query');
+
+            if (tab === 'directory') {
+                btnDir.className = 'royal-font text-base sm:text-lg tracking-wider text-gold font-bold border-b-2 border-gold pb-2 px-2 focus:outline-none transition';
+                btnWA.className = 'royal-font text-base sm:text-lg tracking-wider text-gold/50 font-semibold border-b-2 border-transparent pb-2 px-2 hover:text-gold/80 focus:outline-none transition';
+                contentDir.classList.remove('hidden');
+                contentWA.classList.add('hidden');
+                toolbarDir.classList.remove('hidden');
+                toolbarWA.classList.add('hidden');
+                filtersDir.classList.remove('hidden');
+                searchQuery.placeholder = 'Search guests by name or phone...';
+                searchQuery.value = '';
+                filterGuests();
+            } else {
+                btnWA.className = 'royal-font text-base sm:text-lg tracking-wider text-gold font-bold border-b-2 border-gold pb-2 px-2 focus:outline-none transition';
+                btnDir.className = 'royal-font text-base sm:text-lg tracking-wider text-gold/50 font-semibold border-b-2 border-transparent pb-2 px-2 hover:text-gold/80 focus:outline-none transition';
+                contentWA.classList.remove('hidden');
+                contentDir.classList.add('hidden');
+                toolbarWA.classList.remove('hidden');
+                toolbarDir.classList.add('hidden');
+                filtersDir.classList.add('hidden');
+                searchQuery.placeholder = 'Search WhatsApp contacts...';
+                searchQuery.value = '';
+                
+                if (whatsappContacts.length === 0) {
+                    syncWhatsAppContacts();
+                } else {
+                    renderWhatsAppContacts();
+                }
+            }
+        }
+
+        async function syncWhatsAppContacts() {
+            const listContainer = document.getElementById('whatsapp-contacts-list');
+            const discState = document.getElementById('wa-contacts-disconnected-state');
+            const loadingState = document.getElementById('wa-contacts-loading-state');
+            const emptyState = document.getElementById('wa-contacts-empty-state');
+
+            listContainer.innerHTML = '';
+            discState.classList.add('hidden');
+            loadingState.classList.add('hidden');
+            emptyState.classList.add('hidden');
+
+            try {
+                const statusRes = await fetch(`/api/status?session=${currentSessionId}`);
+                const statusData = await statusRes.json();
+                if (statusData.status !== 'ready') {
+                    discState.classList.remove('hidden');
+                    return;
+                }
+
+                loadingState.classList.remove('hidden');
+
+                const res = await fetch(`/api/whatsapp-contacts?session=${currentSessionId}`);
+                if (!res.ok) {
+                    const errData = await res.json();
+                    throw new Error(errData.error || 'Failed to fetch contacts');
+                }
+                
+                whatsappContacts = await res.json();
+                loadingState.classList.add('hidden');
+
+                if (whatsappContacts.length === 0) {
+                    emptyState.classList.remove('hidden');
+                } else {
+                    renderWhatsAppContacts();
+                }
+            } catch (err) {
+                loadingState.classList.add('hidden');
+                showToast(err.message, 'error');
+                discState.classList.remove('hidden');
+            }
+        }
+
+        function renderWhatsAppContacts(listToRender = whatsappContacts) {
+            const tbody = document.getElementById('whatsapp-contacts-list');
+            tbody.innerHTML = '';
+
+            const guestPhones = contacts.map(c => c.phone.replace(/\D/g, ''));
+
+            listToRender.forEach(c => {
+                const cleanedPhone = c.phone.replace(/\D/g, '');
+                const isSaved = guestPhones.includes(cleanedPhone);
+                
+                const actionButton = isSaved
+                    ? `<span class="px-3 py-1 rounded text-xs font-bold bg-green-950 text-green-400 border border-green-500/20 uppercase tracking-wider"><i class="fa-solid fa-check mr-1"></i>Saved</span>`
+                    : `<button onclick="saveContactAsGuest('${c.name.replace(/'/g, "\\'")}', '${c.phone}')" class="bg-gold hover:bg-gold-light text-royal-bg text-xs px-3 py-1.5 font-bold rounded transition">
+                        <i class="fa-solid fa-user-plus mr-1"></i>Save Guest
+                       </button>`;
+
+                const inBook = c.isMyContact
+                    ? `<span class="text-green-400 text-xs"><i class="fa-solid fa-address-book mr-1.5"></i>Yes</span>`
+                    : `<span class="text-gold/40 text-xs">No (Recent Chat)</span>`;
+
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-royal-bg/30 transition border-b border-gold/5';
+                row.innerHTML = `
+                    <td class="py-3 px-4 font-semibold text-gold-light">${c.name}</td>
+                    <td class="py-3 px-4 text-xs font-mono text-gold/80">+${c.phone}</td>
+                    <td class="py-3 px-4 text-center">${inBook}</td>
+                    <td class="py-3 px-4 text-center">${actionButton}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        async function saveContactAsGuest(name, phone) {
+            try {
+                const res = await fetch('/api/contacts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, phone })
+                });
+                const data = await res.json();
+                
+                if (data.error) {
+                    showToast(data.error, 'error');
+                } else {
+                    showToast(`Saved ${name} as a guest!`);
+                    await loadContacts();
+                    renderWhatsAppContacts();
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        function filterActiveTab() {
+            const query = document.getElementById('search-query').value.toLowerCase();
+            if (activeTab === 'directory') {
+                filterGuests();
+            } else {
+                const filtered = whatsappContacts.filter(c => 
+                    c.name.toLowerCase().includes(query) || c.phone.toString().includes(query)
+                );
+                renderWhatsAppContacts(filtered);
+            }
+        }
+
+        // ════════════════ PAGE INIT & LOOPS ════════════════
+        document.addEventListener('DOMContentLoaded', () => {
+            loadContacts();
+            loadTemplates();
+            
+            // Start state sync timers (Fast poll when sending, slower when quiet)
+            setInterval(checkWhatsAppStatus, 3000);
+            setInterval(checkBulkSendStatus, 1000);
+
+            // Run initial syncs
+            checkWhatsAppStatus();
+            checkBulkSendStatus();
+        });
+
+        // ════════════════ NOTIFICATIONS ════════════════
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            const bgClass = type === 'success' ? 'bg-green-950/90 border-green-500' : 'bg-red-950/90 border-red-500';
+            const textClass = type === 'success' ? 'text-green-300' : 'text-red-300';
+            const icon = type === 'success' ? 'fa-circle-check' : 'fa-triangle-exclamation';
+
+            toast.className = `flex items-center gap-3 border px-5 py-3.5 rounded shadow-lg backdrop-blur-md transition-all duration-300 translate-y-2 opacity-0 ${bgClass} ${textClass}`;
+            toast.innerHTML = `
+                <i class="fa-solid ${icon}"></i>
+                <span class="text-xs font-semibold tracking-wide">${message}</span>
+            `;
+            document.getElementById('toast-container').appendChild(toast);
+            
+            // Trigger animation
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            // Clear toast
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-[-10px]');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // ════════════════ WHATSAPP CLIENT ACTIONS ════════════════
+        function onSessionChange() {
+            currentSessionId = document.getElementById('session-select').value;
+            checkWhatsAppStatus();
+            if (activeTab === 'whatsapp') {
+                syncWhatsAppContacts();
+            }
+        }
+
+        async function addNewSession() {
+            const name = prompt("Enter profile name (e.g., Brother, Sister, Planner):");
+            if (!name) return;
+            const cleanName = name.trim().replace(/[^a-zA-Z0-9_-]/g, "");
+            if (!cleanName) {
+                alert("Invalid name. Use letters, numbers, dashes and underscores only.");
+                return;
+            }
+            try {
+                const res = await fetch('/api/create-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: cleanName })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    showToast(`Created profile '${cleanName}' successfully!`);
+                    currentSessionId = cleanName.toLowerCase();
+                    checkWhatsAppStatus();
+                } else {
+                    showToast(data.error || 'Failed to create profile', 'error');
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        function updateSessionDropdown(allSessions, activeSession) {
+            const select = document.getElementById('session-select');
+            if (!select) return;
+            
+            const existingIds = Array.from(select.options).map(opt => opt.value);
+            const newIds = allSessions.map(s => s.id);
+            const isMatch = existingIds.length === newIds.length && existingIds.every((v, i) => v === newIds[i]);
+            
+            if (!isMatch) {
+                select.innerHTML = '';
+                allSessions.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.id;
+                    opt.textContent = `${s.label} (${s.status === 'ready' ? 'Connected' : s.status})`;
+                    select.appendChild(opt);
+                });
+                select.value = activeSession;
+            } else {
+                allSessions.forEach((s, idx) => {
+                    select.options[idx].textContent = `${s.label} (${s.status === 'ready' ? 'Connected' : s.status})`;
+                });
+            }
+        }
+
+        async function checkWhatsAppStatus() {
+            try {
+                const res = await fetch(`/api/status?session=${currentSessionId}`);
+                const data = await res.json();
+                
+                // Keep selector synced
+                updateSessionDropdown(data.allSessions, data.activeSession);
+                
+                const badge = document.getElementById('conn-badge');
+                const disPanel = document.getElementById('wa-disconnected');
+                const connPanel = document.getElementById('wa-connecting');
+                const readyPanel = document.getElementById('wa-connected');
+                const qrLoading = document.getElementById('qr-loading');
+                const qrImg = document.getElementById('qr-image');
+
+                if (data.status === 'ready') {
+                    badge.textContent = 'CONNECTED';
+                    badge.className = 'px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-green-950/50 text-green-400 border border-green-500/30';
+                    disPanel.classList.add('hidden');
+                    connPanel.classList.add('hidden');
+                    readyPanel.classList.remove('hidden');
+
+                    if (data.info) {
+                        document.getElementById('connected-user').textContent = `Linked: ${data.info.pushname || 'Admin Session'}`;
+                        document.getElementById('connected-phone').textContent = `Number: +${data.info.wid.user}`;
+                    }
+                } else if (data.status === 'connecting') {
+                    badge.textContent = 'CONNECTING';
+                    badge.className = 'px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-yellow-950/50 text-yellow-400 border border-yellow-500/30';
+                    disPanel.classList.add('hidden');
+                    connPanel.classList.remove('hidden');
+                    readyPanel.classList.add('hidden');
+                } else {
+                    badge.textContent = 'DISCONNECTED';
+                    badge.className = 'px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-red-950/50 text-red-400 border border-red-500/30';
+                    disPanel.classList.remove('hidden');
+                    connPanel.classList.add('hidden');
+                    readyPanel.classList.add('hidden');
+
+                    if (data.qrCode) {
+                        qrLoading.classList.add('hidden');
+                        qrImg.src = data.qrCode;
+                        qrImg.classList.remove('hidden');
+                    } else {
+                        qrLoading.classList.remove('hidden');
+                        qrImg.classList.add('hidden');
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to sync WhatsApp status:', err);
+            }
+        }
+
+        async function logoutAdmin() {
+            if (!confirm('Are you sure you want to end your administrator session?')) return;
+            try {
+                const res = await fetch('/api/logout-admin', { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                    showToast('Logged out of Admin Portal');
+                    setTimeout(() => {
+                        window.location.href = '/login.html';
+                    }, 500);
+                } else {
+                    showToast('Failed to logout', 'error');
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        async function logoutWA() {
+            if (!confirm(`Are you sure you want to disconnect the '${currentSessionId}' WhatsApp session?`)) return;
+            try {
+                const res = await fetch('/api/logout', { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ session: currentSessionId })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(`Logged out session '${currentSessionId}'`);
+                    checkWhatsAppStatus();
+                } else {
+                    showToast(data.error || 'Failed to logout', 'error');
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        async function restartClient() {
+            if (!confirm(`This will restart the Puppeteer process for '${currentSessionId}'. Do you want to continue?`)) return;
+            try {
+                const res = await fetch('/api/restart', { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ session: currentSessionId })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(`WhatsApp client '${currentSessionId}' is restarting...`);
+                    checkWhatsAppStatus();
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        // ════════════════ CONTACTS DATA MANAGEMENT ════════════════
+        async function loadContacts() {
+            try {
+                const res = await fetch('/api/contacts');
+                contacts = await res.json();
+                renderGuests();
+                updateStats();
+            } catch (err) {
+                showToast('Failed to load guest directory', 'error');
+            }
+        }
+
+        function updateStats() {
+            const total = contacts.length;
+            const sent = contacts.filter(c => c.status === 'sent').length;
+            const pending = total - sent;
+            const percent = total > 0 ? Math.round((sent / total) * 100) : 0;
+
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-sent').textContent = sent;
+            document.getElementById('stat-pending').textContent = pending;
+            document.getElementById('stat-percent').textContent = `${percent}%`;
+        }
+
+        function renderGuests(listToRender = contacts) {
+            const tbody = document.getElementById('guests-list');
+            const noGuests = document.getElementById('no-guests-state');
+            tbody.innerHTML = '';
+
+            if (listToRender.length === 0) {
+                noGuests.classList.remove('hidden');
+                return;
+            }
+            noGuests.classList.add('hidden');
+
+            listToRender.forEach(g => {
+                const statusBadge = g.status === 'sent' 
+                    ? '<span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider bg-green-950/65 text-green-400 border border-green-500/25">Sent</span>'
+                    : '<span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider bg-yellow-950/40 text-yellow-500 border border-yellow-500/20">Pending</span>';
+
+                const sentDate = g.sentAt 
+                    ? new Date(g.sentAt).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })
+                    : '-';
+
+                // Build template buttons dynamically based on templates config
+                let templateButtonsHtml = '';
+                templates.forEach(t => {
+                    const shortTitle = t.title.split(' ')[0]; // E.g., "Official", "Sangeet", "Reception"
+                    templateButtonsHtml += `
+                        <button onclick="sendTemplateInvite('${g.id}', '${g.phone}', '${g.name}', '${t.id}')" title="Send message: ${t.title}" class="bg-gold hover:bg-gold-light text-royal-bg px-2 py-1 text-[10px] rounded transition font-bold whitespace-nowrap">
+                            <i class="fa-solid fa-paper-plane mr-1 text-[8px]"></i>${shortTitle}
+                        </button>
+                    `;
+                });
+
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-royal-bg/30 transition border-b border-gold/5';
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-center">
+                        <input type="checkbox" data-id="${g.id}" class="guest-selector accent-gold h-4 w-4 rounded border-gray-300">
+                    </td>
+                    <td class="py-3 px-4 font-semibold text-gold-light">${g.name}</td>
+                    <td class="py-3 px-4 text-xs font-mono text-gold/80">+${g.phone}</td>
+                    <td class="py-3 px-4 text-center">${statusBadge}</td>
+                    <td class="py-3 px-4 text-xs text-gold/60">${sentDate}</td>
+                    <td class="py-3 px-4 text-center flex flex-wrap items-center justify-center gap-1.5">
+                        ${templateButtonsHtml}
+                        <button onclick="openCustomMsgModal('${g.id}', '${g.name}', '${g.phone}')" title="Custom message" class="border border-gold/45 text-gold hover:bg-gold/10 px-2 py-1 text-[10px] rounded transition flex items-center gap-1">
+                            <i class="fa-solid fa-comment-dots text-[8px]"></i>Custom
+                        </button>
+                        <button onclick="deleteGuest('${g.id}')" title="Delete guest" class="text-red-400 hover:text-red-300 px-2 py-1 text-xs transition">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function filterGuests() {
+            const query = document.getElementById('search-query').value.toLowerCase();
+            const statusFilter = document.getElementById('filter-status').value;
+
+            const filtered = contacts.filter(c => {
+                const matchesQuery = c.name.toLowerCase().includes(query) || c.phone.toString().includes(query);
+                const matchesStatus = statusFilter === 'all' || c.status === statusFilter;
+                return matchesQuery && matchesStatus;
+            });
+
+            renderGuests(filtered);
+        }
+
+        // ════════════════ GUEST CRUD INTERACTION ════════════════
+        function openAddGuestModal() {
+            document.getElementById('modal-add-guest').classList.remove('hidden');
+            document.getElementById('modal-add-guest').classList.add('flex');
+        }
+
+        function closeAddGuestModal() {
+            document.getElementById('modal-add-guest').classList.add('hidden');
+            document.getElementById('modal-add-guest').classList.remove('flex');
+            document.getElementById('add-guest-form').reset();
+        }
+
+        async function submitAddGuest(e) {
+            e.preventDefault();
+            const name = document.getElementById('add-guest-name').value.trim();
+            let phone = document.getElementById('add-guest-phone').value.trim();
+            
+            // Strip characters
+            phone = phone.replace(/\D/g, '');
+
+            try {
+                const res = await fetch('/api/contacts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, phone })
+                });
+                const data = await res.json();
+                
+                if (data.error) {
+                    showToast(data.error, 'error');
+                } else {
+                    showToast(`Added ${name} to directory`);
+                    closeAddGuestModal();
+                    loadContacts();
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        async function deleteGuest(id) {
+            if (!confirm('Are you sure you want to remove this guest?')) return;
+            try {
+                const res = await fetch(`/api/contacts/${id}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.success) {
+                    showToast('Guest removed');
+                    loadContacts();
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        // CSV Import
+        async function importCSV(input) {
+            if (!input.files || input.files.length === 0) return;
+            const file = input.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+
+            showToast('Uploading and parsing CSV...');
+
+            try {
+                const res = await fetch('/api/contacts/import', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    showToast(`Imported ${data.added} new guests!`);
+                    loadContacts();
+                } else {
+                    showToast(data.error || 'Failed to import CSV', 'error');
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+            // Reset input
+            input.value = '';
+        }
+
+        // Table Selection checkboxes
+        function toggleSelectAll(master) {
+            const selectors = document.querySelectorAll('.guest-selector');
+            selectors.forEach(s => s.checked = master.checked);
+        }
+
+        function getSelectedGuestIds() {
+            const selectors = document.querySelectorAll('.guest-selector:checked');
+            return Array.from(selectors).map(s => s.getAttribute('data-id'));
+        }
+
+        function clearSelectedGuests() {
+            document.getElementById('select-all-checkbox').checked = false;
+            toggleSelectAll({ checked: false });
+        }
+
+        // ════════════════ TEMPLATES CONFIG ════════════════
+        async function loadTemplates() {
+            try {
+                const res = await fetch('/api/templates');
+                templates = await res.json();
+                renderTemplatesEditor();
+                populateTemplateDropdowns();
+                renderGuests();
+            } catch (err) {
+                showToast('Failed to load templates config', 'error');
+            }
+        }
+
+        function renderTemplatesEditor() {
+            const container = document.getElementById('templates-editor-container');
+            container.innerHTML = '';
+
+            templates.forEach((tmpl, idx) => {
+                const card = document.createElement('div');
+                card.className = 'bg-royal-bg/50 border border-gold/10 p-4 rounded space-y-3';
+                card.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <input type="text" value="${tmpl.title}" id="tmpl-title-${tmpl.id}" class="bg-transparent border-b border-gold/20 font-semibold text-sm text-gold py-1 outline-none focus:border-gold w-3/4">
+                        <span class="text-[10px] font-mono text-gold/40">ID: ${tmpl.id}</span>
+                    </div>
+                    <div>
+                        <textarea id="tmpl-body-${tmpl.id}" rows="5" class="w-full bg-royal-bg border border-gold/15 rounded p-3 text-xs text-gold-light outline-none focus:border-gold font-sans">${tmpl.body}</textarea>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function populateTemplateDropdowns() {
+            // Bulk Send Dropdown
+            const select = document.getElementById('bulk-select-tmpl');
+            select.innerHTML = '<option value="">-- Choose Wedding Invite Template --</option>';
+            templates.forEach(tmpl => {
+                select.innerHTML += `<option value="${tmpl.id}">${tmpl.title}</option>`;
+            });
+        }
+
+        async function saveAllTemplates() {
+            const updated = templates.map(t => {
+                return {
+                    id: t.id,
+                    title: document.getElementById(`tmpl-title-${t.id}`).value,
+                    body: document.getElementById(`tmpl-body-${t.id}`).value
+                };
+            });
+
+            try {
+                const res = await fetch('/api/templates', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ templates: updated })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast('Templates configurations saved!');
+                    templates = updated;
+                    populateTemplateDropdowns();
+                    renderGuests();
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        // ════════════════ INDIVIDUAL MESSAGE ACTIONS ════════════════
+        async function sendTemplateInvite(id, phone, name, templateId) {
+            const tmpl = templates.find(t => t.id === templateId);
+            if (!tmpl) {
+                return showToast('No templates configured', 'error');
+            }
+            
+            const personalized = tmpl.body.replace(/{name}/g, name);
+            showToast(`Queueing '${tmpl.title.split(' ')[0]}' invite to ${name}...`);
+
+            try {
+                const res = await fetch('/api/send-message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contactId: id,
+                        phone: phone,
+                        message: personalized,
+                        session: currentSessionId
+                    })
+                });
+                const data = await res.json();
+                
+                if (data.error) {
+                    showToast(data.error, 'error');
+                } else {
+                    showToast(`Sent '${tmpl.title.split(' ')[0]}' invite to ${name}!`);
+                    loadContacts(); // Reload to update status badge
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        function openCustomMsgModal(id, name, phone) {
+            selectedRecipientId = id;
+            document.getElementById('custom-msg-recipient').textContent = `Recipient: ${name} (+${phone})`;
+            
+            // Build template shortcut buttons
+            const shortcuts = document.getElementById('custom-msg-templates');
+            shortcuts.innerHTML = '';
+            
+            templates.forEach(t => {
+                const btn = document.createElement('button');
+                btn.className = 'bg-royal-bg border border-gold/25 hover:bg-gold/15 text-[10px] px-2.5 py-1.5 text-gold tracking-wide rounded';
+                btn.textContent = t.title.split(' ')[0] + ' ' + t.title.split(' ').slice(1).join(' ').slice(0, 10) + '...';
+                btn.onclick = () => {
+                    const text = t.body.replace(/{name}/g, name);
+                    document.getElementById('custom-msg-body').value = text;
+                };
+                shortcuts.appendChild(btn);
+            });
+
+            document.getElementById('custom-msg-body').value = `Dear ${name},\n\n`;
+            
+            document.getElementById('modal-custom-msg').classList.remove('hidden');
+            document.getElementById('modal-custom-msg').classList.add('flex');
+        }
+
+        function closeCustomMsgModal() {
+            document.getElementById('modal-custom-msg').classList.add('hidden');
+            document.getElementById('modal-custom-msg').classList.remove('flex');
+            selectedRecipientId = null;
+        }
+
+        async function sendIndividualCustomMessage() {
+            const text = document.getElementById('custom-msg-body').value.trim();
+            const recipientObj = contacts.find(c => c.id === selectedRecipientId);
+            
+            if (!recipientObj) return showToast('Invalid recipient selection', 'error');
+            if (!text) return showToast('Please write a message body', 'error');
+
+            showToast(`Sending message to ${recipientObj.name}...`);
+            closeCustomMsgModal();
+
+            try {
+                const res = await fetch('/api/send-message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contactId: recipientObj.id,
+                        phone: recipientObj.phone,
+                        message: text,
+                        session: currentSessionId
+                    })
+                });
+                const data = await res.json();
+                
+                if (data.error) {
+                    showToast(data.error, 'error');
+                } else {
+                    showToast(`Custom message sent to ${recipientObj.name}!`);
+                    loadContacts();
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        // ════════════════ BULK BROADCAST ENGINE ════════════════
+        function triggerBulkSendModal() {
+            const selectedIds = getSelectedGuestIds();
+            if (selectedIds.length === 0) {
+                return showToast('Please select at least one guest in the directory', 'error');
+            }
+
+            document.getElementById('bulk-selection-count').textContent = `${selectedIds.length} contacts selected for broadcast`;
+            
+            // Reset fields
+            document.getElementById('bulk-select-tmpl').value = '1'; // Default to first template
+            updateBulkPreview();
+
+            document.getElementById('modal-bulk-send').classList.remove('hidden');
+            document.getElementById('modal-bulk-send').classList.add('flex');
+        }
+
+        function closeBulkSendModal() {
+            document.getElementById('modal-bulk-send').classList.add('hidden');
+            document.getElementById('modal-bulk-send').classList.remove('flex');
+        }
+
+        function updateBulkPreview() {
+            const tmplId = document.getElementById('bulk-select-tmpl').value;
+            const selectedIds = getSelectedGuestIds();
+            if (selectedIds.length === 0) return;
+
+            // Target first contact in selection to show mock preview
+            const firstContact = contacts.find(c => c.id === selectedIds[0]);
+            const previewBox = document.getElementById('bulk-msg-preview');
+
+            if (!tmplId) {
+                previewBox.textContent = 'No template selected';
+                return;
+            }
+
+            const tmpl = templates.find(t => t.id === tmplId);
+            if (tmpl && firstContact) {
+                previewBox.textContent = tmpl.body.replace(/{name}/g, firstContact.name);
+            }
+        }
+
+        async function startBulkBroadcast() {
+            const selectedIds = getSelectedGuestIds();
+            const templateId = document.getElementById('bulk-select-tmpl').value;
+            const delayMin = parseInt(document.getElementById('bulk-delay-min').value) || 6;
+            const delayMax = parseInt(document.getElementById('bulk-delay-max').value) || 12;
+
+            if (!templateId) return showToast('Please select a template to send', 'error');
+            if (delayMin < 1 || delayMax < delayMin) return showToast('Invalid delay range config', 'error');
+
+            showToast('Starting bulk sending broadcast in background...');
+            closeBulkSendModal();
+
+            try {
+                const res = await fetch('/api/bulk-send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contactIds: selectedIds,
+                        templateId: templateId,
+                        minDelay: delayMin,
+                        maxDelay: delayMax,
+                        session: currentSessionId
+                    })
+                });
+                const data = await res.json();
+                
+                if (data.error) {
+                    showToast(data.error, 'error');
+                } else {
+                    activeBulkJob = true;
+                    document.getElementById('bulk-progress-panel').classList.remove('hidden');
+                    clearSelectedGuests(); // Reset selection checkboxes
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        async function checkBulkSendStatus() {
+            try {
+                const res = await fetch('/api/bulk-status');
+                const data = await res.json();
+
+                const progressPanel = document.getElementById('bulk-progress-panel');
+                
+                if (data.sending) {
+                    activeBulkJob = true;
+                    progressPanel.classList.remove('hidden');
+                    
+                    // Calc progress percent
+                    const total = data.total;
+                    const sent = data.sent;
+                    const failed = data.failed;
+                    const done = sent + failed;
+                    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+
+                    document.getElementById('bulk-progress-bar').style.width = `${pct}%`;
+                    document.getElementById('bulk-numbers').textContent = `Sent: ${sent} | Failed: ${failed} | Total: ${total} (${pct}% complete)`;
+                    document.getElementById('bulk-current-contact').innerHTML = `<i class="fa-solid fa-spinner animate-spin text-sky-400 mr-1.5"></i>Sending to: <span class="font-bold text-gold">${data.currentContact || '-'}</span>`;
+
+                    // Handle errors displaying
+                    const errorsContainer = document.getElementById('bulk-errors-container');
+                    if (data.errors.length > 0) {
+                        errorsContainer.classList.remove('hidden');
+                        document.getElementById('bulk-error-count').textContent = data.errors.length;
+                        
+                        const errorsList = document.getElementById('bulk-errors-list');
+                        errorsList.innerHTML = data.errors.map(e => `<div>• Failed sending to [${e.name}]: ${e.error}</div>`).join('');
+                    } else {
+                        errorsContainer.classList.add('hidden');
+                    }
+                } else {
+                    // If it was active and just stopped
+                    if (activeBulkJob) {
+                        activeBulkJob = false;
+                        showToast(`Bulk broadcast completed. Sent: ${data.sent}, Failed: ${data.failed}`);
+                        loadContacts(); // reload directory status badges
+                        
+                        // Hide panel after a short delay so user can read complete status
+                        setTimeout(() => {
+                            if (!activeBulkJob) { // Check if a new job hasn't started
+                                progressPanel.classList.add('hidden');
+                            }
+                        }, 8000);
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to sync bulk sending status:', err);
+            }
+        }
+
+        async function cancelBulkSend() {
+            if (!confirm('Are you sure you want to stop the active broadcast? Messages already sent cannot be unsent.')) return;
+            try {
+                const res = await fetch('/api/bulk-cancel', { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                    showToast('Cancellation request submitted.');
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        function toggleBulkErrors() {
+            const list = document.getElementById('bulk-errors-list');
+            list.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>
