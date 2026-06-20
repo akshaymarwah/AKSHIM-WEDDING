@@ -766,7 +766,7 @@ app.post('/api/bulk-cancel', (req, res) => {
 });
 
 // Start Server
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`=============================================================`);
     console.log(`👑 AKSHIM WEDDING ROYAL INVITE SERVER RUNNING 👑`);
     console.log(`🔗 Admin Panel URL: http://localhost:${PORT}/admin.html`);
