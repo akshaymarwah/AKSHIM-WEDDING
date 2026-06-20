@@ -367,8 +367,17 @@ function doLogin() {
 
 function sendR() {
     const name = document.getElementById('rN').value;
+    const souls = document.getElementById('rG')?.value || 1;
+    const message = document.getElementById('rM')?.value || '';
     const box = document.getElementById('rsvpBox');
-    if (name && box) {
+
+    if (!name) {
+        alert("Please enter your name.");
+        return;
+    }
+
+    if (box) {
+        // Immediate Success UI
         box.innerHTML = `
             <div class="text-center py-20 flex flex-col items-center gap-6 animate-fadeIn">
                 <span class="font-pinyon gold-metallic text-6xl">Thank You</span>
@@ -379,6 +388,13 @@ function sendR() {
                 <div class="h-[1px] w-24 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mt-4"></div>
             </div>
         `;
+
+        // Background sync to server
+        fetch('/api/rsvp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, souls, message })
+        }).catch(err => console.error("RSVP Sync Error:", err));
     }
 }
 

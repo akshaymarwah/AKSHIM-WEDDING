@@ -69,6 +69,28 @@ app.post('/api/logout-admin', (req, res) => {
     res.json({ success: true });
 });
 
+// Public RSVP endpoint (No authentication required)
+app.post('/api/rsvp', (req, res) => {
+    const { name, souls, message } = req.body;
+    if (!name) return res.status(400).json({ error: 'Name is required' });
+
+    const contacts = getContacts();
+    const newContact = {
+        id: "RSVP-" + Date.now().toString(),
+        name: name,
+        phone: '', // Guest didn't provide phone in current UI, but we save the name
+        souls: souls || 1,
+        message: message || '',
+        status: 'pending',
+        sentAt: null,
+        type: 'rsvp'
+    };
+
+    contacts.push(newContact);
+    saveContacts(contacts);
+    res.json({ success: true, contact: newContact });
+});
+
 // Apply authentication check to all other API endpoints
 app.use('/api', (req, res, next) => {
     if (req.path === '/login') {
