@@ -24,11 +24,17 @@ process.on('unhandledRejection', (reason, promise) => {
 
 // ════════════════ SECURE ADMIN AUTHENTICATION ════════════════
 const sessions = new Map(); // token -> { userId, username, name, role }
+const guestSessions = new Map(); // token -> { guestId, name, phone }
 
 // Helper to parse cookies manually
 function getSessionToken(req) {
     const cookies = req.headers.cookie || '';
     return cookies.split(';').find(c => c.trim().startsWith('session_token='))?.split('=')[1];
+}
+
+function getGuestToken(req) {
+    const cookies = req.headers.cookie || '';
+    return cookies.split(';').find(c => c.trim().startsWith('guest_token='))?.split('=')[1];
 }
 
 // Authentication middleware
@@ -114,6 +120,63 @@ app.post('/api/change-password', requireAuth, (req, res) => {
     res.json({ success: true, message: 'Password updated successfully' });
 });
 
+// ════════════════ GUEST AUTHENTICATION ════════════════
+function requireGuestAuth(req, res, next) {
+    const token = getGuestToken(req);
+    if (token && guestSessions.has(token)) {
+        req.guest = guestSessions.get(token);
+        return next();
+    }
+    res.status(401).json({ error: 'Guest session expired. Please login again.' });
+}
+
+app.get('/api/guest/status', (req, res) => {
+    const token = getGuestToken(req);
+    if (token && guestSessions.has(token)) {
+        const guest = guestSessions.get(token);
+        // Refresh guest data from file to get latest RSVP status
+        const contacts = getContacts();
+        const freshData = contacts.find(c => c.id === guest.guestId);
+        return res.json({ loggedIn: true, guest: freshData || guest });
+    }
+    res.json({ loggedIn: false });
+});
+
+app.post('/api/guest/login', (req, res) => {
+    const { phone } = req.body;
+    if (!phone) return res.status(400).json({ error: 'Phone number is required' });
+
+    const cleanPhone = phone.replace(/\D/g, '');
+    const contacts = getContacts();
+    
+    // Find guest by phone (handle both 10-digit and international formats)
+    const guest = contacts.find(c => {
+        const cPhone = c.phone.replace(/\D/g, '');
+        return cPhone === cleanPhone || cPhone === '91' + cleanPhone || '91' + cPhone === cleanPhone;
+    });
+
+    if (guest) {
+        const token = 'guest_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+        guestSessions.set(token, {
+            guestId: guest.id,
+            name: guest.name,
+            phone: guest.phone
+        });
+        res.setHeader('Set-Cookie', `guest_token=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=2592000`); // 30 days
+        res.json({ success: true, guest: { name: guest.name, id: guest.id, rsvpStatus: guest.status } });
+    } else {
+        res.status(401).json({ error: 'Guest not found. Please ensure you are using the registered phone number.' });
+    }
+});
+
+app.post('/api/guest/logout', (req, res) => {
+    const token = getGuestToken(req);
+    if (token) guestSessions.delete(token);
+    res.setHeader('Set-Cookie', 'guest_token=; Path=/; HttpOnly; Max-Age=0');
+    res.json({ success: true });
+});
+
+
 // Public RSVP endpoint (No authentication required)
 app.post('/api/rsvp', (req, res) => {
     const { name, souls, message } = req.body;
@@ -138,7 +201,7 @@ app.post('/api/rsvp', (req, res) => {
 
 // Apply authentication check to all other API endpoints
 app.use('/api', (req, res, next) => {
-    if (req.path === '/login') {
+    if (req.path === '/login' || req.path === '/rsvp') {
         return next();
     }
     requireAuth(req, res, next);
@@ -152,11 +215,12 @@ app.use((req, res, next) => {
         /\.env/i,
         /\.js$/i, // Block all scripts by default (server.js, etc.)
         /package/i,
-        /wwebjs_auth/i
+        /wwebjs_auth/i,
+        /data\//i // Block all access to the data folder
     ];
     
     // Explicitly allow public scripts and assets
-    if (req.path === '/main.js' || req.path === '/index.css' || req.path === '/login.html') {
+    if (req.path === '/main.js' || req.path === '/index.css' || req.path === '/login.html' || req.path.startsWith('/images/')) {
         return next();
     }
     
@@ -174,9 +238,22 @@ app.get('/', (req, res) => {
 });
 
 // Paths for persistent data
-const CONTACTS_FILE = path.join(__dirname, 'contacts.json');
-const TEMPLATES_FILE = path.join(__dirname, 'templates.json');
-const GROUPS_FILE = path.join(__dirname, 'groups.json');
+const DATA_DIR = path.join(__dirname, 'data');
+if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR);
+
+const CONTACTS_FILE = path.join(DATA_DIR, 'contacts.json');
+const TEMPLATES_FILE = path.join(DATA_DIR, 'templates.json');
+const GROUPS_FILE = path.join(DATA_DIR, 'groups.json');
+const USERS_FILE = path.join(DATA_DIR, 'users.json');
+
+// Migrate existing files if they exist in root
+['contacts.json', 'templates.json', 'groups.json', 'users.json'].forEach(f => {
+    const oldPath = path.join(__dirname, f);
+    const newPath = path.join(DATA_DIR, f);
+    if (fs.existsSync(oldPath) && !fs.existsSync(newPath)) {
+        fs.renameSync(oldPath, newPath);
+    }
+});
 
 // Initialize files if they don't exist
 if (!fs.existsSync(CONTACTS_FILE)) {
@@ -403,13 +480,13 @@ function formatPhone(phone) {
 // Helper to load contacts
 function getUsers() {
     try {
-        if (!fs.existsSync('users.json')) return [];
-        return JSON.parse(fs.readFileSync('users.json', 'utf8'));
+        if (!fs.existsSync(USERS_FILE)) return [];
+        return JSON.parse(fs.readFileSync(USERS_FILE, 'utf8'));
     } catch (e) { return []; }
 }
 
 function saveUsers(users) {
-    fs.writeFileSync('users.json', JSON.stringify(users, null, 2));
+    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
 }
 
 function getContacts() {

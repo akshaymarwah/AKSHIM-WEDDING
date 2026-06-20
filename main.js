@@ -351,17 +351,85 @@ function openLogin() {
     }
 }
 
-function doLogin() {
-    const name = document.getElementById('lN').value.trim();
-    if (name) {
-        document.getElementById('loginModal').classList.add('hidden');
-        const lock = document.getElementById('rsvpLock');
-        if (lock) lock.remove();
-        const hw = document.getElementById('hw');
-        if (hw) {
-            hw.textContent = `Welcome, ${name}! The Marwah family is honored by your presence.`;
-            hw.classList.remove('hidden');
+function closeLogin() {
+    const modal = document.getElementById('loginModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+async function doLogin() {
+    const phone = document.getElementById('lP').value.trim();
+    const btn = document.getElementById('login-submit-btn');
+    const err = document.getElementById('login-error');
+
+    if (!phone) return;
+    
+    G.busy = true;
+    btn.textContent = "VERIFYING...";
+    btn.disabled = true;
+    err.classList.add('hidden');
+
+    try {
+        const res = await fetch('/api/guest/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            G.guest = data.guest;
+            updateGuestUI();
+            closeLogin();
+        } else {
+            err.textContent = data.error || "Access Denied";
+            err.classList.remove('hidden');
         }
+    } catch (e) {
+        err.textContent = "Connection Error";
+        err.classList.remove('hidden');
+    } finally {
+        G.busy = false;
+        btn.textContent = "ENTER CELEBRATION";
+        btn.disabled = false;
+    }
+}
+
+async function checkGuestStatus() {
+    try {
+        const res = await fetch('/api/guest/status');
+        const data = await res.json();
+        if (data.loggedIn) {
+            G.guest = data.guest;
+            updateGuestUI();
+        }
+    } catch (e) {}
+}
+
+function updateGuestUI() {
+    if (!G.guest) return;
+
+    // Update Nav
+    const navBtn = document.getElementById('guest-login-btn');
+    if (navBtn) {
+        navBtn.textContent = G.guest.name.toUpperCase();
+        navBtn.classList.add('border-gold');
+    }
+
+    // Update Hero Greeting
+    const welcome = document.getElementById('guest-welcome');
+    const greeting = document.getElementById('guest-greeting');
+    if (welcome && greeting) {
+        greeting.textContent = `Welcome, ${G.guest.name}`;
+        welcome.classList.remove('hidden');
+    }
+
+    // Pre-fill RSVP
+    const rsvpName = document.getElementById('rN');
+    if (rsvpName && !rsvpName.value) {
+        rsvpName.value = G.guest.name;
     }
 }
 
@@ -414,4 +482,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initBRollEngine();
     initWarpEngine();
     runPreloader();
+    checkGuestStatus();
 });

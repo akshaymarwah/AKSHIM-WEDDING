@@ -610,6 +610,7 @@
         async function loadContacts() {
             try {
                 const res = await fetch('/api/contacts');
+                if (res.status === 401) return window.location.href = 'login.html';
                 contacts = await res.json();
                 renderGuests();
                 updateStats();
@@ -621,6 +622,7 @@
         async function fetchGroups() {
             try {
                 const res = await fetch('/api/groups');
+                if (res.status === 401) return window.location.href = 'login.html';
                 groups = await res.json();
                 populateGroupDropdowns();
                 renderGroupsEditor();
@@ -632,6 +634,7 @@
         async function loadTemplates() {
             try {
                 const res = await fetch('/api/templates');
+                if (res.status === 401) return window.location.href = 'login.html';
                 templates = await res.json();
                 renderTemplatesEditor();
                 renderTemplatesSelectorList();
