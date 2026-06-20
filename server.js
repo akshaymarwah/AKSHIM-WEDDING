@@ -78,7 +78,7 @@ app.post('/api/login', (req, res) => {
             role: user.role
         });
         res.setHeader('Set-Cookie', `session_token=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=86400`); // 1 day
-        res.json({ success: true, user: { name: user.name, role: user.role } });
+        res.json({ success: true, user: { name: user.name, role: user.role, username: user.username } });
     } else {
         res.status(401).json({ error: 'Invalid username or password' });
     }
@@ -119,6 +119,38 @@ app.post('/api/change-password', requireAuth, (req, res) => {
 
     res.json({ success: true, message: 'Password updated successfully' });
 });
+
+// Add new administrator/user
+app.post('/api/users', requireAuth, (req, res) => {
+    // Basic security: only superadmin can add users
+    if (req.user.role !== 'superadmin') {
+        return res.status(403).json({ error: 'Only Super Admin can add new profiles' });
+    }
+
+    const { username, password, name, phone } = req.body;
+    if (!username || !password || !name) {
+        return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const users = getUsers();
+    if (users.find(u => u.username === username)) {
+        return res.status(400).json({ error: 'Username already exists' });
+    }
+
+    const newUser = {
+        id: 'user_' + Date.now(),
+        username,
+        password,
+        name,
+        phone: phone || '',
+        role: 'admin'
+    };
+
+    users.push(newUser);
+    saveUsers(users);
+    res.json({ success: true, user: newUser });
+});
+
 
 // ════════════════ GUEST AUTHENTICATION ════════════════
 function requireGuestAuth(req, res, next) {
@@ -165,7 +197,26 @@ app.post('/api/guest/login', (req, res) => {
         res.setHeader('Set-Cookie', `guest_token=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=2592000`); // 30 days
         res.json({ success: true, guest: { name: guest.name, id: guest.id, rsvpStatus: guest.status } });
     } else {
-        res.status(401).json({ error: 'Guest not found. Please ensure you are using the registered phone number.' });
+        // Create a new entry for uninvited guests
+        const newGuest = {
+            id: 'uninvited_' + Date.now(),
+            name: 'New Guest', // Generic name, admin can update later
+            phone: cleanPhone,
+            status: 'uninvited',
+            sentAt: null,
+            groupId: ''
+        };
+        const updatedContacts = [...contacts, newGuest];
+        saveContacts(updatedContacts);
+
+        const token = 'guest_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+        guestSessions.set(token, {
+            guestId: newGuest.id,
+            name: newGuest.name,
+            phone: newGuest.phone
+        });
+        res.setHeader('Set-Cookie', `guest_token=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=2592000`);
+        res.json({ success: true, guest: { name: newGuest.name, id: newGuest.id, rsvpStatus: newGuest.status } });
     }
 });
 
@@ -300,9 +351,11 @@ function getSessionLabels() {
     const users = getUsers();
     const labels = {};
     users.forEach(u => {
-        labels[u.username] = `${u.name}'s WhatsApp`;
+        // Use the name if available, otherwise username
+        const displayName = u.name || u.username;
+        labels[u.username] = `${displayName}'s WhatsApp`;
     });
-    // Ensure default is always there if needed
+    // Ensure default is always there if no users match 'default'
     if (!labels['default']) labels['default'] = 'Main Admin';
     return labels;
 }
