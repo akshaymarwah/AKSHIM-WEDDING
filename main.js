@@ -359,12 +359,62 @@ function closeLogin() {
     }
 }
 
+async function requestOTP() {
+    const name = document.getElementById('lN').value.trim();
+    const phone = document.getElementById('lP').value.trim();
+    const btn = document.getElementById('otp-request-btn');
+    const err = document.getElementById('login-error');
+
+    if (!name || !phone) {
+        err.textContent = "Please enter your name and phone";
+        err.classList.remove('hidden');
+        return;
+    }
+
+    G.busy = true;
+    btn.textContent = "SENDING CODE...";
+    btn.disabled = true;
+    err.classList.add('hidden');
+
+    try {
+        const res = await fetch('/api/guest/request-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, phone })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            // Show Step 2
+            document.getElementById('login-step-1').classList.add('hidden');
+            document.getElementById('login-step-2').classList.remove('hidden');
+            document.getElementById('otp-request-btn').classList.add('hidden');
+            document.getElementById('login-submit-btn').classList.remove('hidden');
+            
+            if (data.debug) {
+                console.log("DEBUG: Check server logs for OTP (WhatsApp not connected)");
+            }
+        } else {
+            err.textContent = data.error || "Failed to send code";
+            err.classList.remove('hidden');
+        }
+    } catch (e) {
+        err.textContent = "Connection Error";
+        err.classList.remove('hidden');
+    } finally {
+        G.busy = false;
+        btn.textContent = "REQUEST ACCESS CODE";
+        btn.disabled = false;
+    }
+}
+
 async function doLogin() {
     const phone = document.getElementById('lP').value.trim();
+    const otp = document.getElementById('lOTP').value.trim();
     const btn = document.getElementById('login-submit-btn');
     const err = document.getElementById('login-error');
 
-    if (!phone) return;
+    if (!otp) return;
     
     G.busy = true;
     btn.textContent = "VERIFYING...";
@@ -375,7 +425,7 @@ async function doLogin() {
         const res = await fetch('/api/guest/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ phone })
+            body: JSON.stringify({ phone, otp })
         });
         const data = await res.json();
 
@@ -383,8 +433,10 @@ async function doLogin() {
             G.guest = data.guest;
             updateGuestUI();
             closeLogin();
+            // Reset for next time
+            resetLoginUI();
         } else {
-            err.textContent = data.error || "Access Denied";
+            err.textContent = data.error || "Invalid Code";
             err.classList.remove('hidden');
         }
     } catch (e) {
@@ -392,9 +444,19 @@ async function doLogin() {
         err.classList.remove('hidden');
     } finally {
         G.busy = false;
-        btn.textContent = "ENTER CELEBRATION";
+        btn.textContent = "VERIFY & ENTER";
         btn.disabled = false;
     }
+}
+
+function resetLoginUI() {
+    document.getElementById('login-step-1').classList.remove('hidden');
+    document.getElementById('login-step-2').classList.add('hidden');
+    document.getElementById('otp-request-btn').classList.remove('hidden');
+    document.getElementById('login-submit-btn').classList.add('hidden');
+    document.getElementById('lOTP').value = '';
+    document.getElementById('lN').value = '';
+    document.getElementById('lP').value = '';
 }
 
 async function checkGuestStatus() {

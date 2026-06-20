@@ -319,31 +319,34 @@
             <p class="font-cormorant italic text-[#fdf2cf]/70 text-base mb-8">Kindly enter your details to access the celebration</p>
             
             <div class="space-y-6 text-left">
-                <div>
-                    <label class="block text-[10px] text-[#D4AF37]/60 uppercase tracking-widest mb-2 font-bold ml-1">Full Name</label>
-                    <input type="text" id="lN" placeholder="Your Name" class="w-full bg-royal-bg/40 border border-[#D4AF37]/20 rounded px-4 py-4 text-sm outline-none font-montserrat text-[#fdf2cf] focus:border-[#D4AF37] transition-all">
-                </div>
-
-                <div>
-                    <label class="block text-[10px] text-[#D4AF37]/60 uppercase tracking-widest mb-2 font-bold ml-1">Mobile Number</label>
-                    <input type="tel" id="lP" placeholder="e.g. 9876543210" class="w-full bg-royal-bg/40 border border-[#D4AF37]/20 rounded px-4 py-4 text-sm outline-none font-montserrat text-[#fdf2cf] focus:border-[#D4AF37] transition-all">
-                    <div id="login-error" class="hidden text-red-400 text-[10px] mt-2 uppercase tracking-widest font-bold">Error encountered</div>
-                </div>
-
-                <div>
-                    <label class="block text-[10px] text-[#D4AF37]/60 uppercase tracking-widest mb-2 font-bold ml-1">Your Photo (Optional)</label>
-                    <div class="relative group">
-                        <input type="file" id="lPic" accept="image/*" class="hidden" onchange="updateFileName(this)">
-                        <label for="lPic" class="flex items-center justify-between w-full bg-royal-bg/40 border border-[#D4AF37]/20 rounded px-4 py-4 text-sm cursor-pointer hover:border-[#D4AF37]/50 transition-all">
-                            <span id="pic-name" class="text-[#fdf2cf]/30 font-montserrat truncate">Choose an image...</span>
-                            <i class="fa-solid fa-camera text-[#D4AF37]/40 group-hover:text-[#D4AF37]"></i>
-                        </label>
+                <div id="login-step-1">
+                    <div class="mb-6">
+                        <label class="block text-[10px] text-[#D4AF37]/60 uppercase tracking-widest mb-2 font-bold ml-1">Full Name</label>
+                        <input type="text" id="lN" placeholder="Your Name" class="w-full bg-royal-bg/40 border border-[#D4AF37]/20 rounded px-4 py-4 text-sm outline-none font-montserrat text-[#fdf2cf] focus:border-[#D4AF37] transition-all">
                     </div>
-                    <p class="text-[9px] text-[#D4AF37]/40 mt-2 italic">* Uploading your image will enable automatic tagging in photos.</p>
+
+                    <div>
+                        <label class="block text-[10px] text-[#D4AF37]/60 uppercase tracking-widest mb-2 font-bold ml-1">Mobile Number</label>
+                        <input type="tel" id="lP" placeholder="e.g. 9876543210" class="w-full bg-royal-bg/40 border border-[#D4AF37]/20 rounded px-4 py-4 text-sm outline-none font-montserrat text-[#fdf2cf] focus:border-[#D4AF37] transition-all">
+                    </div>
                 </div>
+
+                <div id="login-step-2" class="hidden">
+                    <div class="mb-2">
+                        <label class="block text-[10px] text-[#D4AF37]/60 uppercase tracking-widest mb-2 font-bold ml-1">Enter OTP Code</label>
+                        <input type="text" id="lOTP" placeholder="4-Digit Code" maxlength="4" class="w-full bg-royal-bg/40 border border-[#D4AF37]/20 rounded px-4 py-4 text-center text-xl tracking-[1em] outline-none font-montserrat text-gold focus:border-[#D4AF37] transition-all">
+                    </div>
+                    <p class="text-[9px] text-[#D4AF37]/40 text-center italic mb-6">Sent to your WhatsApp number</p>
+                </div>
+
+                <div id="login-error" class="hidden text-red-400 text-[10px] mt-2 mb-4 uppercase tracking-widest font-bold text-center">Error encountered</div>
                 
-                <button id="login-submit-btn" class="w-full bg-gold text-[#050010] font-bold py-5 mt-4 text-[10px] tracking-[0.4em] uppercase hover:brightness-110 transition-all rounded shadow-[0_0_20px_rgba(212,175,55,0.2)]" onclick="doLogin()">
-                    Enter Celebration
+                <button id="otp-request-btn" class="w-full bg-gold text-[#050010] font-bold py-5 mt-4 text-[10px] tracking-[0.4em] uppercase hover:brightness-110 transition-all rounded shadow-[0_0_20px_rgba(212,175,55,0.2)]" onclick="requestOTP()">
+                    Request Access Code
+                </button>
+
+                <button id="login-submit-btn" class="hidden w-full bg-gold text-[#050010] font-bold py-5 mt-4 text-[10px] tracking-[0.4em] uppercase hover:brightness-110 transition-all rounded shadow-[0_0_20px_rgba(212,175,55,0.2)]" onclick="doLogin()">
+                    Verify & Enter
                 </button>
             </div>
             

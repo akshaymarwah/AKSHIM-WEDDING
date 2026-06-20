@@ -25,6 +25,8 @@ process.on('unhandledRejection', (reason, promise) => {
 // ════════════════ SECURE ADMIN AUTHENTICATION ════════════════
 const sessions = new Map(); // token -> { userId, username, name, role }
 const guestSessions = new Map(); // token -> { guestId, name, phone }
+const guestOtps = new Map(); // phone -> { otp, name, expires }
+
 
 // Helper to parse cookies manually
 function getSessionToken(req) {
@@ -174,50 +176,92 @@ app.get('/api/guest/status', (req, res) => {
     res.json({ loggedIn: false });
 });
 
-app.post('/api/guest/login', (req, res) => {
+app.post('/api/guest/request-otp', async (req, res) => {
     const { phone, name } = req.body;
-    if (!phone) return res.status(400).json({ error: 'Phone number is required' });
+    if (!phone || !name) return res.status(400).json({ error: 'Name and phone are required' });
 
     const cleanPhone = phone.replace(/\D/g, '');
+    const otp = Math.floor(1000 + Math.random() * 9000).toString(); // 4 digit OTP
+    
+    // Store OTP with 5 min expiry
+    guestOtps.set(cleanPhone, { 
+        otp, 
+        name, 
+        expires: Date.now() + 5 * 60 * 1000 
+    });
+
+    // Find any active session to send from
+    let senderSession = null;
+    for (const [id, session] of Object.entries(whatsappSessions)) {
+        if (session.client && session.client.info && session.client.info.wid) {
+            senderSession = session.client;
+            break;
+        }
+    }
+
+    if (!senderSession) {
+        // Fallback for development/testing if no WA is connected
+        console.log(`[OTP DEBUG] No WhatsApp connected. OTP for ${cleanPhone} (${name}) is: ${otp}`);
+        return res.json({ success: true, debug: true });
+    }
+
+    try {
+        const target = cleanPhone.includes('@') ? cleanPhone : `${cleanPhone}@c.us`;
+        const message = `✨ *Pranaam ${name} ji!* ✨\n\nWe are delighted to have you join us for the celebrations. \n\nYour secret entry code to the *Akshim Wedding* is:\n\n👑 *${otp}* 👑\n\nPlease enter this code to view your personalized invitation. \n\nWith Warmth & Joy,\n*Marwah & Patel Families*`;
+        
+        await senderSession.sendMessage(target, message);
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Failed to send OTP:', err);
+        res.status(500).json({ error: 'Failed to send OTP message. Please try again.' });
+    }
+});
+
+app.post('/api/guest/login', (req, res) => {
+    const { phone, otp } = req.body;
+    if (!phone || !otp) return res.status(400).json({ error: 'Phone and OTP are required' });
+
+    const cleanPhone = phone.replace(/\D/g, '');
+    const stored = guestOtps.get(cleanPhone);
+
+    if (!stored || stored.otp !== otp || Date.now() > stored.expires) {
+        return res.status(401).json({ error: 'Invalid or expired OTP' });
+    }
+
+    const name = stored.name;
     const contacts = getContacts();
     
-    // Find guest by phone (handle both 10-digit and international formats)
-    const guest = contacts.find(c => {
+    // Find guest by phone
+    let guest = contacts.find(c => {
         const cPhone = c.phone.replace(/\D/g, '');
         return cPhone === cleanPhone || cPhone === '91' + cleanPhone || '91' + cPhone === cleanPhone;
     });
 
-    if (guest) {
-        const token = 'guest_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
-        guestSessions.set(token, {
-            guestId: guest.id,
-            name: guest.name,
-            phone: guest.phone
-        });
-        res.setHeader('Set-Cookie', `guest_token=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=2592000`); // 30 days
-        res.json({ success: true, guest: { name: guest.name, id: guest.id, rsvpStatus: guest.status } });
-    } else {
-        // Create a new entry for uninvited guests
-        const newGuest = {
+    if (!guest) {
+        // Create uninvited guest
+        guest = {
             id: 'uninvited_' + Date.now(),
-            name: name || 'New Guest', // Generic name, admin can update later
+            name: name,
             phone: cleanPhone,
             status: 'uninvited',
             sentAt: null,
             groupId: ''
         };
-        const updatedContacts = [...contacts, newGuest];
+        const updatedContacts = [...contacts, guest];
         saveContacts(updatedContacts);
-
-        const token = 'guest_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
-        guestSessions.set(token, {
-            guestId: newGuest.id,
-            name: newGuest.name,
-            phone: newGuest.phone
-        });
-        res.setHeader('Set-Cookie', `guest_token=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=2592000`);
-        res.json({ success: true, guest: { name: newGuest.name, id: newGuest.id, rsvpStatus: newGuest.status } });
     }
+
+    // Clean up OTP
+    guestOtps.delete(cleanPhone);
+
+    const token = 'guest_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+    guestSessions.set(token, {
+        guestId: guest.id,
+        name: guest.name,
+        phone: guest.phone
+    });
+    res.setHeader('Set-Cookie', `guest_token=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=2592000`); // 30 days
+    res.json({ success: true, guest: { name: guest.name, id: guest.id, rsvpStatus: guest.status } });
 });
 
 app.post('/api/guest/logout', (req, res) => {
