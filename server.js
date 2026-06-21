@@ -108,7 +108,10 @@ const BUCKET_NAME = 'whatsapp-sessions';
 async function uploadSession(sessionId) {
     try {
         const sessionPath = path.join(AUTH_DIR, `session-${sessionId}`);
-        if (!fs.existsSync(sessionPath)) return;
+        if (!fs.existsSync(sessionPath)) {
+            console.log(`[Supabase] [${sessionId}] No session folder found at ${sessionPath}`);
+            return;
+        }
         const zip = new AdmZip();
         zip.addLocalFolder(sessionPath);
         const { error } = await supabase.storage.from(BUCKET_NAME).upload(`${sessionId}.zip`, zip.toBuffer(), { upsert: true });
@@ -229,8 +232,20 @@ async function initWhatsApp(id = 'default') {
     await downloadSession(id);
     s.status = 'connecting';
     const client = new Client({
-        authStrategy: new LocalAuth({ clientId: `session-${id}`, dataPath: AUTH_DIR }),
-        puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] }
+        authStrategy: new LocalAuth({ clientId: id, dataPath: AUTH_DIR }),
+        puppeteer: { 
+            headless: true, 
+            args: [
+                '--no-sandbox', 
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-accelerated-2d-canvas',
+                '--no-first-run',
+                '--no-zygote',
+                '--single-process', // Faster on low resource cloud
+                '--disable-gpu'
+            ] 
+        }
     });
     s.client = client;
     client.on('qr', async qr => { s.status = 'disconnected'; s.qrCode = await qrcode.toDataURL(qr); });
