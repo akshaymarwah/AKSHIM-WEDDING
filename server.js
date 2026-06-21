@@ -109,27 +109,36 @@ async function uploadSession(sessionId) {
     try {
         const sessionPath = path.join(AUTH_DIR, `session-${sessionId}`);
         if (!fs.existsSync(sessionPath)) {
-            console.log(`[Supabase] [${sessionId}] No session folder found at ${sessionPath}`);
+            console.log(`[Supabase] [${sessionId}] Backup skipped: No session folder at ${sessionPath}`);
             return;
         }
+        console.log(`[Supabase] [${sessionId}] Zipping session files...`);
         const zip = new AdmZip();
         zip.addLocalFolder(sessionPath);
-        const { error } = await supabase.storage.from(BUCKET_NAME).upload(`${sessionId}.zip`, zip.toBuffer(), { upsert: true });
+        const buffer = zip.toBuffer();
+        console.log(`[Supabase] [${sessionId}] Uploading ${buffer.length} bytes to cloud...`);
+        const { error } = await supabase.storage.from(BUCKET_NAME).upload(`${sessionId}.zip`, buffer, { upsert: true });
         if (error) throw error;
-        console.log(`[Supabase] [${sessionId}] Session backed up.`);
-    } catch (err) { console.error(`[Supabase] [${sessionId}] Upload failed:`, err.message); }
+        console.log(`[Supabase] [${sessionId}] Session backup completed. 👑`);
+    } catch (err) { console.error(`[Supabase] [${sessionId}] Backup failed:`, err.message); }
 }
 
 async function downloadSession(sessionId) {
     try {
+        console.log(`[Supabase] [${sessionId}] Checking cloud backup...`);
         const { data, error } = await supabase.storage.from(BUCKET_NAME).download(`${sessionId}.zip`);
-        if (error) return;
+        if (error) {
+            console.log(`[Supabase] [${sessionId}] No cloud backup found.`);
+            return;
+        }
         const sessionPath = path.join(AUTH_DIR, `session-${sessionId}`);
         if (!fs.existsSync(sessionPath)) fs.mkdirSync(sessionPath, { recursive: true });
+        
+        console.log(`[Supabase] [${sessionId}] Restoring session files...`);
         const zip = new AdmZip(Buffer.from(await data.arrayBuffer()));
         zip.extractAllTo(sessionPath, true);
-        console.log(`[Supabase] [${sessionId}] Session restored.`);
-    } catch (err) { console.error(`[Supabase] [${sessionId}] Download failed:`, err.message); }
+        console.log(`[Supabase] [${sessionId}] Session restored successfully. 👑`);
+    } catch (err) { console.error(`[Supabase] [${sessionId}] Download/Restore failed:`, err.message); }
 }
 
 // ════════════════ AUTH MIDDLEWARE ════════════════
@@ -257,8 +266,9 @@ async function initWhatsApp(id = 'default') {
         s.status = 'ready'; 
         s.qrCode = null; 
         s.info = client.info; 
-        console.log(`[WhatsApp] [${id}] Ready. Refreshing cloud backup...`);
-        uploadSession(id); 
+        console.log(`[WhatsApp] [${id}] Ready. Session active for ${client.info.pushname || id}.`);
+        console.log(`[WhatsApp] [${id}] Refreshing cloud backup in 10s...`);
+        setTimeout(() => uploadSession(id), 10000); 
     });
     client.on('disconnected', () => { s.status = 'disconnected'; s.client = null; setTimeout(() => initWhatsApp(id), 5000); });
     client.initialize().catch(e => { s.status = 'disconnected'; console.error(e); });

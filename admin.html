@@ -294,7 +294,7 @@
                         <!-- Search -->
                         <div class="flex-1 relative">
                             <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gold/40 text-sm"></i>
-                            <input type="text" id="search-query" onkeyup="filterGuests()" placeholder="Search name or phone..." class="w-full bg-royal-bg/50 border border-gold/20 rounded pl-10 pr-4 py-3 text-xs text-gold-light outline-none focus:border-gold transition">
+                            <input type="text" id="search-query" oninput="filterGuests()" placeholder="Search name or phone..." class="w-full bg-royal-bg/50 border border-gold/20 rounded pl-10 pr-4 py-3 text-xs text-gold-light outline-none focus:border-gold transition">
                         </div>
                         
                         <!-- Dropdowns -->
@@ -807,7 +807,9 @@
             const group = document.getElementById('filter-group').value;
             
             const filtered = contacts.filter(g => {
-                const matchSearch = g.name.toLowerCase().includes(query) || g.phone.includes(query);
+                const n = (g.name || "").toLowerCase();
+                const p = (g.phone || "");
+                const matchSearch = n.includes(query) || p.includes(query);
                 const matchStatus = status === 'all' || g.status === status;
                 const matchGroup = group === 'all' || g.groupId === group;
                 return matchSearch && matchStatus && matchGroup;
