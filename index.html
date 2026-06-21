@@ -312,7 +312,9 @@
         <div class="max-w-[500px] w-full p-8 sm:p-12 text-center bg-[#0a0020] border border-[#D4AF37]/30 shadow-2xl relative overflow-hidden rounded-lg">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent opacity-50"></div>
             
-            <button onclick="closeLogin()" class="absolute top-4 right-4 text-[#D4AF37]/40 hover:text-[#D4AF37] transition-all"><i class="fa-solid fa-times text-xl"></i></button>
+            <button onclick="closeLogin()" class="absolute top-5 right-5 text-gold hover:text-white transition-all z-[10]">
+                <i class="fa-solid fa-circle-xmark text-2xl opacity-60 hover:opacity-100"></i>
+            </button>
             
             <img src="images/akshim_logo.png" alt="Logo" class="w-16 h-16 mx-auto mb-6 opacity-80">
             <h3 class="royal-head text-2xl gold-metallic mb-2 uppercase tracking-[0.3em]">Guest Access</h3>
@@ -348,6 +350,12 @@
                 <button id="login-submit-btn" class="hidden w-full bg-gold text-[#050010] font-bold py-5 mt-4 text-[10px] tracking-[0.4em] uppercase hover:brightness-110 transition-all rounded shadow-[0_0_20px_rgba(212,175,55,0.2)]" onclick="doLogin()">
                     Verify & Enter
                 </button>
+
+                <div class="text-center mt-6">
+                    <button onclick="closeLogin()" class="text-[9px] text-[#D4AF37]/40 hover:text-gold uppercase tracking-[0.2em] font-bold transition-all underline underline-offset-4">
+                        Skip for now & browse website
+                    </button>
+                </div>
             </div>
             
             <p class="font-cinzel text-[8px] tracking-[0.3em] text-[#D4AF37]/20 mt-10 uppercase">Marwah & Patel Families</p>
