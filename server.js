@@ -84,7 +84,14 @@ async function getTemplates() {
     return data || [];
 }
 async function saveTemplate(t) {
-    await supabase.from('templates').upsert(t);
+    const payload = {
+        id: t.id,
+        title: t.title,
+        body: t.body,
+        is_quick_action: t.isQuickAction || t.is_quick_action || false
+    };
+    const { error } = await supabase.from('templates').upsert(payload);
+    if (error) console.error('[Supabase] saveTemplate error:', error);
 }
 async function getGroups() {
     const { data, error } = await supabase.from('groups').select('*');

@@ -696,10 +696,14 @@
             try {
                 const res = await fetch('/api/templates');
                 if (res.status === 401) return window.location.href = 'login.html';
-                templates = await res.json();
+                const rawTemplates = await res.json();
+                templates = rawTemplates.map(t => ({
+                    ...t,
+                    isQuickAction: t.is_quick_action // Map DB snake_case to frontend camelCase
+                }));
                 renderTemplatesEditor();
-                renderTemplatesSelectorList();
                 populateTemplateDropdowns();
+                renderTemplatesSelectorList();
             } catch (err) {
                 showToast('Failed to load templates', 'error');
             }
