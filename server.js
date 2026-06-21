@@ -65,27 +65,49 @@ async function getContacts() {
 async function saveContact(contact) {
     if (!contact.id) contact.id = 'guest_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
     
-    // Explicitly define allowed columns to prevent Supabase errors from extra fields
-    const payload = {
-        id: contact.id,
-        name: contact.name,
-        phone: contact.phone,
-        status: contact.status || 'uninvited',
-        group_id: contact.groupId || contact.group_id || null,
-        souls: contact.souls || 1,
-        message: contact.message || '',
-        type: contact.type || 'guest',
-        sent_at: contact.sentAt || contact.sent_at || null,
-        arrival_date: contact.arrivalDate || contact.arrival_date || null,
-        arrival_mode: contact.arrivalMode || contact.arrival_mode || null,
-        arrival_details: contact.arrivalDetails || contact.arrival_details || null,
-        profile_image_url: contact.profileImageUrl || contact.profile_image_url || null,
-        document_url: contact.documentUrl || contact.document_url || null,
-        vault_access: contact.vaultAccess !== undefined ? contact.vaultAccess : (contact.vault_access !== undefined ? contact.vault_access : true)
-    };
+    // Build a sparse payload to support partial updates (like one-tap approval)
+    const payload = { id: contact.id };
+    
+    const add = (dbKey, val) => { if (val !== undefined) payload[dbKey] = val; };
 
+    add('name', contact.name);
+    add('phone', contact.phone);
+    add('status', contact.status);
+    
+    const gid = contact.groupId || contact.group_id;
+    if (gid !== undefined) payload.group_id = gid || null;
+    
+    if (contact.souls !== undefined) payload.souls = contact.souls;
+    if (contact.message !== undefined) payload.message = contact.message;
+    if (contact.type !== undefined) payload.type = contact.type;
+    
+    const sa = contact.sentAt || contact.sent_at;
+    if (sa !== undefined) payload.sent_at = sa || null;
+    
+    const ad = contact.arrivalDate || contact.arrival_date;
+    if (ad !== undefined) payload.arrival_date = ad || null;
+    
+    const am = contact.arrivalMode || contact.arrival_mode;
+    if (am !== undefined) payload.arrival_mode = am || null;
+    
+    const adt = contact.arrivalDetails || contact.arrival_details;
+    if (adt !== undefined) payload.arrival_details = adt || null;
+    
+    const piu = contact.profileImageUrl || contact.profile_image_url;
+    if (piu !== undefined) payload.profile_image_url = piu || null;
+    
+    const du = contact.documentUrl || contact.document_url;
+    if (du !== undefined) payload.document_url = du || null;
+    
+    if (contact.vaultAccess !== undefined) payload.vault_access = contact.vaultAccess;
+    else if (contact.vault_access !== undefined) payload.vault_access = contact.vault_access;
+
+    console.log(`[Supabase] Saving guest ${contact.id} (${contact.name || 'Partial Update'})`);
     const { error } = await supabase.from('guests').upsert(payload);
-    if (error) console.error('[Supabase] saveContact error:', error);
+    if (error) {
+        console.error('[Supabase] saveContact error:', error);
+        throw error;
+    }
 }
 async function deleteContact(id) {
     const { error } = await supabase.from('guests').delete().eq('id', id);
@@ -335,10 +357,22 @@ app.get('/api/status', async (req, res) => {
     res.json({ activeSession: id, status: s.status, qrCode: s.qrCode, info: s.info, allSessions: all });
 });
 
-app.get('/api/contacts', requireAuth, async (req, res) => res.json(await getContacts()));
-app.post('/api/contacts', requireAuth, async (req, res) => { await saveContact(req.body); res.json({ success: true }); });
-app.put('/api/contacts/:id', requireAuth, async (req, res) => { await saveContact({ ...req.body, id: req.params.id }); res.json({ success: true }); });
-app.delete('/api/contacts/:id', requireAuth, async (req, res) => { await deleteContact(req.params.id); res.json({ success: true }); });
+app.get('/api/contacts', requireAuth, async (req, res) => {
+    try { res.json(await getContacts()); }
+    catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.post('/api/contacts', requireAuth, async (req, res) => { 
+    try { await saveContact(req.body); res.json({ success: true }); }
+    catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.put('/api/contacts/:id', requireAuth, async (req, res) => { 
+    try { await saveContact({ ...req.body, id: req.params.id }); res.json({ success: true }); }
+    catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.delete('/api/contacts/:id', requireAuth, async (req, res) => { 
+    try { await deleteContact(req.params.id); res.json({ success: true }); }
+    catch (e) { res.status(500).json({ error: e.message }); }
+});
 
 app.get('/api/templates', requireAuth, async (req, res) => res.json(await getTemplates()));
 app.post('/api/templates', requireAuth, async (req, res) => { for (const t of req.body.templates) await saveTemplate(t); res.json({ success: true }); });
