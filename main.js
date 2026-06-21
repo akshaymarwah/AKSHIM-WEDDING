@@ -516,6 +516,41 @@ function updateGuestUI() {
     if (rsvpName && !rsvpName.value) {
         rsvpName.value = G.guest.name;
     }
+
+    // Update Portal Data
+    const portalName = document.getElementById('portal-greeting-name');
+    if (portalName) portalName.textContent = `Welcome, ${G.guest.name}`;
+    
+    const portalStatus = document.getElementById('portal-guest-status');
+    if (portalStatus) {
+        const status = G.guest.status || 'uninvited';
+        portalStatus.textContent = status.toUpperCase();
+        if (status === 'sent' || status === 'accepted') {
+            portalStatus.className = "bg-green-500/10 text-green-400 border border-green-500/40 px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest";
+        }
+    }
+
+    // Show Portal Button
+    const portalBtn = document.getElementById('guest-portal-btn-wrap');
+    if (portalBtn) portalBtn.classList.remove('hidden');
+}
+
+function openGuestPortal() {
+    const portal = document.getElementById('guestPortal');
+    if (portal) {
+        portal.classList.remove('hidden');
+        portal.classList.add('flex');
+        document.body.classList.add('overflow-hidden');
+    }
+}
+
+function closeGuestPortal() {
+    const portal = document.getElementById('guestPortal');
+    if (portal) {
+        portal.classList.add('hidden');
+        portal.classList.remove('flex');
+        document.body.classList.remove('overflow-hidden');
+    }
 }
 
 function sendR() {

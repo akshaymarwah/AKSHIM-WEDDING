@@ -147,6 +147,13 @@
                         <span class="text-2xl sm:text-5xl tracking-[0.3em] sm:tracking-[0.5em] pl-[0.3em] sm:pl-[0.5em]">Himanshi</span>
                     </h1>
                     <p class="font-cinzel text-sm sm:text-xl text-[#D4AF37] tracking-[0.6em] opacity-60">JULY 7 · 2026</p>
+                    
+                    <!-- Guest Portal Access -->
+                    <div id="guest-portal-btn-wrap" class="hidden animate-fadeIn mt-4">
+                        <button onclick="openGuestPortal()" class="pointer-events-auto bg-gradient-to-r from-gold/20 via-gold/10 to-gold/20 border border-gold/40 text-gold font-bold px-10 py-4 text-[10px] tracking-[0.4em] uppercase hover:bg-gold/20 transition-all rounded backdrop-blur-md shadow-[0_0_30px_rgba(212,175,55,0.1)]">
+                            Enter Royal Portal
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -371,6 +378,63 @@
             </div>
             
             <p class="font-cinzel text-[8px] tracking-[0.3em] text-[#D4AF37]/20 mt-10 uppercase">Marwah & Patel Families</p>
+        </div>
+    </div>
+    
+    <!-- ── GUEST PORTAL MODAL ── -->
+    <div id="guestPortal" class="fixed inset-0 z-[1000] bg-[#050010]/95 backdrop-blur-xl hidden items-center justify-center p-6">
+        <div class="bg-[#0a0518] border border-gold/30 rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col relative shadow-[0_0_100px_rgba(0,0,0,1)]">
+            <button onclick="closeGuestPortal()" class="absolute top-6 right-6 text-gold/60 hover:text-gold text-2xl z-50">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <div class="p-8 sm:p-12 overflow-y-auto custom-scrollbar">
+                <div class="text-center mb-12">
+                    <span class="font-script gold-metallic text-4xl mb-2 block" id="portal-greeting-name">Welcome, Guest</span>
+                    <h2 class="font-decorative text-xl gold-metallic uppercase tracking-[0.4em]">Your Royal Itinerary</h2>
+                    <div class="h-[1px] w-32 bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mt-4"></div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                    <!-- Event 1 -->
+                    <div class="bg-white/5 border border-gold/10 p-6 rounded text-center group hover:border-gold/30 transition-all">
+                        <i class="fa-solid fa-om text-gold/40 text-3xl mb-4 group-hover:scale-110 transition-transform"></i>
+                        <h4 class="font-cinzel text-gold text-sm tracking-widest mb-2 uppercase">Sangeet</h4>
+                        <p class="text-[10px] text-gold/40 uppercase tracking-tighter mb-4">July 6 · 7:00 PM</p>
+                        <p class="text-xs text-gold-light italic">"A night of music, dance, and celebration."</p>
+                    </div>
+                    <!-- Event 2 -->
+                    <div class="bg-white/5 border border-gold/30 p-6 rounded text-center relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-gold/5 animate-pulse"></div>
+                        <i class="fa-solid fa-heart text-gold text-3xl mb-4 group-hover:scale-110 transition-transform"></i>
+                        <h4 class="font-cinzel text-gold text-sm tracking-widest mb-2 uppercase font-bold">The Wedding</h4>
+                        <p class="text-[10px] text-gold uppercase tracking-tighter mb-4">July 7 · 5:00 PM</p>
+                        <p class="text-xs text-gold-light italic">"Join us for the sacred union of two souls."</p>
+                    </div>
+                    <!-- Event 3 -->
+                    <div class="bg-white/5 border border-gold/10 p-6 rounded text-center group hover:border-gold/30 transition-all">
+                        <i class="fa-solid fa-champagne-glasses text-gold/40 text-3xl mb-4 group-hover:scale-110 transition-transform"></i>
+                        <h4 class="font-cinzel text-gold text-sm tracking-widest mb-2 uppercase">Reception</h4>
+                        <p class="text-[10px] text-gold/40 uppercase tracking-tighter mb-4">July 8 · 8:00 PM</p>
+                        <p class="text-xs text-gold-light italic">"A grand feast to celebrate our new journey."</p>
+                    </div>
+                </div>
+                
+                <div class="bg-gold/5 border border-gold/20 p-8 rounded flex flex-col items-center text-center gap-6">
+                    <div class="flex flex-col items-center">
+                        <p class="text-[10px] text-gold/40 uppercase font-black tracking-widest mb-1">Current Status</p>
+                        <span id="portal-guest-status" class="bg-gold/10 text-gold border border-gold/40 px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest">
+                            Invite Awaiting
+                        </span>
+                    </div>
+                    <p class="text-xs text-gold/60 max-w-md italic">
+                        "Your presence is a gift that we treasure. We look forward to creating beautiful memories together in the heart of Delhi."
+                    </p>
+                    <button onclick="closeGuestPortal(); goTo(4)" class="text-[9px] text-gold font-bold uppercase tracking-[0.3em] border-b border-gold/40 pb-1 hover:border-gold transition-all">
+                        Manage My RSVP
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
