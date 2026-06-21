@@ -282,13 +282,18 @@ app.post('/api/send-message', requireAuth, async (req, res) => {
 });
 
 app.post('/api/bulk-send', requireAuth, async (req, res) => {
-    const { contactIds, templateId, session: sid } = req.body;
+    const { contactIds, templateId, customMessage, minDelay, maxDelay, session: sid } = req.body;
     const s = getSession(sid || 'default');
     if (s.status !== 'ready' || bulkSendState.sending) return res.status(400).json({ error: 'Busy or disconnected' });
+    if (!contactIds || contactIds.length === 0) return res.status(400).json({ error: 'No recipients' });
+
     const all = await getContacts();
     const targets = all.filter(c => contactIds.includes(c.id));
     const tmpls = await getTemplates();
     const tmpl = tmpls.find(t => t.id === templateId);
+
+    const minD = (parseInt(minDelay) || 6) * 1000;
+    const maxD = (parseInt(maxDelay) || 12) * 1000;
 
     bulkSendState = { sending: true, total: targets.length, sent: 0, failed: 0, currentContact: '', errors: [], cancelRequested: false };
     res.json({ success: true, stats: bulkSendState });
@@ -298,14 +303,27 @@ app.post('/api/bulk-send', requireAuth, async (req, res) => {
             if (bulkSendState.cancelRequested) break;
             bulkSendState.currentContact = t.name;
             try {
-                const m = (tmpl ? tmpl.body : 'Hello').replace(/{name}/g, t.name);
+                const rawMsg = customMessage || (tmpl ? tmpl.body : 'Hello');
+                const m = rawMsg.replace(/{name}/g, t.name);
                 await s.client.sendMessage(formatPhone(t.phone), m);
-                t.status = 'sent'; t.sentAt = new Date().toISOString(); await saveContact(t);
+                
+                // Update status in DB
+                t.status = 'sent'; 
+                t.sent_at = new Date().toISOString(); 
+                await saveContact(t);
+                
                 bulkSendState.sent++;
-            } catch (e) { bulkSendState.failed++; bulkSendState.errors.push({ name: t.name, error: e.message }); }
-            await new Promise(r => setTimeout(r, 3000 + Math.random() * 5000));
+            } catch (e) { 
+                console.error('[Broadcast] Error:', e.message);
+                bulkSendState.failed++; 
+                bulkSendState.errors.push({ name: t.name, error: e.message }); 
+            }
+            // Dynamic delay
+            const delay = Math.floor(Math.random() * (maxD - minD + 1)) + minD;
+            await new Promise(r => setTimeout(r, delay));
         }
         bulkSendState.sending = false;
+        console.log(`[Broadcast] [${sid}] Finished. Sent: ${bulkSendState.sent}, Failed: ${bulkSendState.failed}`);
     })();
 });
 

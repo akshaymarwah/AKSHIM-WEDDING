@@ -992,6 +992,7 @@
             const templateId = document.getElementById('bulk-select-tmpl').value;
             const customMessage = document.getElementById('bulk-custom-msg').value;
             if (!customMessage.trim() && !templateId) return showToast('Select a message', 'error');
+            if (selectedIds.length === 0) return showToast('No guests selected', 'error');
 
             try {
                 const res = await fetch('/api/bulk-send', {
@@ -1001,19 +1002,22 @@
                         contactIds: selectedIds,
                         templateId: customMessage.trim() ? null : templateId,
                         customMessage: customMessage.trim() || null,
-                        minDelay: parseInt(document.getElementById('bulk-delay-min').value),
-                        maxDelay: parseInt(document.getElementById('bulk-delay-max').value),
+                        minDelay: parseInt(document.getElementById('bulk-delay-min').value) || 6,
+                        maxDelay: parseInt(document.getElementById('bulk-delay-max').value) || 12,
                         session: currentSessionId
                     })
                 });
+                const data = await res.json();
                 if (res.ok) {
                     showToast('Broadcast Started!');
                     closeBulkSendModal();
                     clearSelectedGuests();
                     activeBulkJob = true;
                     document.getElementById('bulk-progress-panel').classList.remove('hidden');
+                } else {
+                    showToast(data.error || 'Failed to start broadcast', 'error');
                 }
-            } catch (err) { showToast('Error starting broadcast', 'error'); }
+            } catch (err) { showToast('Network error', 'error'); }
         }
 
         async function checkBulkSendStatus() {
