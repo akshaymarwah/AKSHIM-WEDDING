@@ -9,6 +9,7 @@ const qrcode = require('qrcode');
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const { createClient } = require('@supabase/supabase-js');
 const AdmZip = require('adm-zip');
+const WebSocket = require('ws');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,7 +17,13 @@ const PORT = process.env.PORT || 3000;
 // Initialize Supabase
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(supabaseUrl, supabaseKey, {
+    auth: { persistSession: false },
+    realtime: {
+        params: { eventsPerSecond: 10 },
+        transport: WebSocket
+    }
+});
 
 app.use(cors());
 app.use(express.json());

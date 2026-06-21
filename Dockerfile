@@ -1,5 +1,5 @@
 # Use the full Node.js runtime to ensure all system libraries are present
-FROM node:20
+FROM node:22
 
 # Install dependencies for Chromium (needed for WhatsApp Web)
 RUN apt-get update && apt-get install -y \
