@@ -195,15 +195,26 @@
                 </div>
             </div>
 
-            <!-- Quick Action Templates -->
+            <!-- Manual Guest Validation -->
             <div class="bg-royal-card gold-border-glow p-6 rounded-lg">
                 <h2 class="royal-font text-base tracking-wider text-gold mb-6 font-bold uppercase">
-                    <i class="fa-solid fa-bolt mr-2 text-yellow-500"></i>Quick Actions
+                    <i class="fa-solid fa-user-check mr-2 text-green-500"></i>Manual Validation
                 </h2>
-                <div id="templates-selector-list" class="flex flex-col gap-3">
-                    <!-- Loaded dynamically -->
+                <div class="space-y-4">
+                    <p class="text-[10px] text-gold/40 uppercase font-black tracking-widest leading-relaxed">
+                        Manually authorize a guest to access the website by their mobile number.
+                    </p>
+                    <div class="flex gap-2">
+                        <input type="text" id="manual-phone" placeholder="Enter Phone Number" 
+                               class="flex-1 bg-royal-bg/50 border border-gold/20 rounded-lg px-4 py-2 text-xs text-gold outline-none focus:border-gold/50 transition">
+                        <button onclick="manualValidate()" class="bg-gold text-royal-bg text-[10px] uppercase font-black tracking-widest px-4 py-2 rounded-lg hover:scale-105 transition active:scale-95">
+                            Validate
+                        </button>
+                    </div>
                 </div>
             </div>
+
+            <!-- Quick Action Templates -->
         </div>
 
         <!-- ── RIGHT COLUMN (TABLE + ACTIONS) ── -->
@@ -1441,6 +1452,28 @@
                     closeChangePasswordModal();
                 } else {
                     showToast(data.error || 'Failed to update password', 'error');
+                }
+            } catch (err) {
+                showToast('Network error', 'error');
+            }
+        }
+        async function manualValidate() {
+            const phone = document.getElementById('manual-phone').value;
+            if (!phone) return showToast('Enter phone number', 'error');
+            
+            try {
+                const res = await fetch('/api/admin/validate-guest', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone })
+                });
+                if (res.ok) {
+                    showToast('Guest Validated Successfully!');
+                    document.getElementById('manual-phone').value = '';
+                    loadContacts();
+                } else {
+                    const data = await res.json();
+                    showToast(data.error || 'Validation failed', 'error');
                 }
             } catch (err) {
                 showToast('Network error', 'error');

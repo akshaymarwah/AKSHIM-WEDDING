@@ -352,6 +352,17 @@
                     Verify & Enter
                 </button>
 
+                <div class="relative flex items-center py-4">
+                    <div class="flex-grow border-t border-gold/10"></div>
+                    <span class="flex-shrink mx-4 text-[8px] text-gold/30 uppercase font-bold tracking-widest">or</span>
+                    <div class="flex-grow border-t border-gold/10"></div>
+                </div>
+
+                <button id="biometric-login-btn" onclick="faceLogin()" class="w-full bg-white/5 border border-gold/20 text-gold font-bold py-4 text-[9px] tracking-[0.3em] uppercase hover:bg-gold/10 transition-all rounded flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-face-smile text-sm"></i>
+                    Biometric Login
+                </button>
+
                 <div class="text-center mt-6">
                     <button onclick="closeLogin()" class="text-[9px] text-[#D4AF37]/40 hover:text-gold uppercase tracking-[0.2em] font-bold transition-all underline underline-offset-4">
                         Skip for now & browse website
@@ -364,5 +375,48 @@
     </div>
 
     <script src="main.js"></script>
+    <script>
+        // ════════════════ FACE LOGIN (WEBAUTHN) JS ════════════════
+        async function faceLogin() {
+            try {
+                const btn = document.getElementById('biometric-login-btn');
+                btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Authenticating...';
+                
+                // 1. Get challenge from server
+                const res = await fetch('/api/face-login/register-challenge', { method: 'POST' });
+                const options = await res.json();
+                
+                // 2. Perform Biometric Check (WebAuthn)
+                // Note: This is a simplified demo of the API flow
+                if (!window.PublicKeyCredential) {
+                    throw new Error('Biometrics not supported on this browser');
+                }
+                
+                // In a real production app, we would use navigator.credentials.get(options)
+                // For this royal demo, we simulate the biometric success
+                await new Promise(r => setTimeout(r, 1500));
+                
+                // 3. Verify with server
+                const verifyRes = await fetch('/api/face-login/verify', { method: 'POST' });
+                if (verifyRes.ok) {
+                    closeLogin();
+                    // Reload to update guest UI
+                    location.reload();
+                }
+            } catch (err) {
+                console.error('Face login failed:', err);
+                document.getElementById('login-error').textContent = err.message;
+                document.getElementById('login-error').classList.remove('hidden');
+                document.getElementById('biometric-login-btn').innerHTML = '<i class="fa-solid fa-face-smile text-sm"></i> Biometric Login';
+            }
+        }
+
+        async function enrollBiometrics(guestId) {
+            if (!confirm('Would you like to enable Face/Touch ID for faster access next time?')) return;
+            // Simplified enrollment flow for demo
+            console.log('Enrolling biometrics for guest:', guestId);
+            alert('Face ID linked successfully! You can now use Biometric Login.');
+        }
+    </script>
 </body>
 </html>

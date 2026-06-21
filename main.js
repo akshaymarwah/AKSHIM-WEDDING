@@ -437,6 +437,11 @@ async function doLogin() {
             closeLogin();
             // Reset for next time
             resetLoginUI();
+            
+            // Enrollment prompt for Biometrics (Face ID)
+            if (typeof enrollBiometrics === 'function') {
+                setTimeout(() => enrollBiometrics(data.guest.id), 1000);
+            }
         } else {
             err.textContent = data.error || "Invalid Code";
             err.classList.remove('hidden');
