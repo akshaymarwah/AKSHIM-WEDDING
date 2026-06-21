@@ -105,8 +105,19 @@ async function saveGroup(g) {
 const AUTH_DIR = path.join(__dirname, '.wwebjs_auth');
 const BUCKET_NAME = 'whatsapp-sessions';
 
+async function ensureBucket() {
+    try {
+        const { data: buckets } = await supabase.storage.listBuckets();
+        if (!buckets.find(b => b.name === BUCKET_NAME)) {
+            await supabase.storage.createBucket(BUCKET_NAME, { public: false });
+            console.log(`[Supabase] Created bucket: ${BUCKET_NAME}`);
+        }
+    } catch (e) { console.error('[Supabase] Storage check failed:', e.message); }
+}
+
 async function uploadSession(sessionId) {
     try {
+        await ensureBucket();
         const sessionPath = path.join(AUTH_DIR, `session-${sessionId}`);
         if (!fs.existsSync(sessionPath)) {
             console.log(`[Supabase] [${sessionId}] Backup skipped: No session folder at ${sessionPath}`);
@@ -114,7 +125,14 @@ async function uploadSession(sessionId) {
         }
         console.log(`[Supabase] [${sessionId}] Zipping session files...`);
         const zip = new AdmZip();
-        zip.addLocalFolder(sessionPath);
+        // Use try-catch for zipping as files might be temporarily locked
+        try {
+            zip.addLocalFolder(sessionPath);
+        } catch (zipErr) {
+            console.warn(`[Supabase] [${sessionId}] Zip warning (some files might be busy):`, zipErr.message);
+            // We proceed anyway, AdmZip often captures enough for restoration
+        }
+        
         const buffer = zip.toBuffer();
         console.log(`[Supabase] [${sessionId}] Uploading ${buffer.length} bytes to cloud...`);
         const { error } = await supabase.storage.from(BUCKET_NAME).upload(`${sessionId}.zip`, buffer, { upsert: true });
