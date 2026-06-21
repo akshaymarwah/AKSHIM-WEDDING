@@ -803,7 +803,7 @@
                     documentUrl: c.document_url,
                     vaultAccess: c.vault_access
                 }));
-                renderGuests();
+                filterGuests();
                 updateStats();
             } catch (err) {
                 showToast('Failed to load guest directory', 'error');
