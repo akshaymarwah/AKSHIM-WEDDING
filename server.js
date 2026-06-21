@@ -335,9 +335,6 @@ app.post('/api/send-message', requireAuth, async (req, res) => {
 });
 
 // ════════════════ FILE UPLOAD ════════════════
-const multer = require('multer');
-const upload = multer({ storage: multer.memoryBuffer() });
-
 app.post('/api/upload-file', requireAuth, upload.single('file'), async (req, res) => {
     try {
         const { bucket } = req.body;
