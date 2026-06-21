@@ -160,9 +160,15 @@ async function downloadSession(sessionId) {
             return;
         }
         const sessionPath = path.join(AUTH_DIR, `session-${sessionId}`);
-        if (!fs.existsSync(sessionPath)) fs.mkdirSync(sessionPath, { recursive: true });
         
-        console.log(`[Supabase] [${sessionId}] Restoring session files...`);
+        // Clear existing folder to prevent corruption merge
+        if (fs.existsSync(sessionPath)) {
+            console.log(`[Supabase] [${sessionId}] Cleaning up old session folder for fresh restore...`);
+            fs.rmSync(sessionPath, { recursive: true, force: true });
+        }
+        fs.mkdirSync(sessionPath, { recursive: true });
+        
+        console.log(`[Supabase] [${sessionId}] Restoring session files (${data.size} bytes)...`);
         const zip = new AdmZip(Buffer.from(await data.arrayBuffer()));
         zip.extractAllTo(sessionPath, true);
         console.log(`[Supabase] [${sessionId}] Session restored successfully. 👑`);
@@ -504,6 +510,14 @@ app.post('/api/backup-session', requireAuth, async (req, res) => {
     const id = req.body.session || 'default';
     await uploadSession(id);
     res.json({ success: true });
+});
+
+app.get('/api/admin/backups', requireAuth, async (req, res) => {
+    try {
+        const { data, error } = await supabase.storage.from(BUCKET_NAME).list();
+        if (error) throw error;
+        res.json(data);
+    } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 // Admin Manual Validation
