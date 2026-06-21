@@ -848,7 +848,8 @@
                             ${g.arrivalMode ? `<i class="fa-solid ${g.arrivalMode === 'Flight' ? 'fa-plane' : (g.arrivalMode === 'Train' ? 'fa-train' : 'fa-car')} text-gold/60" title="${g.arrivalMode}"></i>` : ''}
                             ${g.profileImageUrl ? `<i class="fa-solid fa-camera text-green-400/60" title="Photo Uploaded"></i>` : ''}
                             ${g.documentUrl ? `<i class="fa-solid fa-file-invoice text-blue-400/60" title="Ticket Uploaded"></i>` : ''}
-                            ${(!g.arrivalMode && !g.profileImageUrl && !g.documentUrl) ? '-' : ''}
+                            ${g.vault_access !== false ? `<i class="fa-solid fa-shield-heart text-gold" title="Vault Access Enabled"></i>` : `<i class="fa-solid fa-shield text-gold/10" title="Vault Access Disabled"></i>`}
+                            ${(!g.arrivalMode && !g.profileImageUrl && !g.documentUrl && g.vault_access === false) ? '-' : ''}
                         </div>
                     </td>
                     <td class="py-4 px-4 text-gold/30 text-[10px]">${lastSent}</td>
@@ -892,6 +893,7 @@
                             ${g.arrivalMode ? `<span><i class="fa-solid ${g.arrivalMode === 'Flight' ? 'fa-plane' : (g.arrivalMode === 'Train' ? 'fa-train' : 'fa-car')} mr-1"></i> ${g.arrivalMode}</span>` : ''}
                             ${g.profileImageUrl ? `<span><i class="fa-solid fa-camera mr-1"></i> Photo</span>` : ''}
                             ${g.documentUrl ? `<span><i class="fa-solid fa-file-invoice mr-1"></i> Ticket</span>` : ''}
+                            ${g.vault_access !== false ? `<span><i class="fa-solid fa-shield-heart text-gold/60 mr-1"></i> Vault</span>` : ''}
                         </div>
                         <div class="flex justify-between items-center pt-2 border-t border-gold/5">
                             <span class="text-[9px] text-gold/30 uppercase">Sent: ${lastSent}</span>
