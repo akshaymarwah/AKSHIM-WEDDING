@@ -3,8 +3,8 @@ self.addEventListener('push', function(event) {
         const data = event.data.json();
         const options = {
             body: data.body,
-            icon: '/images/royal-invite-gold.png',
-            badge: '/images/royal-invite-gold.png',
+            icon: '/images/akshim_logo.png',
+            badge: '/images/akshim_logo.png',
             data: {
                 url: self.location.origin
             },
