@@ -468,9 +468,6 @@ async function checkGuestStatus() {
         if (data.loggedIn) {
             G.guest = data.guest;
             updateGuestUI();
-        } else {
-            // Suggest login on start, but allow skip
-            openLogin();
         }
     } catch (e) {}
 }

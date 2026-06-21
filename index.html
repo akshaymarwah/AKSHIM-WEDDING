@@ -121,6 +121,7 @@
         <button class="royal-head text-2xl tracking-[0.5em] gold-metallic" onclick="toggleMenu(); goTo(2)">EVENTS</button>
         <button class="royal-head text-2xl tracking-[0.5em] gold-metallic" onclick="toggleMenu(); goTo(3)">VENUE</button>
         <button class="royal-head text-2xl tracking-[0.5em] gold-metallic" onclick="toggleMenu(); goTo(4)">RSVP</button>
+        <button class="royal-head text-lg tracking-[0.3em] text-[#D4AF37] border border-[#D4AF37]/30 px-8 py-3 mt-4 hover:bg-[#D4AF37]/15" onclick="toggleMenu(); openLogin()">GUEST LOGIN</button>
     </div>
 
     <!-- ── ARTISTIC PERSPECTIVE LAYER (Fixed Sections) ── -->
@@ -312,8 +313,8 @@
         <div class="max-w-[500px] w-full p-8 sm:p-12 text-center bg-[#0a0020] border border-[#D4AF37]/30 shadow-2xl relative overflow-hidden rounded-lg">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent opacity-50"></div>
             
-            <button onclick="closeLogin()" class="absolute top-5 right-5 text-gold hover:text-white transition-all z-[10]">
-                <i class="fa-solid fa-circle-xmark text-2xl opacity-60 hover:opacity-100"></i>
+            <button onclick="closeLogin()" class="absolute top-4 right-4 text-gold/60 hover:text-gold transition-all z-[50] p-2" title="Close">
+                <i class="fa-solid fa-xmark text-2xl"></i>
             </button>
             
             <img src="images/akshim_logo.png" alt="Logo" class="w-16 h-16 mx-auto mb-6 opacity-80">
