@@ -353,9 +353,6 @@ function openLogin() {
 }
 
 function closeLogin() {
-    // Only allow closing if guest is logged in (Failsafe)
-    if (!G.guest) return;
-    
     const modal = document.getElementById('loginModal');
     if (modal) {
         document.body.classList.remove('overflow-hidden');
@@ -472,12 +469,10 @@ async function checkGuestStatus() {
             G.guest = data.guest;
             updateGuestUI();
         } else {
-            // FAILSAFE: Force open the login portal if not logged in
+            // Suggest login on start, but allow skip
             openLogin();
         }
-    } catch (e) {
-        console.error("Status Check Error:", e);
-    }
+    } catch (e) {}
 }
 
 function updateGuestUI() {
