@@ -227,8 +227,17 @@ async function initWhatsApp(id = 'default') {
     });
     s.client = client;
     client.on('qr', async qr => { s.status = 'disconnected'; s.qrCode = await qrcode.toDataURL(qr); });
-    client.on('ready', () => { s.status = 'ready'; s.qrCode = null; s.info = client.info; });
-    client.on('authenticated', () => uploadSession(id));
+    client.on('authenticated', () => {
+        console.log(`[WhatsApp] [${id}] Authenticated. Syncing to cloud in 5s...`);
+        setTimeout(() => uploadSession(id), 5000);
+    });
+    client.on('ready', () => { 
+        s.status = 'ready'; 
+        s.qrCode = null; 
+        s.info = client.info; 
+        console.log(`[WhatsApp] [${id}] Ready. Refreshing cloud backup...`);
+        uploadSession(id); 
+    });
     client.on('disconnected', () => { s.status = 'disconnected'; s.client = null; setTimeout(() => initWhatsApp(id), 5000); });
     client.initialize().catch(e => { s.status = 'disconnected'; console.error(e); });
 }
@@ -329,6 +338,12 @@ app.get('/api/whatsapp-contacts', requireAuth, async (req, res) => {
         const clean = raw.filter(c => !c.isGroup && c.isMyContact).map(c => ({ name: c.name || c.pushname || c.number, phone: c.number }));
         res.json(clean);
     } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/backup-session', requireAuth, async (req, res) => {
+    const id = req.body.session || 'default';
+    await uploadSession(id);
+    res.json({ success: true });
 });
 
 // Admin Manual Validation

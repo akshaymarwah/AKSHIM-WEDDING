@@ -155,6 +155,9 @@
                         <button onclick="logoutWA()" class="mt-5 border border-red-500/30 text-red-400 text-[9px] uppercase font-black tracking-widest px-5 py-2 hover:bg-red-500/10 rounded transition">
                             Terminate Link
                         </button>
+                        <button onclick="forceBackup()" class="mt-2 border border-gold/30 text-gold text-[9px] uppercase font-black tracking-widest px-5 py-2 hover:bg-gold/10 rounded transition">
+                            <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Backup to Cloud
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1486,6 +1489,18 @@
             } catch (err) {
                 showToast('Network error', 'error');
             }
+        }
+        async function forceBackup() {
+            try {
+                showToast('Syncing to Cloud...');
+                const res = await fetch('/api/backup-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ session: currentSessionId })
+                });
+                if (res.ok) showToast('Session Backed Up! 👑');
+                else showToast('Backup failed', 'error');
+            } catch (err) { showToast('Network error', 'error'); }
         }
 
         // Start App
