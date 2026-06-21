@@ -432,7 +432,11 @@ async function doLogin() {
         const data = await res.json();
 
         if (data.success) {
-            G.guest = data.guest;
+            G.guest = {
+                ...data.guest,
+                groupId: data.guest.group_id,
+                sentAt: data.guest.sent_at
+            };
             updateGuestUI();
             closeLogin();
             // Reset for next time
@@ -471,7 +475,11 @@ async function checkGuestStatus() {
         const res = await fetch('/api/guest/status');
         const data = await res.json();
         if (data.loggedIn) {
-            G.guest = data.guest;
+            G.guest = {
+                ...data.guest,
+                groupId: data.guest.group_id,
+                sentAt: data.guest.sent_at
+            };
             updateGuestUI();
         }
     } catch (e) {}

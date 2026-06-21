@@ -671,7 +671,8 @@
                 const rawContacts = await res.json();
                 contacts = rawContacts.map(c => ({
                     ...c,
-                    groupId: c.group_id // Map DB snake_case to frontend camelCase
+                    groupId: c.group_id,
+                    sentAt: c.sent_at
                 }));
                 renderGuests();
                 updateStats();
@@ -699,7 +700,7 @@
                 const rawTemplates = await res.json();
                 templates = rawTemplates.map(t => ({
                     ...t,
-                    isQuickAction: t.is_quick_action // Map DB snake_case to frontend camelCase
+                    isQuickAction: t.is_quick_action
                 }));
                 renderTemplatesEditor();
                 populateTemplateDropdowns();
