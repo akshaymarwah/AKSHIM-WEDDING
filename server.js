@@ -56,7 +56,22 @@ async function getContacts() {
     return data || [];
 }
 async function saveContact(contact) {
-    const { error } = await supabase.from('guests').upsert(contact);
+    if (!contact.id) contact.id = 'guest_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+    
+    // Explicitly define allowed columns to prevent Supabase errors from extra fields
+    const payload = {
+        id: contact.id,
+        name: contact.name,
+        phone: contact.phone,
+        status: contact.status || 'uninvited',
+        group_id: contact.groupId || contact.group_id || null,
+        souls: contact.souls || 1,
+        message: contact.message || '',
+        type: contact.type || 'guest',
+        sent_at: contact.sentAt || contact.sent_at || null
+    };
+
+    const { error } = await supabase.from('guests').upsert(payload);
     if (error) console.error('[Supabase] saveContact error:', error);
 }
 async function deleteContact(id) {

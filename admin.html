@@ -665,7 +665,11 @@
             try {
                 const res = await fetch('/api/contacts');
                 if (res.status === 401) return window.location.href = 'login.html';
-                contacts = await res.json();
+                const rawContacts = await res.json();
+                contacts = rawContacts.map(c => ({
+                    ...c,
+                    groupId: c.group_id // Map DB snake_case to frontend camelCase
+                }));
                 renderGuests();
                 updateStats();
             } catch (err) {
@@ -1235,7 +1239,11 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, phone, groupId: gId })
                 });
-                if (res.ok) { showToast('Saved to Directory!'); loadContacts(); }
+                if (res.ok) { 
+                    showToast('Saved to Directory!'); 
+                    await loadContacts(); 
+                    switchTab('directory'); // Switch to guest list to show the new entry
+                }
                 else showToast('Error saving contact', 'error');
             } catch (e) { showToast('Network error', 'error'); }
         }
