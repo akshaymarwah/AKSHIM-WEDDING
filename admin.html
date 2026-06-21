@@ -323,6 +323,35 @@
                     </div>
                 </div>
 
+                <!-- Push Notification Management -->
+                <div class="bg-royal-bg/30 border border-sky-500/20 p-6 rounded-lg mb-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="royal-font text-sm text-sky-400 tracking-widest font-bold uppercase">
+                            <i class="fa-solid fa-bell animate-bounce mr-2"></i>Push Alert Manager
+                        </h3>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+                        <div class="lg:col-span-2">
+                            <input type="text" id="push-title" placeholder="Notification Title (e.g. 🥂 Sangeet Starting!)" class="w-full bg-royal-bg/50 border border-gold/20 rounded px-4 py-3 text-xs text-gold-light outline-none focus:border-sky-500 transition">
+                            <textarea id="push-body" placeholder="Message details..." class="w-full bg-royal-bg/50 border border-gold/20 rounded px-4 py-3 text-xs text-gold-light mt-2 outline-none focus:border-sky-500 transition h-20"></textarea>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <select id="push-target" onchange="togglePushTargetFields()" class="bg-royal-bg border border-gold/20 rounded px-4 py-3 text-xs text-gold outline-none focus:border-sky-500">
+                                <option value="all">Broadcast to All</option>
+                                <option value="group">Specific Group</option>
+                                <option value="individual">Single Guest</option>
+                            </select>
+                            <select id="push-group-id" class="hidden bg-royal-bg border border-gold/20 rounded px-4 py-3 text-xs text-gold outline-none focus:border-sky-500">
+                                <option value="">-- Select Group --</option>
+                            </select>
+                            <input type="text" id="push-guest-id" placeholder="Guest ID..." class="hidden bg-royal-bg border border-gold/20 rounded px-4 py-3 text-xs text-gold outline-none focus:border-sky-500">
+                        </div>
+                        <button onclick="sendPushNotification()" class="bg-sky-500 hover:bg-sky-400 text-white text-[10px] px-6 py-4 font-bold rounded uppercase tracking-widest transition shadow-lg h-fit">
+                            <i class="fa-solid fa-paper-plane mr-2"></i>Send Push
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Content Area -->
                 <div id="tab-content-directory">
                     <!-- Desktop Table -->
@@ -843,7 +872,7 @@
                     <td class="py-4 px-4 text-gold/60">${g.phone}</td>
                     <td class="py-4 px-4 text-[10px] uppercase tracking-tighter text-gold/40">${groupName}</td>
                     <td class="py-4 px-4 text-center">
-                        <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase ${isSent ? 'bg-green-500/10 text-green-400' : (g.status === 'uninvited' ? 'bg-red-500/10 text-red-400' : 'bg-yellow-500/10 text-yellow-400')}">
+                        <span onclick="${g.status === 'uninvited' ? `approveGuest('${g.id}')` : ''}" class="px-2 py-0.5 rounded text-[9px] font-bold uppercase ${g.status === 'uninvited' ? 'cursor-pointer hover:scale-105 active:scale-95 transition' : ''} ${isSent ? 'bg-green-500/10 text-green-400' : (g.status === 'uninvited' ? 'bg-red-500/10 text-red-400' : 'bg-yellow-500/10 text-yellow-400')}">
                             ${g.status}
                         </span>
                     </td>
@@ -885,7 +914,7 @@
                                 <h4 class="text-sm font-bold text-gold-light">${g.name}</h4>
                                 <p class="text-[10px] text-gold/40 uppercase tracking-widest">${groupName}</p>
                             </div>
-                            <span class="px-2 py-0.5 rounded text-[8px] font-bold uppercase ${isSent ? 'bg-green-500/10 text-green-400' : (g.status === 'uninvited' ? 'bg-red-500/10 text-red-400' : 'bg-yellow-500/10 text-yellow-400')}">
+                            <span onclick="${g.status === 'uninvited' ? `approveGuest('${g.id}')` : ''}" class="px-2 py-0.5 rounded text-[8px] font-bold uppercase ${g.status === 'uninvited' ? 'cursor-pointer hover:scale-105 active:scale-95 transition' : ''} ${isSent ? 'bg-green-500/10 text-green-400' : (g.status === 'uninvited' ? 'bg-red-500/10 text-red-400' : 'bg-yellow-500/10 text-yellow-400')}">
                                 ${g.status}
                             </span>
                         </div>
@@ -1279,7 +1308,7 @@
         }
 
         function populateGroupDropdowns() {
-            const dropdowns = ['filter-group', 'add-guest-group', 'edit-guest-group'];
+            const dropdowns = ['filter-group', 'add-guest-group', 'edit-guest-group', 'push-group-id'];
             dropdowns.forEach(id => {
                 const el = document.getElementById(id);
                 if (!el) return;
@@ -1471,7 +1500,7 @@
                 const res = await fetch('/api/contacts', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, phone, groupId: gId })
+                    body: JSON.stringify({ name, phone, groupId: gId, status: 'pending' })
                 });
                 if (res.ok) { 
                     showToast('Saved to Directory!'); 
@@ -1480,6 +1509,36 @@
                 }
                 else showToast('Error saving contact', 'error');
             } catch (e) { showToast('Network error', 'error'); }
+        }
+        function togglePushTargetFields() {
+            const target = document.getElementById('push-target').value;
+            document.getElementById('push-group-id').classList.toggle('hidden', target !== 'group');
+            document.getElementById('push-guest-id').classList.toggle('hidden', target !== 'individual');
+        }
+
+        async function sendPushNotification() {
+            const title = document.getElementById('push-title').value;
+            const body = document.getElementById('push-body').value;
+            const target = document.getElementById('push-target').value;
+            const groupId = document.getElementById('push-group-id').value;
+            const guestId = document.getElementById('push-guest-id').value;
+            
+            if (!title || !body) return showToast('Title and Body required', 'error');
+            if (target === 'group' && !groupId) return showToast('Please select a group', 'error');
+            if (target === 'individual' && !guestId) return showToast('Please enter a Guest ID', 'error');
+            
+            try {
+                const res = await fetch('/api/admin/send-push', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, body, target, groupId, guestId })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(`Alert sent to ${data.sent} devices!`);
+                    document.getElementById('push-body').value = '';
+                } else showToast('Failed to send push', 'error');
+            } catch (err) { showToast('Error sending push', 'error'); }
         }
 
         // ════════════════ CONFIGURATORS ════════════════

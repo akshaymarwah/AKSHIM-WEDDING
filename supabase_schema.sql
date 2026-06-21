@@ -54,11 +54,21 @@ CREATE TABLE IF NOT EXISTS public.groups (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Enable RLS (Optional for now but good practice)
+-- 5. Create Push Subscriptions Table
+CREATE TABLE IF NOT EXISTS public.push_subscriptions (
+    id TEXT PRIMARY KEY,
+    guest_id TEXT REFERENCES public.guests(id) ON DELETE CASCADE,
+    subscription JSONB NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.guests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.templates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.groups ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.push_subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.shared_vault ENABLE ROW LEVEL SECURITY;
 
 -- Simple policy: Service Role can do anything (Default)
 -- Note: For production, you'd add more granular policies

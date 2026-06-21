@@ -11,6 +11,7 @@ const { Client, LocalAuth } = require('whatsapp-web.js');
 const { createClient } = require('@supabase/supabase-js');
 const AdmZip = require('adm-zip');
 const WebSocket = require('ws');
+const webpush = require('web-push');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,6 +26,11 @@ const supabase = createClient(supabaseUrl, supabaseKey, {
         transport: WebSocket
     }
 });
+
+// Configure Web Push
+const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY || 'BGWBSIM3yGvRpSTLB0nhEnUXvY_KKIFtoFj3jzhzAVq1h6F-ZDmSybAJkEf24Tq01D3zYZ9PyrXLLxOeUI5ABBo';
+const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY || 'wQDWNLyHMnJiExXbEmG3OZFAZXODalsi0AgkaUVtutw';
+webpush.setVapidDetails('mailto:admin@akshimwedding.com', VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
 
 app.use(cors());
 app.use(express.json());
@@ -237,11 +243,19 @@ app.post('/api/guest/login', async (req, res) => {
     if (!stored || stored.otp !== otp || Date.now() > stored.expires) return res.status(401).json({ error: 'Invalid OTP' });
 
     const contacts = await getContacts();
-    let guest = contacts.find(c => c.phone.replace(/\D/g, '').endsWith(clean.slice(-10)));
+    // Match by last 10 digits to be extremely robust
+    let guest = contacts.find(c => {
+        const cp = (c.phone || '').replace(/\D/g, '');
+        return cp.endsWith(clean.slice(-10));
+    });
+
     if (!guest) {
         guest = { id: 'uninvited_' + Date.now(), name: stored.name, phone: clean, status: 'uninvited' };
         await saveContact(guest);
+    } else if (guest.status === 'uninvited') {
+        // If they were found but marked uninvited, keep them uninvited but log them in
     }
+
     guestOtps.delete(clean);
     const token = 'guest_' + Math.random().toString(36).substring(2);
     guestSessions.set(token, { guestId: guest.id, name: guest.name, phone: guest.phone });
@@ -540,9 +554,53 @@ app.post('/api/face-login/register-challenge', async (req, res) => {
 app.post('/api/face-login/verify', async (req, res) => { res.json({ success: true }); });
 
 app.use(express.static(__dirname));
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`👑 AKSHIM Server running on port ${PORT}`);
-    initWhatsApp('default');
+
+app.post('/api/push/subscribe', async (req, res) => {
+    const token = getGuestToken(req);
+    if (!token || !guestSessions.has(token)) return res.status(401).json({ error: 'Unauthorized' });
+    const { subscription } = req.body;
+    const guestId = guestSessions.get(token).guestId;
+    
+    try {
+        await supabase.from('push_subscriptions').upsert({
+            id: `sub_${guestId}`,
+            guest_id: guestId,
+            subscription: subscription
+        });
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.post('/api/admin/send-push', requireAuth, async (req, res) => {
+    const { title, body, target, groupId, guestId } = req.body;
+    
+    try {
+        let query = supabase.from('push_subscriptions').select('*');
+        
+        if (target === 'group') query = query.eq('guest_id', supabase.from('guests').select('id').eq('group_id', groupId));
+        else if (target === 'individual') query = query.eq('guest_id', guestId);
+        
+        const { data: subs } = await query;
+        if (!subs || subs.length === 0) return res.json({ success: true, sent: 0 });
+
+        const promises = subs.map(s => 
+            webpush.sendNotification(s.subscription, JSON.stringify({ title, body }))
+            .catch(err => {
+                if (err.statusCode === 410 || err.statusCode === 404) {
+                    return supabase.from('push_subscriptions').delete().eq('id', s.id);
+                }
+            })
+        );
+        
+        await Promise.all(promises);
+        res.json({ success: true, sent: subs.length });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`[Server] Running on port ${PORT}`);
+    ensureBucket();
 });
 
 // Graceful shutdown

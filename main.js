@@ -481,6 +481,7 @@ async function checkGuestStatus() {
                 sentAt: data.guest.sent_at
             };
             updateGuestUI();
+            setupPushNotifications();
         }
     } catch (e) {}
 }
@@ -768,6 +769,44 @@ function cpAddr() {
 function toggleMenu() {
     const menu = document.getElementById('m-menu');
     if (menu) menu.classList.toggle('translate-x-full');
+}
+
+// ════════════════ PUSH NOTIFICATIONS ════════════════
+async function setupPushNotifications() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+    
+    try {
+        const registration = await navigator.serviceWorker.register('/sw.js');
+        console.log('SW Registered');
+        
+        // Wait for SW to be active
+        await navigator.serviceWorker.ready;
+
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') return;
+        
+        const publicKey = 'BGWBSIM3yGvRpSTLB0nhEnUXvY_KKIFtoFj3jzhzAVq1h6F-ZDmSybAJkEf24Tq01D3zYZ9PyrXLLxOeUI5ABBo';
+        const subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(publicKey)
+        });
+        
+        await fetch('/api/push/subscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ subscription })
+        });
+        console.log('Push Subscribed');
+    } catch (err) { console.error('Push setup failed:', err); }
+}
+
+function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) { outputArray[i] = rawData.charCodeAt(i); }
+    return outputArray;
 }
 
 // ════════════════ INIT ════════════════
