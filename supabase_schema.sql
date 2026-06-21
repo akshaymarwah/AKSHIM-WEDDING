@@ -25,10 +25,20 @@ CREATE TABLE IF NOT EXISTS public.guests (
     arrival_details TEXT,
     profile_image_url TEXT,
     document_url TEXT,
+    vault_access BOOLEAN DEFAULT true,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 3. Create Templates Table
+-- 3. Create Shared Vault Table (Crowdsourced Photos)
+CREATE TABLE IF NOT EXISTS public.shared_vault (
+    id TEXT PRIMARY KEY,
+    url TEXT NOT NULL,
+    uploader_id TEXT REFERENCES public.guests(id),
+    uploader_name TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 4. Create Templates Table
 CREATE TABLE IF NOT EXISTS public.templates (
     id TEXT PRIMARY KEY,
     title TEXT NOT NULL,

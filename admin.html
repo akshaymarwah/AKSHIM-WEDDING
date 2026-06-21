@@ -517,6 +517,14 @@
                         </div>
                     </div>
                 </div>
+                <div class="flex items-center gap-3 bg-gold/5 p-4 rounded-lg border border-gold/10 mt-2">
+                    <input type="checkbox" id="edit-guest-vault-access" class="accent-gold h-4 w-4 rounded">
+                    <div>
+                        <label for="edit-guest-vault-access" class="block text-[10px] text-gold font-bold uppercase tracking-widest">Shared Vault Access</label>
+                        <p class="text-[8px] text-gold/40 uppercase mt-0.5">Allows guest to view & upload to gallery</p>
+                    </div>
+                </div>
+
                 <button type="submit" class="w-full bg-gold hover:bg-gold-light text-royal-bg font-bold py-4 text-xs tracking-widest uppercase transition mt-6 rounded shadow-lg">
                     Update Guest
                 </button>
@@ -759,7 +767,8 @@
                     arrivalMode: c.arrival_mode,
                     arrivalDetails: c.arrival_details,
                     profileImageUrl: c.profile_image_url,
-                    documentUrl: c.document_url
+                    documentUrl: c.document_url,
+                    vaultAccess: c.vault_access
                 }));
                 renderGuests();
                 updateStats();
@@ -1010,8 +1019,9 @@
             document.getElementById('edit-guest-arrival-date').value = guest.arrivalDate || '';
             document.getElementById('edit-guest-arrival-mode').value = guest.arrivalMode || '';
             document.getElementById('edit-guest-arrival-details').value = guest.arrivalDetails || '';
-            document.getElementById('edit-guest-image-url').value = guest.profileImageUrl || '';
-            document.getElementById('edit-guest-doc-url').value = guest.documentUrl || '';
+            document.getElementById('edit-guest-image-url').value = guest.profileImageUrl || guest.profile_image_url || '';
+            document.getElementById('edit-guest-doc-url').value = guest.documentUrl || guest.document_url || '';
+            document.getElementById('edit-guest-vault-access').checked = guest.vault_access !== false;
             
             // Labels
             document.getElementById('edit-guest-image-label').textContent = guest.profileImageUrl ? 'Photo Uploaded' : 'Choose Photo';
@@ -1037,6 +1047,7 @@
             const arrivalDetails = document.getElementById('edit-guest-arrival-details').value;
             const profileImageUrl = document.getElementById('edit-guest-image-url').value;
             const documentUrl = document.getElementById('edit-guest-doc-url').value;
+            const vaultAccess = document.getElementById('edit-guest-vault-access').checked;
 
             try {
                 const res = await fetch(`/api/contacts/${id}`, {
@@ -1045,7 +1056,7 @@
                     body: JSON.stringify({ 
                         name, phone, groupId, souls, 
                         arrivalDate, arrivalMode, arrivalDetails,
-                        profileImageUrl, documentUrl
+                        profileImageUrl, documentUrl, vaultAccess
                     })
                 });
                 const data = await res.json();

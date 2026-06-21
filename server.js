@@ -4,6 +4,7 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
 const csv = require('csv-parser');
 const qrcode = require('qrcode');
 const { Client, LocalAuth } = require('whatsapp-web.js');
@@ -73,7 +74,8 @@ async function saveContact(contact) {
         arrival_mode: contact.arrivalMode || contact.arrival_mode || null,
         arrival_details: contact.arrivalDetails || contact.arrival_details || null,
         profile_image_url: contact.profileImageUrl || contact.profile_image_url || null,
-        document_url: contact.documentUrl || contact.document_url || null
+        document_url: contact.documentUrl || contact.document_url || null,
+        vault_access: contact.vaultAccess !== undefined ? contact.vaultAccess : (contact.vault_access !== undefined ? contact.vault_access : true)
     };
 
     const { error } = await supabase.from('guests').upsert(payload);
@@ -357,6 +359,47 @@ app.post('/api/upload-file', requireAuth, upload.single('file'), async (req, res
         console.error('[Upload] Error:', err.message);
         res.status(500).json({ error: err.message });
     }
+});
+
+// ════════════════ SHARED VAULT ════════════════
+app.get('/api/vault', requireAuth, async (req, res) => {
+    try {
+        if (req.user.role === 'guest') {
+            const { data: guest } = await supabase.from('guests').select('vault_access').eq('id', req.user.id).single();
+            if (!guest || !guest.vault_access) return res.status(403).json({ error: 'Vault access denied' });
+        }
+        const { data, error } = await supabase.from('shared_vault').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+        res.json(data);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.post('/api/vault/upload', requireAuth, upload.single('file'), async (req, res) => {
+    try {
+        if (req.user.role === 'guest') {
+            const { data: guest } = await supabase.from('guests').select('vault_access, name').eq('id', req.user.id).single();
+            if (!guest || !guest.vault_access) return res.status(403).json({ error: 'Vault access denied' });
+            req.user.name = guest.name;
+        }
+        const file = req.file;
+        if (!file) return res.status(400).json({ error: 'No file' });
+        const fileName = `vault_${Date.now()}_${file.originalname.replace(/\s+/g, '_')}`;
+        const { error: upErr } = await supabase.storage.from('shared-vault').upload(fileName, file.buffer, {
+            contentType: file.mimetype,
+            upsert: true
+        });
+        if (upErr) throw upErr;
+        const { data: { publicUrl } } = supabase.storage.from('shared-vault').getPublicUrl(fileName);
+        const entry = {
+            id: 'vlt_' + Date.now(),
+            url: publicUrl,
+            uploader_id: req.user.id,
+            uploader_name: req.user.name || 'Admin'
+        };
+        const { error: dbErr } = await supabase.from('shared_vault').insert(entry);
+        if (dbErr) throw dbErr;
+        res.json({ success: true, entry });
+    } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.post('/api/bulk-send', requireAuth, async (req, res) => {

@@ -552,11 +552,86 @@ function updateGuestUI() {
         pPreview.innerHTML = `<img src="${G.guest.profile_image_url}" class="w-full h-full object-cover">`;
     }
 
-    console.log('Guest UI Updated for:', G.guest.name);
+    // Update Vault Visibility
+    const vaultSection = document.getElementById('portal-vault-section');
+    if (vaultSection) {
+        if (G.guest.vault_access !== false) {
+            vaultSection.classList.remove('hidden');
+            loadVault();
+        } else {
+            vaultSection.classList.add('hidden');
+        }
+    }
 
-    // Show Portal Button
-    const portalBtn = document.getElementById('guest-portal-btn-wrap');
-    if (portalBtn) portalBtn.classList.remove('hidden');
+    console.log('Guest UI Updated for:', G.guest.name);
+}
+
+async function loadVault() {
+    const gallery = document.getElementById('vault-gallery');
+    if (!gallery) return;
+
+    try {
+        const res = await fetch('/api/vault');
+        const data = await res.json();
+        if (data.error) return console.error('Vault error:', data.error);
+
+        if (data.length === 0) {
+            gallery.innerHTML = `
+                <div class="col-span-full flex flex-col items-center justify-center py-20 text-gold/20">
+                    <i class="fa-solid fa-images text-4xl mb-4"></i>
+                    <p class="text-[10px] uppercase tracking-widest">No memories shared yet</p>
+                </div>
+            `;
+            return;
+        }
+
+        gallery.innerHTML = data.map(img => `
+            <div class="relative aspect-square rounded overflow-hidden group border border-gold/10 hover:border-gold/40 transition-all cursor-pointer shadow-lg" onclick="previewVaultImage('${img.url}')">
+                <img src="${img.url}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
+                    <p class="text-[8px] text-gold font-bold uppercase tracking-widest truncate">By ${img.uploader_name}</p>
+                    <p class="text-[7px] text-gold/40 uppercase">${new Date(img.created_at).toLocaleDateString()}</p>
+                </div>
+            </div>
+        `).join('');
+    } catch (err) { console.error('Load vault failed:', err); }
+}
+
+async function uploadToVault(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const btn = document.querySelector('button[onclick="uploadToVault(this)"]') || input.parentElement.querySelector('.bg-gradient-to-r');
+    const originalContent = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Uploading...';
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('bucket', 'shared-vault');
+
+    try {
+        const res = await fetch('/api/vault/upload', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+            showToast('Memory shared! 👑');
+            loadVault();
+        } else {
+            showToast('Upload failed: ' + (data.error || 'Unknown error'), 'error');
+        }
+    } catch (err) {
+        showToast('Network error', 'error');
+    } finally {
+        btn.innerHTML = originalContent;
+        input.value = '';
+    }
+}
+
+function previewVaultImage(url) {
+    // Basic full screen preview or simple link
+    window.open(url, '_blank');
 }
 
 async function savePortalDetails() {
