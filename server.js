@@ -597,9 +597,9 @@ app.post('/api/admin/send-push', requireAuth, async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`[Server] Running on port ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`👑 AKSHIM Server running on port ${PORT}`);
+    initWhatsApp('default');
     ensureBucket();
 });
 
