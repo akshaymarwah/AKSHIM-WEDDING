@@ -375,6 +375,10 @@
                             </tbody>
                         </table>
                     </div>
+                    <!-- Mobile Cards for WhatsApp -->
+                    <div id="whatsapp-contacts-list-mobile" class="md:hidden space-y-3 mt-4">
+                        <!-- Loaded dynamically -->
+                    </div>
                     <div id="wa-contacts-disconnected-state" class="py-20 text-center">
                         <i class="fa-brands fa-whatsapp text-gold/20 text-5xl mb-4"></i>
                         <p class="text-gold/60 text-sm font-bold uppercase tracking-widest">Not Connected</p>
@@ -749,7 +753,7 @@
                 toolbarWA.classList.remove('hidden');
                 toolbarDir.classList.add('hidden');
                 if (whatsappContacts.length === 0) syncWhatsAppContacts();
-                else renderWhatsAppContacts();
+                else filterGuests();
             }
         }
 
@@ -918,15 +922,24 @@
             const status = document.getElementById('filter-status').value;
             const group = document.getElementById('filter-group').value;
             
-            const filtered = contacts.filter(g => {
-                const n = (g.name || "").toLowerCase();
-                const p = (g.phone || "");
-                const matchSearch = n.includes(query) || p.includes(query);
-                const matchStatus = status === 'all' || g.status === status;
-                const matchGroup = group === 'all' || g.groupId === group;
-                return matchSearch && matchStatus && matchGroup;
-            });
-            renderGuests(filtered);
+            if (activeTab === 'directory') {
+                const filtered = contacts.filter(g => {
+                    const n = (g.name || "").toLowerCase();
+                    const p = (g.phone || "");
+                    const matchSearch = n.includes(query) || p.includes(query);
+                    const matchStatus = status === 'all' || g.status === status;
+                    const matchGroup = group === 'all' || g.groupId === group;
+                    return matchSearch && matchStatus && matchGroup;
+                });
+                renderGuests(filtered);
+            } else {
+                const filtered = whatsappContacts.filter(c => {
+                    const n = (c.name || "").toLowerCase();
+                    const p = (c.phone || "");
+                    return n.includes(query) || p.includes(query);
+                });
+                renderWhatsAppContacts(filtered);
+            }
             
             // If group is selected, auto-select all filtered guests
             if (group !== 'all') {
@@ -1400,11 +1413,26 @@
             }
         }
 
-        function renderWhatsAppContacts() {
-            const list = document.getElementById('whatsapp-contacts-list');
-            if (!list) return;
-            list.innerHTML = whatsappContacts.map(c => `
-                <tr class="border-b border-gold/5">
+        function renderWhatsAppContacts(listToRender = null) {
+            const data = listToRender || whatsappContacts;
+            const desktopTbody = document.getElementById('whatsapp-contacts-list');
+            const mobileContainer = document.getElementById('whatsapp-contacts-list-mobile');
+            if (!desktopTbody || !mobileContainer) return;
+
+            desktopTbody.innerHTML = '';
+            mobileContainer.innerHTML = '';
+
+            if (data.length === 0) {
+                const empty = `<tr class="border-b border-gold/5"><td colspan="3" class="py-20 text-center text-gold/20 uppercase tracking-widest text-[10px]">No Contacts Found</td></tr>`;
+                desktopTbody.innerHTML = empty;
+                mobileContainer.innerHTML = `<div class="py-10 text-center text-gold/20 uppercase tracking-widest text-[10px]">No Contacts Found</div>`;
+                return;
+            }
+
+            data.forEach(c => {
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gold/5 hover:bg-gold/[0.02] transition';
+                row.innerHTML = `
                     <td class="py-4 px-4 font-bold text-gold-light">${c.name}</td>
                     <td class="py-4 px-4 text-gold/60">${c.phone}</td>
                     <td class="py-4 px-4 text-center">
@@ -1412,8 +1440,23 @@
                             Save as Guest
                         </button>
                     </td>
-                </tr>
-            `).join('');
+                `;
+                desktopTbody.appendChild(row);
+
+                const card = document.createElement('div');
+                card.className = 'bg-royal-bg/40 border border-gold/10 p-4 rounded-lg flex justify-between items-center';
+                card.innerHTML = `
+                    <div>
+                        <h4 class="text-xs font-bold text-gold-light">${c.name}</h4>
+                        <p class="text-[10px] text-gold/40 mt-1">${c.phone}</p>
+                    </div>
+                    <button onclick="saveContactAsGuest('${c.name.replace(/'/g, "\\'")}', '${c.phone}')" class="bg-gold text-royal-bg text-[9px] px-4 py-2 rounded font-black uppercase tracking-widest">
+                        Save
+                    </button>
+                `;
+                mobileContainer.appendChild(card);
+            });
+
             document.getElementById('wa-contacts-disconnected-state').classList.add('hidden');
         }
 

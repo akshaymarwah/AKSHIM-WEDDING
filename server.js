@@ -479,7 +479,23 @@ app.get('/api/whatsapp-contacts', requireAuth, async (req, res) => {
     if (s.status !== 'ready') return res.status(400).json({ error: 'Not connected' });
     try {
         const raw = await s.client.getContacts();
-        const clean = raw.filter(c => !c.isGroup && c.isMyContact).map(c => ({ name: c.name || c.pushname || c.number, phone: c.number }));
+        const seen = new Set();
+        const clean = [];
+        for (const c of raw) {
+            if (c.isGroup || !c.isMyContact || !c.number || c.number.length > 13) continue;
+            
+            // Deduplicate by the last 10 digits to catch same number in different formats
+            const numOnly = c.number.replace(/\D/g, '');
+            const normalized = numOnly.length >= 10 ? numOnly.slice(-10) : numOnly;
+            
+            if (seen.has(normalized)) continue;
+            seen.add(normalized);
+            
+            clean.push({ 
+                name: c.name || c.pushname || c.number, 
+                phone: c.number 
+            });
+        }
         res.json(clean);
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
