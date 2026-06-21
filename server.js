@@ -68,7 +68,12 @@ async function saveContact(contact) {
         souls: contact.souls || 1,
         message: contact.message || '',
         type: contact.type || 'guest',
-        sent_at: contact.sentAt || contact.sent_at || null
+        sent_at: contact.sentAt || contact.sent_at || null,
+        arrival_date: contact.arrivalDate || contact.arrival_date || null,
+        arrival_mode: contact.arrivalMode || contact.arrival_mode || null,
+        arrival_details: contact.arrivalDetails || contact.arrival_details || null,
+        profile_image_url: contact.profileImageUrl || contact.profile_image_url || null,
+        document_url: contact.documentUrl || contact.document_url || null
     };
 
     const { error } = await supabase.from('guests').upsert(payload);
@@ -135,9 +140,12 @@ async function uploadSession(sessionId) {
         
         const buffer = zip.toBuffer();
         console.log(`[Supabase] [${sessionId}] Uploading ${buffer.length} bytes to cloud...`);
-        const { error } = await supabase.storage.from(BUCKET_NAME).upload(`${sessionId}.zip`, buffer, { upsert: true });
+        const { error } = await supabase.storage.from(BUCKET_NAME).upload(`${sessionId}.zip`, buffer, { 
+            upsert: true,
+            contentType: 'application/zip'
+        });
         if (error) throw error;
-        console.log(`[Supabase] [${sessionId}] Session backup completed. 👑`);
+        console.log(`[Supabase] [${sessionId}] Session backup completed successfully. 👑`);
     } catch (err) { console.error(`[Supabase] [${sessionId}] Backup failed:`, err.message); }
 }
 
@@ -324,6 +332,33 @@ app.post('/api/send-message', requireAuth, async (req, res) => {
     catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// ════════════════ FILE UPLOAD ════════════════
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryBuffer() });
+
+app.post('/api/upload-file', requireAuth, upload.single('file'), async (req, res) => {
+    try {
+        const { bucket } = req.body;
+        const file = req.file;
+        if (!file) return res.status(400).json({ error: 'No file uploaded' });
+
+        const fileName = `${Date.now()}_${file.originalname.replace(/\s+/g, '_')}`;
+        const { data, error } = await supabase.storage.from(bucket).upload(fileName, file.buffer, {
+            contentType: file.mimetype,
+            upsert: true
+        });
+
+        if (error) throw error;
+
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(fileName);
+        res.json({ success: true, url: publicUrl });
+    } catch (err) {
+        console.error('[Upload] Error:', err.message);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 app.post('/api/bulk-send', requireAuth, async (req, res) => {
     const { contactIds, templateId, customMessage, minDelay, maxDelay, session: sid } = req.body;
     const s = getSession(sid || 'default');
@@ -357,9 +392,10 @@ app.post('/api/bulk-send', requireAuth, async (req, res) => {
                 
                 bulkSendState.sent++;
             } catch (e) { 
-                console.error('[Broadcast] Error:', e.message);
+                const errMsg = e.message || 'Unknown error';
+                console.error(`[Broadcast] [${t.name}] Error:`, errMsg);
                 bulkSendState.failed++; 
-                bulkSendState.errors.push({ name: t.name, error: e.message }); 
+                bulkSendState.errors.push({ name: t.name, error: errMsg }); 
             }
             // Dynamic delay
             const delay = Math.floor(Math.random() * (maxD - minD + 1)) + minD;

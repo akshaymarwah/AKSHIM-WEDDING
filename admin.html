@@ -337,6 +337,7 @@
                                     <th class="py-4 px-4">WhatsApp</th>
                                     <th class="py-4 px-4">Group</th>
                                     <th class="py-4 px-4 text-center">Status</th>
+                                    <th class="py-4 px-4 text-center">Travel</th>
                                     <th class="py-4 px-4">Last Sent</th>
                                     <th class="py-4 px-4 text-center">Actions</th>
                                 </tr>
@@ -399,11 +400,40 @@
                     <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">WhatsApp Number</label>
                     <input type="text" id="add-guest-phone" required placeholder="91XXXXXXXXXX" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold-light outline-none focus:border-gold">
                 </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Assign Group</label>
+                        <select id="add-guest-group" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold outline-none focus:border-gold">
+                            <option value="">-- No Group --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Souls</label>
+                        <input type="number" id="add-guest-souls" value="1" min="1" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold-light outline-none focus:border-gold">
+                    </div>
+                </div>
+
+                <div class="h-[1px] bg-gold/10 my-4"></div>
+                <p class="text-[9px] text-gold/40 uppercase tracking-[0.2em] font-bold mb-4">Arrival Details (Prayagraj)</p>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Arrival Date</label>
+                        <input type="date" id="add-guest-arrival-date" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-xs text-gold outline-none focus:border-gold">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Mode</label>
+                        <select id="add-guest-arrival-mode" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-xs text-gold outline-none focus:border-gold">
+                            <option value="">-- Mode --</option>
+                            <option value="Car">Car</option>
+                            <option value="Train">Train</option>
+                            <option value="Flight">Flight</option>
+                        </select>
+                    </div>
+                </div>
                 <div>
-                    <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Assign Group</label>
-                    <select id="add-guest-group" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold outline-none focus:border-gold">
-                        <option value="">-- No Group --</option>
-                    </select>
+                    <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Travel Details (Number/Info)</label>
+                    <input type="text" id="add-guest-arrival-details" placeholder="Flight/Train No." class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-xs text-gold-light outline-none focus:border-gold">
                 </div>
                 <button type="submit" class="w-full bg-gold hover:bg-gold-light text-royal-bg font-bold py-4 text-xs tracking-widest uppercase transition mt-6 rounded shadow-lg">
                     Add Guest
@@ -429,11 +459,63 @@
                     <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Phone</label>
                     <input type="text" id="edit-guest-phone" required class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold-light outline-none focus:border-gold">
                 </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Group</label>
+                        <select id="edit-guest-group" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold outline-none focus:border-gold">
+                            <option value="">-- No Group --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Souls</label>
+                        <input type="number" id="edit-guest-souls" value="1" min="1" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold-light outline-none focus:border-gold">
+                    </div>
+                </div>
+
+                <div class="h-[1px] bg-gold/10 my-4"></div>
+                <p class="text-[9px] text-gold/40 uppercase tracking-[0.2em] font-bold mb-4">Travel & Media (Prayagraj)</p>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Arrival Date</label>
+                        <input type="date" id="edit-guest-arrival-date" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-xs text-gold outline-none focus:border-gold">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Mode</label>
+                        <select id="edit-guest-arrival-mode" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-xs text-gold outline-none focus:border-gold">
+                            <option value="">-- Mode --</option>
+                            <option value="Car">Car</option>
+                            <option value="Train">Train</option>
+                            <option value="Flight">Flight</option>
+                        </select>
+                    </div>
+                </div>
                 <div>
-                    <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Group</label>
-                    <select id="edit-guest-group" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold outline-none focus:border-gold">
-                        <option value="">-- No Group --</option>
-                    </select>
+                    <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Travel Info</label>
+                    <input type="text" id="edit-guest-arrival-details" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-xs text-gold-light outline-none focus:border-gold">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Profile Photo</label>
+                        <div class="relative group">
+                            <input type="file" id="edit-guest-image-file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="handleFileUpload(this, 'guest-images', 'edit-guest-image-url')">
+                            <div class="w-full bg-royal-bg/50 border border-gold/20 rounded px-4 py-3 text-[10px] text-gold/60 group-hover:border-gold/50 transition truncate">
+                                <i class="fa-solid fa-camera mr-2"></i> <span id="edit-guest-image-label">Choose Photo</span>
+                            </div>
+                            <input type="hidden" id="edit-guest-image-url">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Documents</label>
+                        <div class="relative group">
+                            <input type="file" id="edit-guest-doc-file" accept=".pdf,image/*" class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="handleFileUpload(this, 'guest-documents', 'edit-guest-doc-url')">
+                            <div class="w-full bg-royal-bg/50 border border-gold/20 rounded px-4 py-3 text-[10px] text-gold/60 group-hover:border-gold/50 transition truncate">
+                                <i class="fa-solid fa-file-invoice mr-2"></i> <span id="edit-guest-doc-label">Upload Ticket</span>
+                            </div>
+                            <input type="hidden" id="edit-guest-doc-url">
+                        </div>
+                    </div>
                 </div>
                 <button type="submit" class="w-full bg-gold hover:bg-gold-light text-royal-bg font-bold py-4 text-xs tracking-widest uppercase transition mt-6 rounded shadow-lg">
                     Update Guest
@@ -672,7 +754,12 @@
                 contacts = rawContacts.map(c => ({
                     ...c,
                     groupId: c.group_id,
-                    sentAt: c.sent_at
+                    sentAt: c.sent_at,
+                    arrivalDate: c.arrival_date,
+                    arrivalMode: c.arrival_mode,
+                    arrivalDetails: c.arrival_details,
+                    profileImageUrl: c.profile_image_url,
+                    documentUrl: c.document_url
                 }));
                 renderGuests();
                 updateStats();
@@ -747,6 +834,14 @@
                             ${g.status}
                         </span>
                     </td>
+                    <td class="py-4 px-4 text-center">
+                        <div class="flex items-center justify-center gap-2 text-gold/40 text-[10px]">
+                            ${g.arrivalMode ? `<i class="fa-solid ${g.arrivalMode === 'Flight' ? 'fa-plane' : (g.arrivalMode === 'Train' ? 'fa-train' : 'fa-car')} text-gold/60" title="${g.arrivalMode}"></i>` : ''}
+                            ${g.profileImageUrl ? `<i class="fa-solid fa-camera text-green-400/60" title="Photo Uploaded"></i>` : ''}
+                            ${g.documentUrl ? `<i class="fa-solid fa-file-invoice text-blue-400/60" title="Ticket Uploaded"></i>` : ''}
+                            ${(!g.arrivalMode && !g.profileImageUrl && !g.documentUrl) ? '-' : ''}
+                        </div>
+                    </td>
                     <td class="py-4 px-4 text-gold/30 text-[10px]">${lastSent}</td>
                     <td class="py-4 px-4 text-center">
                         <div class="flex items-center justify-center gap-2">
@@ -782,6 +877,12 @@
                         </div>
                         <div class="flex items-center text-xs text-gold/60 gap-2">
                             <i class="fa-brands fa-whatsapp text-green-500"></i> ${g.phone}
+                        </div>
+                        </div>
+                        <div class="flex items-center text-[10px] text-gold/40 gap-3 pt-1">
+                            ${g.arrivalMode ? `<span><i class="fa-solid ${g.arrivalMode === 'Flight' ? 'fa-plane' : (g.arrivalMode === 'Train' ? 'fa-train' : 'fa-car')} mr-1"></i> ${g.arrivalMode}</span>` : ''}
+                            ${g.profileImageUrl ? `<span><i class="fa-solid fa-camera mr-1"></i> Photo</span>` : ''}
+                            ${g.documentUrl ? `<span><i class="fa-solid fa-file-invoice mr-1"></i> Ticket</span>` : ''}
                         </div>
                         <div class="flex justify-between items-center pt-2 border-t border-gold/5">
                             <span class="text-[9px] text-gold/30 uppercase">Sent: ${lastSent}</span>
@@ -874,11 +975,19 @@
             const name = document.getElementById('add-guest-name').value;
             const phone = document.getElementById('add-guest-phone').value;
             const groupId = document.getElementById('add-guest-group').value;
+            const souls = document.getElementById('add-guest-souls').value;
+            const arrivalDate = document.getElementById('add-guest-arrival-date').value;
+            const arrivalMode = document.getElementById('add-guest-arrival-mode').value;
+            const arrivalDetails = document.getElementById('add-guest-arrival-details').value;
+
             try {
                 const res = await fetch('/api/contacts', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, phone, groupId })
+                    body: JSON.stringify({ 
+                        name, phone, groupId, souls, 
+                        arrivalDate, arrivalMode, arrivalDetails 
+                    })
                 });
                 const data = await res.json();
                 if (data.error) showToast(data.error, 'error');
@@ -897,6 +1006,17 @@
             document.getElementById('edit-guest-name').value = guest.name;
             document.getElementById('edit-guest-phone').value = guest.phone;
             document.getElementById('edit-guest-group').value = guest.groupId || '';
+            document.getElementById('edit-guest-souls').value = guest.souls || 1;
+            document.getElementById('edit-guest-arrival-date').value = guest.arrivalDate || '';
+            document.getElementById('edit-guest-arrival-mode').value = guest.arrivalMode || '';
+            document.getElementById('edit-guest-arrival-details').value = guest.arrivalDetails || '';
+            document.getElementById('edit-guest-image-url').value = guest.profileImageUrl || '';
+            document.getElementById('edit-guest-doc-url').value = guest.documentUrl || '';
+            
+            // Labels
+            document.getElementById('edit-guest-image-label').textContent = guest.profileImageUrl ? 'Photo Uploaded' : 'Choose Photo';
+            document.getElementById('edit-guest-doc-label').textContent = guest.documentUrl ? 'Ticket Uploaded' : 'Upload Ticket';
+
             document.getElementById('modal-edit-guest').classList.remove('hidden');
             document.getElementById('modal-edit-guest').classList.add('flex');
         }
@@ -911,11 +1031,22 @@
             const name = document.getElementById('edit-guest-name').value;
             const phone = document.getElementById('edit-guest-phone').value;
             const groupId = document.getElementById('edit-guest-group').value;
+            const souls = document.getElementById('edit-guest-souls').value;
+            const arrivalDate = document.getElementById('edit-guest-arrival-date').value;
+            const arrivalMode = document.getElementById('edit-guest-arrival-mode').value;
+            const arrivalDetails = document.getElementById('edit-guest-arrival-details').value;
+            const profileImageUrl = document.getElementById('edit-guest-image-url').value;
+            const documentUrl = document.getElementById('edit-guest-doc-url').value;
+
             try {
                 const res = await fetch(`/api/contacts/${id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, phone, groupId })
+                    body: JSON.stringify({ 
+                        name, phone, groupId, souls, 
+                        arrivalDate, arrivalMode, arrivalDetails,
+                        profileImageUrl, documentUrl
+                    })
                 });
                 const data = await res.json();
                 if (data.error) showToast(data.error, 'error');
@@ -925,6 +1056,39 @@
                     closeEditGuestModal();
                 }
             } catch (err) { showToast('Error updating guest', 'error'); }
+        }
+
+        async function handleFileUpload(input, bucket, hiddenId) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const labelId = hiddenId.replace('-url', '-label');
+            const label = document.getElementById(labelId);
+            const originalText = label.textContent;
+            label.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Uploading...';
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('bucket', bucket);
+
+            try {
+                const res = await fetch('/api/upload-file', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById(hiddenId).value = data.url;
+                    label.textContent = 'Uploaded ✅';
+                    showToast('File uploaded successfully');
+                } else {
+                    throw new Error(data.error);
+                }
+            } catch (err) {
+                console.error('Upload failed:', err);
+                label.textContent = 'Upload Failed';
+                showToast('Upload failed: ' + err.message, 'error');
+            }
         }
 
         async function deleteGuest(id) {

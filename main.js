@@ -530,9 +530,108 @@ function updateGuestUI() {
         }
     }
 
+    // Update Travel Info
+    const pDate = document.getElementById('portal-arrival-date');
+    if (pDate) pDate.value = G.guest.arrival_date || '';
+    
+    const pMode = document.getElementById('portal-arrival-mode');
+    if (pMode) pMode.value = G.guest.arrival_mode || '';
+    
+    const pDetails = document.getElementById('portal-arrival-details');
+    if (pDetails) pDetails.value = G.guest.arrival_details || '';
+
+    const pImg = document.getElementById('portal-image-url');
+    if (pImg) pImg.value = G.guest.profile_image_url || '';
+
+    const pDoc = document.getElementById('portal-doc-url');
+    if (pDoc) pDoc.value = G.guest.document_url || '';
+
+    // Update Photo Preview
+    const pPreview = document.getElementById('portal-profile-preview');
+    if (pPreview && G.guest.profile_image_url) {
+        pPreview.innerHTML = `<img src="${G.guest.profile_image_url}" class="w-full h-full object-cover">`;
+    }
+
+    console.log('Guest UI Updated for:', G.guest.name);
+
     // Show Portal Button
     const portalBtn = document.getElementById('guest-portal-btn-wrap');
     if (portalBtn) portalBtn.classList.remove('hidden');
+}
+
+async function savePortalDetails() {
+    if (!G.guest) return;
+    const btn = document.querySelector('button[onclick="savePortalDetails()"]');
+    const originalText = btn.textContent;
+    btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Saving...';
+
+    const payload = {
+        ...G.guest,
+        arrival_date: document.getElementById('portal-arrival-date').value,
+        arrival_mode: document.getElementById('portal-arrival-mode').value,
+        arrival_details: document.getElementById('portal-arrival-details').value,
+        profile_image_url: document.getElementById('portal-image-url').value,
+        document_url: document.getElementById('portal-doc-url').value
+    };
+
+    try {
+        const res = await fetch(`/api/contacts/${G.guest.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+            G.guest = payload; // Update local state
+            showToast('Details updated! 👑');
+            updateGuestUI();
+        } else {
+            showToast('Update failed', 'error');
+        }
+    } catch (err) {
+        showToast('Network error', 'error');
+    } finally {
+        btn.textContent = originalText;
+    }
+}
+
+async function portalFileUpload(input, bucket, hiddenId) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const labelId = hiddenId.replace('-url', '-label');
+    const label = document.getElementById(labelId);
+    const originalText = label.textContent;
+    label.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Uploading...';
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('bucket', bucket);
+
+    try {
+        const res = await fetch('/api/upload-file', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+            document.getElementById(hiddenId).value = data.url;
+            label.textContent = 'Uploaded ✅';
+            showToast('File uploaded!');
+            
+            // If it was a profile image, update the preview immediately
+            if (hiddenId === 'portal-image-url') {
+                const preview = document.getElementById('portal-profile-preview');
+                if (preview) preview.innerHTML = `<img src="${data.url}" class="w-full h-full object-cover">`;
+            }
+        } else {
+            showToast('Upload failed', 'error');
+            label.textContent = originalText;
+        }
+    } catch (err) {
+        showToast('Error uploading', 'error');
+        label.textContent = originalText;
+    }
 }
 
 function openGuestPortal() {

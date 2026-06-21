@@ -20,6 +20,11 @@ CREATE TABLE IF NOT EXISTS public.guests (
     message TEXT,
     type TEXT,
     sent_at TEXT,
+    arrival_date TEXT,
+    arrival_mode TEXT,
+    arrival_details TEXT,
+    profile_image_url TEXT,
+    document_url TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

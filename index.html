@@ -428,8 +428,76 @@
                         </span>
                     </div>
                     <p class="text-xs text-gold/60 max-w-md italic">
-                        "Your presence is a gift that we treasure. We look forward to creating beautiful memories together in the heart of Delhi."
+                        "Your presence is a gift that we treasure. We look forward to creating beautiful memories together in the heart of Prayagraj."
                     </p>
+                </div>
+
+                <!-- Travel & Profile Section -->
+                <div class="mt-12 pt-12 border-t border-gold/10">
+                    <div class="text-center mb-8">
+                        <h3 class="font-cinzel text-gold text-lg tracking-[0.3em] uppercase">Travel & Profile</h3>
+                        <p class="text-[10px] text-gold/40 uppercase tracking-widest mt-2">Help us coordinate your royal arrival</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Profile Media -->
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-[10px] text-gold/60 uppercase font-bold mb-3 tracking-widest">Your Royal Portrait</label>
+                                <div class="flex items-center gap-4">
+                                    <div id="portal-profile-preview" class="w-16 h-16 rounded-full border border-gold/20 overflow-hidden bg-gold/5 flex items-center justify-center">
+                                        <i class="fa-solid fa-user text-gold/20 text-xl"></i>
+                                    </div>
+                                    <div class="flex-1 relative group">
+                                        <input type="file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="portalFileUpload(this, 'guest-images', 'portal-image-url')">
+                                        <div class="w-full bg-white/5 border border-gold/20 rounded px-4 py-3 text-[10px] text-gold/60 group-hover:border-gold/50 transition">
+                                            <i class="fa-solid fa-camera mr-2"></i> <span id="portal-image-label">Update Photo</span>
+                                        </div>
+                                        <input type="hidden" id="portal-image-url">
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-gold/60 uppercase font-bold mb-3 tracking-widest">Travel Document (Ticket/ID)</label>
+                                <div class="relative group">
+                                    <input type="file" accept=".pdf,image/*" class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="portalFileUpload(this, 'guest-documents', 'portal-doc-url')">
+                                    <div class="w-full bg-white/5 border border-gold/20 rounded px-4 py-3 text-[10px] text-gold/60 group-hover:border-gold/50 transition">
+                                        <i class="fa-solid fa-file-invoice mr-2"></i> <span id="portal-doc-label">Upload PDF/Image</span>
+                                    </div>
+                                    <input type="hidden" id="portal-doc-url">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Arrival Info -->
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Arrival Date</label>
+                                    <input type="date" id="portal-arrival-date" class="w-full bg-white/5 border border-gold/20 rounded px-4 py-3 text-xs text-gold outline-none focus:border-gold">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Mode</label>
+                                    <select id="portal-arrival-mode" class="w-full bg-white/5 border border-gold/20 rounded px-4 py-3 text-xs text-gold outline-none focus:border-gold">
+                                        <option value="">-- Select --</option>
+                                        <option value="Car">Car</option>
+                                        <option value="Train">Train</option>
+                                        <option value="Flight">Flight</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Flight / Train Details</label>
+                                <input type="text" id="portal-arrival-details" placeholder="e.g. Flight 6E-123" class="w-full bg-white/5 border border-gold/20 rounded px-4 py-3 text-xs text-gold-light outline-none focus:border-gold">
+                            </div>
+                            <button onclick="savePortalDetails()" class="w-full bg-gold/10 hover:bg-gold/20 text-gold border border-gold/40 font-bold py-4 text-[10px] tracking-[0.2em] uppercase transition mt-2 rounded">
+                                Update My Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-12 pb-4">
                     <button onclick="closeGuestPortal(); goTo(4)" class="text-[9px] text-gold font-bold uppercase tracking-[0.3em] border-b border-gold/40 pb-1 hover:border-gold transition-all">
                         Manage My RSVP
                     </button>
