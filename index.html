@@ -8,6 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-[#050010] text-[#fdf2cf] overflow-hidden">
 
@@ -116,6 +117,10 @@
 
     <!-- Mobile Menu -->
     <div id="m-menu" class="fixed inset-0 z-[850] bg-[#050010] translate-x-full transition-transform duration-700 flex flex-col items-center justify-center gap-8">
+        <!-- Close Button -->
+        <button class="absolute top-8 right-8 text-[#D4AF37] text-3xl p-4 hover:scale-110 transition" onclick="toggleMenu()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
         <button class="royal-head text-2xl tracking-[0.5em] gold-metallic" onclick="toggleMenu(); goTo(0)">HOME</button>
         <button class="royal-head text-2xl tracking-[0.5em] gold-metallic" onclick="toggleMenu(); goTo(1)">STORY</button>
         <button class="royal-head text-2xl tracking-[0.5em] gold-metallic" onclick="toggleMenu(); goTo(2)">EVENTS</button>
