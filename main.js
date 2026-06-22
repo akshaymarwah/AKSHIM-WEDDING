@@ -337,7 +337,7 @@ const initBRollEngine = () => {
             const content = s.querySelector('.inner, .card');
             if (idx === i) {
                 s.classList.add('active-scene');
-                if (content) gsap.set(content, { opacity: 1, scale: 1, filter: 'blur(0px)', y: 0 });
+                if (content) gsap.set(content, { opacity: 1, scale: 1, filter: 'blur(0px)', y: 0, xPercent: 0 });
             } else {
                 s.classList.remove('active-scene');
                 if (content) gsap.set(content, { opacity: 0 });
@@ -354,7 +354,15 @@ const initBRollEngine = () => {
         const prevContent = sections[curS]?.querySelector('.inner, .card');
         const nextContent = sections[targetIndex]?.querySelector('.inner, .card');
 
-        if (startWarp) startWarp(dir);
+        const isStoryTransition = 
+            sections[curS]?.id.startsWith('s1_') && 
+            sections[targetIndex]?.id.startsWith('s1_');
+
+        const isEventsTransition = 
+            sections[curS]?.id.startsWith('s2_') && 
+            sections[targetIndex]?.id.startsWith('s2_');
+
+        const isSlidingTransition = isStoryTransition || isEventsTransition;
 
         const tl = gsap.timeline({
             onComplete: () => {
@@ -364,27 +372,53 @@ const initBRollEngine = () => {
             }
         });
 
-        if (dir === 1) {
-            if (prevContent) tl.to(prevContent, { scale: 6, opacity: 0, filter: 'blur(60px)', duration: 1.2, ease: 'power2.in' }, 0);
-            if (nextContent) {
-                sections[targetIndex].classList.add('active-scene');
-                tl.fromTo(nextContent, { scale: 0, opacity: 0, filter: 'blur(40px)' }, { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 1.5, ease: 'expo.out' }, 0.2);
+        if (isSlidingTransition) {
+            // Kindle Book-style smooth slide transition
+            if (dir === 1) {
+                if (prevContent) tl.to(prevContent, { xPercent: -100, opacity: 0, duration: 0.8, ease: 'power2.inOut' }, 0);
+                if (nextContent) {
+                    sections[targetIndex].classList.add('active-scene');
+                    tl.fromTo(nextContent, 
+                        { xPercent: 100, opacity: 0 }, 
+                        { xPercent: 0, opacity: 1, duration: 0.8, ease: 'power2.inOut' }, 0.02
+                    );
+                }
+            } else {
+                if (prevContent) tl.to(prevContent, { xPercent: 100, opacity: 0, duration: 0.8, ease: 'power2.inOut' }, 0);
+                if (nextContent) {
+                    sections[targetIndex].classList.add('active-scene');
+                    tl.fromTo(nextContent, 
+                        { xPercent: -100, opacity: 0 }, 
+                        { xPercent: 0, opacity: 1, duration: 0.8, ease: 'power2.inOut' }, 0.02
+                    );
+                }
             }
         } else {
-            if (prevContent) tl.to(prevContent, { scale: 0, opacity: 0, filter: 'blur(40px)', duration: 1.0, ease: 'power2.in' }, 0);
-            if (nextContent) {
-                sections[targetIndex].classList.add('active-scene');
-                tl.fromTo(nextContent, { scale: 6, opacity: 0, filter: 'blur(60px)' }, { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 1.5, ease: 'expo.out' }, 0.2);
-            }
-        }
+            // Standard major section cosmic broll warp
+            if (startWarp) startWarp(dir);
 
-        gsap.to('.bg-mandala', { 
-            scale: dir === 1 ? 5 : 0.2, opacity: 0, duration: 1, ease: 'power4.in',
-            onComplete: () => {
-                gsap.set('.bg-mandala', { scale: dir === 1 ? 0.2 : 5 });
-                gsap.to('.bg-mandala', { scale: 1.5, opacity: 0.1, duration: 1.5, ease: 'power2.out' });
+            if (dir === 1) {
+                if (prevContent) tl.to(prevContent, { scale: 6, opacity: 0, filter: 'blur(60px)', duration: 1.2, ease: 'power2.in' }, 0);
+                if (nextContent) {
+                    sections[targetIndex].classList.add('active-scene');
+                    tl.fromTo(nextContent, { scale: 0, opacity: 0, filter: 'blur(40px)' }, { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 1.5, ease: 'expo.out' }, 0.2);
+                }
+            } else {
+                if (prevContent) tl.to(prevContent, { scale: 0, opacity: 0, filter: 'blur(40px)', duration: 1.0, ease: 'power2.in' }, 0);
+                if (nextContent) {
+                    sections[targetIndex].classList.add('active-scene');
+                    tl.fromTo(nextContent, { scale: 6, opacity: 0, filter: 'blur(60px)' }, { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 1.5, ease: 'expo.out' }, 0.2);
+                }
             }
-        });
+
+            gsap.to('.bg-mandala', { 
+                scale: dir === 1 ? 5 : 0.2, opacity: 0, duration: 1, ease: 'power4.in',
+                onComplete: () => {
+                    gsap.set('.bg-mandala', { scale: dir === 1 ? 0.2 : 5 });
+                    gsap.to('.bg-mandala', { scale: 1.5, opacity: 0.1, duration: 1.5, ease: 'power2.out' });
+                }
+            });
+        }
     };
 
     window.addEventListener('wheel', (e) => {
@@ -400,14 +434,14 @@ const initBRollEngine = () => {
         if (Math.abs(diff) > 40) navigate(curS + (diff > 0 ? 1 : -1));
     }, { passive: true });
 
-    // Expose to global for menu links with index mapping for split story chapters
+    // Expose to global for menu links with index mapping for split story chapters & event slides
     window.goTo = (i) => {
         const mapping = {
             0: 0, // Home
             1: 1, // Story (Chapter I)
-            2: 4, // Events
-            3: 5, // Venue
-            4: 6  // RSVP
+            2: 4, // Events (Day I - Morning)
+            3: 8, // Venue
+            4: 9  // RSVP
         };
         const target = mapping[i] !== undefined ? mapping[i] : i;
         navigate(target);
