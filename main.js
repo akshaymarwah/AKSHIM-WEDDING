@@ -446,18 +446,7 @@ const initBRollEngine = () => {
         }
     };
 
-    window.addEventListener('wheel', (e) => {
-        if (Math.abs(e.deltaY) < 15) return;
-        navigate(curS + (e.deltaY > 0 ? 1 : -1));
-    }, { passive: true });
 
-    let ts = 0;
-    window.addEventListener('touchstart', (e) => ts = e.touches[0].clientY, { passive: true });
-    window.addEventListener('touchend', (e) => {
-        const te = e.changedTouches[0].clientY;
-        const diff = ts - te;
-        if (Math.abs(diff) > 40) navigate(curS + (diff > 0 ? 1 : -1));
-    }, { passive: true });
 
     // Expose to global for menu links with index mapping for split story chapters & event slides
     window.goTo = (i) => {
