@@ -353,9 +353,15 @@ const initBRollEngine = () => {
         // Prevent page change if current section is scrolling internally
         const activeSection = sections[curS];
         if (activeSection && !force) {
-            const scrollTop = activeSection.scrollTop;
-            const scrollHeight = activeSection.scrollHeight;
-            const clientHeight = activeSection.clientHeight;
+            let scrollEl = activeSection;
+            const scrollableChild = activeSection.querySelector('.inner, .card, .matte-royal-card');
+            if (scrollableChild && scrollableChild.scrollHeight > scrollableChild.clientHeight + 5) {
+                scrollEl = scrollableChild;
+            }
+
+            const scrollTop = scrollEl.scrollTop;
+            const scrollHeight = scrollEl.scrollHeight;
+            const clientHeight = scrollEl.clientHeight;
 
             if (scrollHeight > clientHeight + 5) {
                 const dir = targetIndex > curS ? 1 : -1;
