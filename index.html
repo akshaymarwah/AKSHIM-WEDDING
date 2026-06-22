@@ -121,17 +121,9 @@
     </div>
 
     <!-- ── NAVIGATION BAR ── -->
-    <nav id="nav" class="fixed top-0 w-full z-[100] flex items-center justify-between px-6 sm:px-12 py-6 sm:py-10 opacity-0">
+    <nav id="nav" class="fixed top-0 w-full z-[100] flex items-center justify-between px-6 sm:px-12 py-4 sm:py-6 opacity-0">
         <img src="images/akshim_logo.png" alt="AKSHIM Logo" class="nav-logo w-14 h-14 sm:w-20 sm:h-20 object-contain cursor-pointer hover:scale-105 transition-transform duration-500" onclick="goTo(0)">
-        <div class="nav-links hidden lg:flex gap-8 items-center">
-            <button class="nb royal-head text-[10px] tracking-[0.35em] gold-metallic" onclick="goTo(0)" data-t="nav_home">HOME</button>
-            <button class="nb royal-head text-[10px] tracking-[0.35em] gold-metallic" onclick="goTo(1)" data-t="nav_story">STORY</button>
-            <button class="nb royal-head text-[10px] tracking-[0.35em] gold-metallic" onclick="goTo(2)" data-t="nav_events">EVENTS</button>
-            <button class="nb royal-head text-[10px] tracking-[0.35em] gold-metallic" onclick="goTo(3)" data-t="nav_venue">VENUE</button>
-            <button class="nb royal-head text-[10px] tracking-[0.3em] gold-metallic" onclick="goTo(4)" data-t="nav_rsvp">RSVP</button>
-            <button id="guest-login-btn" class="royal-head text-[10px] tracking-[0.2em] text-[#D4AF37] border border-[#D4AF37]/30 px-5 py-2 hover:bg-[#D4AF37]/15" onclick="openLogin()" data-t="nav_login">GUEST LOGIN</button>
-        </div>
-        <button class="lg:hidden flex flex-col gap-1.5 p-2 z-[900]" onclick="toggleMenu()">
+        <button class="flex flex-col gap-1.5 p-2 z-[900]" onclick="toggleMenu()">
             <div class="w-6 h-[1px] bg-[#D4AF37]"></div>
             <div class="w-4 h-[1px] bg-[#D4AF37] ml-auto"></div>
             <div class="w-6 h-[1px] bg-[#D4AF37]"></div>
@@ -194,7 +186,7 @@
         </section>
 
         <!-- S1: STORY - CHAPTER I -->
-        <section class="S pt-20 pb-20" id="s1_1">
+        <section class="S pt-32 sm:pt-40 pb-20" id="s1_1">
             <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center gap-12" id="storyContent1">
                 <div class="flex flex-col items-center gap-2">
                     <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]" data-t="story_title">Our Eternal Story</h2>
@@ -215,7 +207,7 @@
         </section>
 
         <!-- S1: STORY - CHAPTER II -->
-        <section class="S pt-20 pb-20" id="s1_2">
+        <section class="S pt-32 sm:pt-40 pb-20" id="s1_2">
             <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center gap-12" id="storyContent2">
                 <div class="flex flex-col items-center gap-2">
                     <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]" data-t="story_title">Our Eternal Story</h2>
@@ -236,7 +228,7 @@
         </section>
 
         <!-- S1: STORY - CHAPTER III -->
-        <section class="S pt-20 pb-20" id="s1_3">
+        <section class="S pt-32 sm:pt-40 pb-20" id="s1_3">
             <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center gap-12" id="storyContent3">
                 <div class="flex flex-col items-center gap-2">
                     <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]" data-t="story_title">Our Eternal Story</h2>
@@ -257,7 +249,7 @@
         </section>
 
         <!-- S2: GRAND CELEBRATIONS - EVENT I (MEHENDI) -->
-        <section class="S pt-20 pb-20" id="s2_1">
+        <section class="S pt-32 sm:pt-40 pb-20" id="s2_1">
             <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center gap-12" id="eventContent1">
                 <div class="flex flex-col items-center gap-2">
                     <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]">Grand Celebrations</h2>
@@ -284,7 +276,7 @@
         </section>
 
         <!-- S2: GRAND CELEBRATIONS - EVENT II (SAGAN & COCKTAIL) -->
-        <section class="S pt-20 pb-20" id="s2_2">
+        <section class="S pt-32 sm:pt-40 pb-20" id="s2_2">
             <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center gap-12" id="eventContent2">
                 <div class="flex flex-col items-center gap-2">
                     <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]">Grand Celebrations</h2>
@@ -311,7 +303,7 @@
         </section>
 
         <!-- S2: GRAND CELEBRATIONS - EVENT III (HALDI) -->
-        <section class="S pt-20 pb-20" id="s2_3">
+        <section class="S pt-32 sm:pt-40 pb-20" id="s2_3">
             <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center gap-12" id="eventContent3">
                 <div class="flex flex-col items-center gap-2">
                     <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]">Grand Celebrations</h2>
@@ -338,7 +330,7 @@
         </section>
 
         <!-- S2: GRAND CELEBRATIONS - EVENT IV (BARAT & WEDDING) -->
-        <section class="S pt-20 pb-20" id="s2_4">
+        <section class="S pt-32 sm:pt-40 pb-20" id="s2_4">
             <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center gap-12" id="eventContent4">
                 <div class="flex flex-col items-center gap-2">
                     <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]">Grand Celebrations</h2>
@@ -365,7 +357,7 @@
         </section>
 
         <!-- S3: VENUE -->
-        <section class="S pt-20 pb-20" id="s3">
+        <section class="S pt-32 sm:pt-40 pb-20" id="s3">
             <div class="inner relative z-10 max-w-5xl mx-auto px-6 flex flex-col items-center gap-12" id="venueContent">
                 <div class="flex flex-col items-center gap-2">
                     <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]">The Palatial Sanctuary</h2>
@@ -390,7 +382,7 @@
         </section>
 
         <!-- S4: RSVP -->
-        <section class="S pt-20 pb-20" id="s4">
+        <section class="S pt-32 sm:pt-40 pb-20" id="s4">
             <div class="inner relative z-10 max-w-2xl mx-auto px-6 flex flex-col items-center gap-12" id="rsvpContent">
                 <div class="flex flex-col items-center gap-2 text-center">
                     <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]">Sacred Acceptance</h2>
