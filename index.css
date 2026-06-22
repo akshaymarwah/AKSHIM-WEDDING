@@ -19,6 +19,14 @@
     box-sizing: border-box;
 }
 
+html, body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden !important;
+    position: fixed;
+    overscroll-behavior: none !important;
+}
+
 /* ── LOGO & BRANDING ── */
 .logo-screen {
     mix-blend-mode: screen;
@@ -95,11 +103,18 @@
     background: linear-gradient(145deg, rgba(26, 2, 53, 0.95) 0%, rgba(10, 1, 26, 0.98) 100%);
     border: 1px solid rgba(212, 175, 55, 0.2);
     position: relative;
-    overflow: hidden;
+    overflow-y: auto !important;
+    max-height: 65vh !important;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overscroll-behavior: contain !important;
     transition: all 0.6s cubic-bezier(0.2, 1, 0.3, 1);
     border-radius: 8px;
     box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(212, 175, 55, 0.05);
     backdrop-filter: blur(5px);
+}
+.matte-royal-card::-webkit-scrollbar {
+    display: none;
 }
 
 .hero-blur-in {
@@ -134,6 +149,86 @@
     box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
 }
 
+/* ── ROYAL CREATIVE BUTTONS ── */
+.royal-nav-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.65rem 1.6rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #fdf2cf;
+    background: rgba(212, 175, 55, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.45);
+    border-radius: 40px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.2, 1, 0.3, 1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+}
+
+.royal-nav-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(253, 242, 207, 0.25),
+        transparent
+    );
+    transition: all 0.6s ease;
+}
+
+.royal-nav-btn:hover::before {
+    left: 100%;
+}
+
+.royal-nav-btn:hover {
+    color: #050010;
+    background: #D4AF37;
+    border-color: #D4AF37;
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.55);
+    transform: translateY(-2px);
+}
+
+/* Specific styling for Previous buttons */
+.royal-nav-btn-prev {
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(212, 175, 55, 0.25);
+    color: rgba(253, 242, 207, 0.85);
+}
+
+.royal-nav-btn-prev:hover {
+    background: rgba(212, 175, 55, 0.15);
+    color: #D4AF37;
+    border-color: #D4AF37;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+/* Active next button glow animation */
+.royal-nav-btn-next {
+    animation: button-pulse 3s infinite alternate;
+}
+
+@keyframes button-pulse {
+    0% {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 0 0 rgba(212, 175, 55, 0.15);
+    }
+    100% {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 12px 4px rgba(212, 175, 55, 0.25);
+    }
+}
+
 /* ── PRELOADER ── */
 .pc {
     font-family: 'Cinzel', serif;
@@ -153,7 +248,7 @@
     inset: 0;
     width: 100%;
     height: 100vh;
-    overflow-y: auto;
+    overflow: hidden !important;
     -ms-overflow-style: none; /* IE/Edge */
     scrollbar-width: none; /* Firefox */
     z-index: 1;
@@ -180,6 +275,14 @@
     opacity: 0;
     transform: translateZ(0);
     transition: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    max-height: 100vh !important;
+    overflow: hidden !important;
+    width: 100% !important;
 }
 
 /* Ambient section gradients - Floral & Royal Tones */
@@ -217,27 +320,63 @@
 
 /* ── RESPONSIVE & MOBILE OVERFLOW SAFEGUARDS ── */
 @media (max-width: 768px) {
-    #nav { padding: 1rem 1.5rem; }
+    #nav { 
+        padding: 0.5rem 1rem !important; 
+        height: 60px !important;
+    }
+    .nav-logo {
+        width: 3.25rem !important;
+        height: 3.25rem !important;
+    }
+    #frame {
+        inset: 8px !important; /* Give more layout space */
+    }
     .nav-links { display: none; }
     .S { 
-        padding: 80px 1rem 40px !important;
+        padding: 65px 12px 16px !important; /* Only clear the nav and bottom border */
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
         height: 100vh !important;
+        overflow: hidden !important;
     }
     .inner, .card {
-        max-height: 82vh !important;
-        overflow-y: auto !important;
+        height: 100% !important;
+        max-height: calc(100vh - 85px) !important;
+        overflow: hidden !important;
         width: 100% !important;
-        padding-bottom: 3rem !important;
-        scrollbar-width: none; /* Hide scrollbars for ultra clean look */
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 0.75rem !important; /* Tighten gap to pull elements closer together */
+        padding: 0 !important;
     }
     .inner::-webkit-scrollbar, .card::-webkit-scrollbar {
         display: none;
     }
+    /* Scale down the big gold titles on mobile so they don't consume too much height */
+    .inner h2.font-decorative, .card h2.font-decorative {
+        font-size: clamp(1.3rem, 5.5vw, 1.75rem) !important;
+        letter-spacing: 0.22em !important;
+        line-height: 1.25 !important;
+        text-align: center !important;
+    }
     .matte-royal-card { 
-        padding: 2rem 1.5rem !important; 
+        padding: 1.5rem 1.1rem !important; 
+        max-height: 48vh !important; /* Perfect fit to prevent overflowing bottom bar */
+        overflow-y: auto !important;
+        scrollbar-width: none;
+        width: 100% !important;
+    }
+    .matte-royal-card::-webkit-scrollbar {
+        display: none;
+    }
+    /* Optimize buttons slightly for small mobile screens to fit side-by-side */
+    .royal-nav-btn {
+        padding: 0.55rem 1.15rem !important;
+        font-size: 9.5px !important;
+        gap: 0.4rem !important;
     }
 }
