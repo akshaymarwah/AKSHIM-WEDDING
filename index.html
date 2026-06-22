@@ -9,8 +9,31 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        [data-t] { transition: opacity 0.3s ease; }
+        .lang-switching { opacity: 0; }
+    </style>
 </head>
 <body class="bg-[#050010] text-[#fdf2cf] overflow-hidden">
+
+    <!-- ── LANGUAGE SELECTION MODAL ── -->
+    <div id="modal-lang" class="fixed inset-0 z-[2000] bg-[#050010] flex items-center justify-center p-4 transition-all duration-1000 hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.08)_0%,transparent_70%)]"></div>
+        <div class="relative z-10 text-center max-w-sm w-full p-8 border border-[#D4AF37]/30 bg-royal-bg/80 backdrop-blur-xl rounded-lg gold-border-glow">
+            <img src="images/akshim_logo.png" alt="Logo" class="w-24 mx-auto mb-6 animate-pulse">
+            <h2 class="font-decorative gold-metallic text-2xl tracking-[0.3em] uppercase mb-2">Welcome</h2>
+            <p class="font-cinzel text-[10px] text-[#D4AF37]/60 tracking-[0.4em] uppercase mb-8">Choose Your Language</p>
+            
+            <div class="flex flex-col gap-4">
+                <button onclick="setLanguage('en')" class="group relative overflow-hidden border border-[#D4AF37]/40 px-6 py-4 transition-all hover:bg-[#D4AF37]/10">
+                    <span class="relative z-10 royal-head text-xs tracking-[0.3em] text-[#fdf2cf]">English</span>
+                </button>
+                <button onclick="setLanguage('hi')" class="group relative overflow-hidden border border-[#D4AF37]/40 px-6 py-4 transition-all hover:bg-[#D4AF37]/10">
+                    <span class="relative z-10 font-cinzel text-base tracking-[0.1em] text-[#D4AF37]">हिन्दी (Hindi)</span>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- ── CANVAS LAYERS (CINEMATIC DEPTH) ── -->
     <canvas id="c-bg" class="fixed inset-0 z-0 pointer-events-none"></canvas>
@@ -76,22 +99,22 @@
         <div class="pre-cd flex gap-2 sm:gap-5 items-center justify-center opacity-0 px-4 w-full max-w-md" id="pre-cd">
             <div class="cd-b text-center bg-[#D4AF37]/5 border border-[#D4AF37]/20 p-2 sm:p-3 min-w-[60px] sm:min-w-[70px]">
                 <div class="cd-n royal-head text-2xl sm:text-3xl text-[#fdf2cf] leading-none" id="pD">00</div>
-                <div class="cd-l font-montserrat text-[8px] sm:text-[10px] tracking-[0.2em] text-[#D4AF37]/60 mt-1 uppercase">DAYS</div>
+                <div class="cd-l font-montserrat text-[8px] sm:text-[10px] tracking-[0.2em] text-[#D4AF37]/60 mt-1 uppercase" data-t="countdown_days">DAYS</div>
             </div>
             <div class="cd-s royal-head text-xl sm:text-2xl text-[#D4AF37]/40 animate-pulse">:</div>
             <div class="cd-b text-center bg-[#D4AF37]/5 border border-[#D4AF37]/20 p-2 sm:p-3 min-w-[60px] sm:min-w-[70px]">
                 <div class="cd-n royal-head text-2xl sm:text-3xl text-[#fdf2cf] leading-none" id="pH">00</div>
-                <div class="cd-l font-montserrat text-[8px] sm:text-[10px] tracking-[0.2em] text-[#D4AF37]/60 mt-1 uppercase">HRS</div>
+                <div class="cd-l font-montserrat text-[8px] sm:text-[10px] tracking-[0.2em] text-[#D4AF37]/60 mt-1 uppercase" data-t="countdown_hrs">HRS</div>
             </div>
             <div class="cd-s royal-head text-xl sm:text-2xl text-[#D4AF37]/40 animate-pulse">:</div>
             <div class="cd-b text-center bg-[#D4AF37]/5 border border-[#D4AF37]/20 p-2 sm:p-3 min-w-[60px] sm:min-w-[70px]">
                 <div class="cd-n royal-head text-2xl sm:text-3xl text-[#fdf2cf] leading-none" id="pM">00</div>
-                <div class="cd-l font-montserrat text-[8px] sm:text-[10px] tracking-[0.2em] text-[#D4AF37]/60 mt-1 uppercase">MIN</div>
+                <div class="cd-l font-montserrat text-[8px] sm:text-[10px] tracking-[0.2em] text-[#D4AF37]/60 mt-1 uppercase" data-t="countdown_min">MIN</div>
             </div>
             <div class="cd-s royal-head text-xl sm:text-2xl text-[#D4AF37]/40 animate-pulse">:</div>
             <div class="cd-b text-center bg-[#D4AF37]/5 border border-[#D4AF37]/20 p-2 sm:p-3 min-w-[60px] sm:min-w-[70px]">
                 <div class="cd-n royal-head text-2xl sm:text-3xl text-[#fdf2cf] leading-none" id="pS">00</div>
-                <div class="cd-l font-montserrat text-[8px] sm:text-[10px] tracking-[0.2em] text-[#D4AF37]/60 mt-1 uppercase">SEC</div>
+                <div class="cd-l font-montserrat text-[8px] sm:text-[10px] tracking-[0.2em] text-[#D4AF37]/60 mt-1 uppercase" data-t="countdown_sec">SEC</div>
             </div>
         </div>
         <div id="pre-curtain" class="absolute inset-0 bg-[#050010] scale-y-0 origin-top"></div>
@@ -101,12 +124,12 @@
     <nav id="nav" class="fixed top-0 w-full z-[100] flex items-center justify-between px-6 sm:px-12 py-6 sm:py-10 opacity-0">
         <img src="images/akshim_logo.png" alt="AKSHIM Logo" class="nav-logo w-14 h-14 sm:w-20 sm:h-20 object-contain cursor-pointer hover:scale-105 transition-transform duration-500" onclick="goTo(0)">
         <div class="nav-links hidden lg:flex gap-8 items-center">
-            <button class="nb royal-head text-[10px] tracking-[0.35em] gold-metallic" onclick="goTo(0)">HOME</button>
-            <button class="nb royal-head text-[10px] tracking-[0.35em] gold-metallic" onclick="goTo(1)">STORY</button>
-            <button class="nb royal-head text-[10px] tracking-[0.35em] gold-metallic" onclick="goTo(2)">EVENTS</button>
-            <button class="nb royal-head text-[10px] tracking-[0.35em] gold-metallic" onclick="goTo(3)">VENUE</button>
-            <button class="nb royal-head text-[10px] tracking-[0.3em] gold-metallic" onclick="goTo(4)">RSVP</button>
-            <button id="guest-login-btn" class="royal-head text-[10px] tracking-[0.2em] text-[#D4AF37] border border-[#D4AF37]/30 px-5 py-2 hover:bg-[#D4AF37]/15" onclick="openLogin()">GUEST LOGIN</button>
+            <button class="nb royal-head text-[10px] tracking-[0.35em] gold-metallic" onclick="goTo(0)" data-t="nav_home">HOME</button>
+            <button class="nb royal-head text-[10px] tracking-[0.35em] gold-metallic" onclick="goTo(1)" data-t="nav_story">STORY</button>
+            <button class="nb royal-head text-[10px] tracking-[0.35em] gold-metallic" onclick="goTo(2)" data-t="nav_events">EVENTS</button>
+            <button class="nb royal-head text-[10px] tracking-[0.35em] gold-metallic" onclick="goTo(3)" data-t="nav_venue">VENUE</button>
+            <button class="nb royal-head text-[10px] tracking-[0.3em] gold-metallic" onclick="goTo(4)" data-t="nav_rsvp">RSVP</button>
+            <button id="guest-login-btn" class="royal-head text-[10px] tracking-[0.2em] text-[#D4AF37] border border-[#D4AF37]/30 px-5 py-2 hover:bg-[#D4AF37]/15" onclick="openLogin()" data-t="nav_login">GUEST LOGIN</button>
         </div>
         <button class="lg:hidden flex flex-col gap-1.5 p-2 z-[900]" onclick="toggleMenu()">
             <div class="w-6 h-[1px] bg-[#D4AF37]"></div>
@@ -121,12 +144,19 @@
         <button class="absolute top-8 right-8 text-[#D4AF37] text-3xl p-4 hover:scale-110 transition" onclick="toggleMenu()">
             <i class="fa-solid fa-xmark"></i>
         </button>
-        <button class="royal-head text-2xl tracking-[0.5em] gold-metallic" onclick="toggleMenu(); goTo(0)">HOME</button>
-        <button class="royal-head text-2xl tracking-[0.5em] gold-metallic" onclick="toggleMenu(); goTo(1)">STORY</button>
-        <button class="royal-head text-2xl tracking-[0.5em] gold-metallic" onclick="toggleMenu(); goTo(2)">EVENTS</button>
-        <button class="royal-head text-2xl tracking-[0.5em] gold-metallic" onclick="toggleMenu(); goTo(3)">VENUE</button>
-        <button class="royal-head text-2xl tracking-[0.5em] gold-metallic" onclick="toggleMenu(); goTo(4)">RSVP</button>
-        <button class="royal-head text-lg tracking-[0.3em] text-[#D4AF37] border border-[#D4AF37]/30 px-8 py-3 mt-4 hover:bg-[#D4AF37]/15" onclick="toggleMenu(); openLogin()">GUEST LOGIN</button>
+        <button class="royal-head text-2xl tracking-[0.5em] gold-metallic" onclick="toggleMenu(); goTo(0)" data-t="nav_home">HOME</button>
+        <button class="royal-head text-2xl tracking-[0.5em] gold-metallic" onclick="toggleMenu(); goTo(1)" data-t="nav_story">STORY</button>
+        <button class="royal-head text-2xl tracking-[0.5em] gold-metallic" onclick="toggleMenu(); goTo(2)" data-t="nav_events">EVENTS</button>
+        <button class="royal-head text-2xl tracking-[0.5em] gold-metallic" onclick="toggleMenu(); goTo(3)" data-t="nav_venue">VENUE</button>
+        <button class="royal-head text-2xl tracking-[0.5em] gold-metallic" onclick="toggleMenu(); goTo(4)" data-t="nav_rsvp">RSVP</button>
+        <button class="royal-head text-lg tracking-[0.3em] text-[#D4AF37] border border-[#D4AF37]/30 px-8 py-3 mt-4 hover:bg-[#D4AF37]/15" onclick="toggleMenu(); openLogin()" data-t="nav_login">GUEST LOGIN</button>
+        
+        <!-- Quick Lang Switch in Mobile Menu -->
+        <div class="mt-8 flex gap-4">
+            <button onclick="setLanguage('en')" class="text-[10px] tracking-widest text-[#fdf2cf] opacity-50 hover:opacity-100 transition">EN</button>
+            <div class="w-[1px] h-4 bg-[#D4AF37]/20"></div>
+            <button onclick="setLanguage('hi')" class="text-[10px] tracking-widest text-[#D4AF37] opacity-50 hover:opacity-100 transition">हिन्दी</button>
+        </div>
     </div>
 
     <!-- ── ARTISTIC PERSPECTIVE LAYER (Fixed Sections) ── -->
@@ -155,7 +185,7 @@
                     
                     <!-- Guest Portal Access -->
                     <div id="guest-portal-btn-wrap" class="hidden animate-fadeIn mt-4">
-                        <button onclick="openGuestPortal()" class="pointer-events-auto bg-gradient-to-r from-gold/20 via-gold/10 to-gold/20 border border-gold/40 text-gold font-bold px-10 py-4 text-[10px] tracking-[0.4em] uppercase hover:bg-gold/20 transition-all rounded backdrop-blur-md shadow-[0_0_30px_rgba(212,175,55,0.1)]">
+                        <button onclick="openGuestPortal()" class="pointer-events-auto bg-gradient-to-r from-gold/20 via-gold/10 to-gold/20 border border-gold/40 text-gold font-bold px-10 py-4 text-[10px] tracking-[0.4em] uppercase hover:bg-gold/20 transition-all rounded backdrop-blur-md shadow-[0_0_30px_rgba(212,175,55,0.1)]" data-t="btn_enter">
                             Enter Royal Portal
                         </button>
                     </div>
@@ -167,15 +197,15 @@
         <section class="S pt-20 pb-20" id="s1">
             <div class="card relative z-10 max-w-5xl mx-auto px-6 py-12 text-center flex flex-col items-center gap-12" id="storyContent">
                 <div class="flex flex-col items-center gap-2">
-                    <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]">Our Eternal Story</h2>
+                    <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]" data-t="story_title">Our Eternal Story</h2>
                     <div class="h-[1px] w-24 sm:w-48 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
                     <!-- Chapter I -->
                     <div class="matte-royal-card p-10 flex flex-col gap-5 group">
-                        <span class="font-script gold-metallic text-5xl opacity-80 group-hover:scale-110 transition-transform">Chapter I</span>
-                        <h3 class="font-decorative text-sm tracking-[0.3em] text-[#D4AF37]">The Solitary Stars</h3>
+                        <span class="font-script gold-metallic text-5xl opacity-80 group-hover:scale-110 transition-transform" data-t="chapter_1">Chapter I</span>
+                        <h3 class="font-decorative text-sm tracking-[0.3em] text-[#D4AF37]" data-t="chapter_1_title">The Solitary Stars</h3>
                         <p class="font-cormorant italic text-xl text-[#fdf2cf]/80 leading-relaxed">
                             "For lifetimes, we walked beneath separate heavens, each a silent masterpiece of our own making. Two solitary stars, glowing with the pride of heritage, yet waiting for an alignment only the ancients could foresee."
                         </p>
@@ -183,8 +213,8 @@
 
                     <!-- Chapter II -->
                     <div class="matte-royal-card p-10 flex flex-col gap-5 group">
-                        <span class="font-script gold-metallic text-5xl opacity-80 group-hover:scale-110 transition-transform">Chapter II</span>
-                        <h3 class="font-decorative text-sm tracking-[0.3em] text-[#D4AF37]">The Celestial Convergence</h3>
+                        <span class="font-script gold-metallic text-5xl opacity-80 group-hover:scale-110 transition-transform" data-t="chapter_2">Chapter II</span>
+                        <h3 class="font-decorative text-sm tracking-[0.3em] text-[#D4AF37]" data-t="chapter_2_title">The Celestial Convergence</h3>
                         <p class="font-cormorant italic text-xl text-[#fdf2cf]/80 leading-relaxed">
                             "When our worlds finally collided through the wisdom of our kin, the air itself shifted. In that sacred moment of introduction, the quiet paths we trod ignited into a single, brilliant flame of shared destiny."
                         </p>
@@ -192,8 +222,8 @@
 
                     <!-- Chapter III -->
                     <div class="matte-royal-card p-10 flex flex-col gap-5 group border-[#D4AF37]/50">
-                        <span class="font-script gold-metallic text-5xl opacity-80 group-hover:scale-110 transition-transform">Chapter III</span>
-                        <h3 class="font-decorative text-sm tracking-[0.3em] text-[#D4AF37]">The Mirror Soul</h3>
+                        <span class="font-script gold-metallic text-5xl opacity-80 group-hover:scale-110 transition-transform" data-t="chapter_3">Chapter III</span>
+                        <h3 class="font-decorative text-sm tracking-[0.3em] text-[#D4AF37]" data-t="chapter_3_title">The Mirror Soul</h3>
                         <p class="font-cormorant italic text-xl text-[#fdf2cf]/80 leading-relaxed">
                             "Looking into your eyes, I found not a stranger, but the missing piece of my own soul. I found myself in you, a reflection so perfect it felt like coming home after a thousand years of wandering."
                         </p>

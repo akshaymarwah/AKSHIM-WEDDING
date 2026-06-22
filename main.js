@@ -6,8 +6,95 @@ const G = {
     busy: false,
     lastScrollTop: 0,
     scrollVelocity: 0,
-    targetDate: new Date('July 7, 2026 00:00:00').getTime()
+    targetDate: new Date('July 7, 2026 00:00:00').getTime(),
+    lang: localStorage.getItem('akshim_lang') || null
 };
+
+// ════════════════ TRANSLATIONS ════════════════
+const I18N = {
+    en: {
+        nav_home: "HOME",
+        nav_story: "STORY",
+        nav_events: "EVENTS",
+        nav_venue: "VENUE",
+        nav_rsvp: "RSVP",
+        nav_login: "GUEST LOGIN",
+        btn_enter: "Enter Royal Portal",
+        welcome_msg: "Welcome to the Royal Union",
+        countdown_days: "DAYS",
+        countdown_hrs: "HRS",
+        countdown_min: "MIN",
+        countdown_sec: "SEC",
+        story_title: "Our Eternal Story",
+        chapter_1: "Chapter I",
+        chapter_1_title: "The Solitary Stars",
+        chapter_2: "Chapter II",
+        chapter_2_title: "The Celestial Convergence",
+        chapter_3: "Chapter III",
+        chapter_3_title: "The Mirror Soul"
+    },
+    hi: {
+        nav_home: "मुखपृष्ठ",
+        nav_story: "कहानी",
+        nav_events: "कार्यक्रम",
+        nav_venue: "स्थान",
+        nav_rsvp: "आरएसवीपी",
+        nav_login: "अतिथि लॉगिन",
+        btn_enter: "शाही पोर्टल में प्रवेश करें",
+        welcome_msg: "शाही मिलन में आपका स्वागत है",
+        countdown_days: "दिन",
+        countdown_hrs: "घंटे",
+        countdown_min: "मिनट",
+        countdown_sec: "सेकंड",
+        story_title: "हमारी शाश्वत कहानी",
+        chapter_1: "अध्याय १",
+        chapter_1_title: "अकेले सितारे",
+        chapter_2: "अध्याय २",
+        chapter_2_title: "दिव्य मिलन",
+        chapter_3: "अध्याय ३",
+        chapter_3_title: "दर्पण आत्मा"
+    }
+};
+
+function applyLanguage(lang) {
+    if (!I18N[lang]) return;
+    const elements = document.querySelectorAll('[data-t]');
+    elements.forEach(el => {
+        const key = el.getAttribute('data-t');
+        if (I18N[lang][key]) {
+            el.classList.add('lang-switching');
+            setTimeout(() => {
+                el.textContent = I18N[lang][key];
+                el.classList.remove('lang-switching');
+            }, 300);
+        }
+    });
+    
+    // Update placeholders if any
+    document.querySelectorAll('[data-t-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-t-placeholder');
+        if (I18N[lang][key]) el.placeholder = I18N[lang][key];
+    });
+
+    document.documentElement.lang = lang;
+}
+
+function setLanguage(lang) {
+    G.lang = lang;
+    localStorage.setItem('akshim_lang', lang);
+    applyLanguage(lang);
+    
+    const modal = document.getElementById('modal-lang');
+    if (modal) {
+        modal.classList.add('opacity-0');
+        setTimeout(() => modal.classList.add('hidden'), 1000);
+    }
+    
+    // Restart any language-sensitive animations if needed
+    if (lang === 'hi') {
+        document.body.style.fontFamily = "'Cinzel', serif"; // Fallback/Mixed
+    }
+}
 
 // ════════════════ COUNTDOWN ════════════════
 function updateCountdown() {
@@ -812,6 +899,15 @@ function urlBase64ToUint8Array(base64String) {
 // ════════════════ INIT ════════════════
 document.addEventListener('DOMContentLoaded', () => {
     initStarField(); 
+    
+    // Language Check
+    if (!G.lang) {
+        const modal = document.getElementById('modal-lang');
+        if (modal) modal.classList.remove('hidden');
+    } else {
+        applyLanguage(G.lang);
+    }
+    
     initBRollEngine();
     initWarpEngine();
     runPreloader();
