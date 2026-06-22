@@ -329,31 +329,8 @@ const initBRollEngine = () => {
     const sections = document.querySelectorAll('.S');
     let curS = 0;
     let isT = false;
-    let nudgeTimer;
 
     if (!sections.length) return;
-
-    const startNudgeTimer = (index) => {
-        if (nudgeTimer) clearTimeout(nudgeTimer);
-        nudgeTimer = setTimeout(() => {
-            const activeSection = sections[index];
-            if (!activeSection) return;
-            const activeCard = activeSection.querySelector('.matte-royal-card');
-            if (activeCard) {
-                // Glow prominently and bounce-nudge up/down once
-                gsap.timeline()
-                    .to(activeCard, { 
-                        boxShadow: '0 0 50px rgba(212, 175, 55, 0.45)', 
-                        borderColor: 'rgba(212, 175, 55, 0.8)', 
-                        duration: 0.6, 
-                        yoyo: true, 
-                        repeat: 3 
-                    }, 0)
-                    .to(activeCard, { y: -15, duration: 0.3, ease: 'power2.out' }, 0)
-                    .to(activeCard, { y: 0, duration: 0.8, ease: 'bounce.out' }, 0.3);
-            }
-        }, 10000);
-    };
 
     const show = (i) => {
         sections.forEach((s, idx) => {
@@ -367,7 +344,6 @@ const initBRollEngine = () => {
                 if (content) gsap.set(content, { opacity: 0 });
             }
         });
-        startNudgeTimer(i);
     };
     show(0);
 
@@ -488,6 +464,11 @@ const initBRollEngine = () => {
         };
         const target = mapping[i] !== undefined ? mapping[i] : i;
         navigate(target, true);
+    };
+
+    // Expose direct slide navigation for next/prev buttons
+    window.goToSlide = (i) => {
+        navigate(i, true);
     };
 };
 
