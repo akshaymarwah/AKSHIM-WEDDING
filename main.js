@@ -28,10 +28,14 @@ const I18N = {
         story_title: "Our Eternal Story",
         chapter_1: "Chapter I",
         chapter_1_title: "The Solitary Stars",
+        chapter_1_text: `"Born near the sacred confluences of Prayagraj, a mind of relentless innovation was shaped—a creator of solutions and an architect of possibilities. Miles away, under the regal skies of Gwalior, a brilliant spirit decoded the secrets of elements and the music of language, guiding young minds with grace and wisdom. Two solitary stars, revolving in their own orbits, destined to align."`,
         chapter_2: "Chapter II",
         chapter_2_title: "The Celestial Convergence",
+        chapter_2_text: `"When the precision of science met the vision of innovation, a beautiful alchemy unfolded. Her deep understanding of elements and his passion for creating seamless systems sparked an unexpected connection. It was a perfect integration of heart and mind—where logic transformed into poetry, and two distinct paths merged into a single journey of endless possibilities."`,
         chapter_3: "Chapter III",
-        chapter_3_title: "The Mirror Soul"
+        chapter_3_title: "The Mirror Soul",
+        chapter_3_text: `"In each other's eyes, they found their most beautiful design. He found the focal element that gave meaning to all his ideas, while she discovered a story deeper than any textbook. Now, walking hand in hand, they are building a modern-day kingdom—a shared space of love, laughter, and lifelong discovery."`,
+        presence_msg: `"Your presence is a gift that we treasure. We look forward to creating beautiful, everlasting memories together in the heart of Prayagraj."`
     },
     hi: {
         nav_home: "मुखपृष्ठ",
@@ -49,10 +53,14 @@ const I18N = {
         story_title: "हमारी शाश्वत कहानी",
         chapter_1: "अध्याय १",
         chapter_1_title: "अकेले सितारे",
+        chapter_1_text: `"प्रयागराज के पावन संगम तट पर एक विलक्षण प्रतिभा का जन्म हुआ—जो नए विचारों के सृजक और सुव्यवस्थित समाधानों के शिल्पी बने। वहीं दूसरी ओर, ग्वालियर के राजसी इतिहास के आँचल में, एक प्रबुद्ध आत्मा तत्वों के रहस्यों को सुलझाती और भाषा के सौंदर्य को संवारती थी, जो अपनी शिक्षा से युवा मनों को प्रेरित कर रही थीं। अपने-अपने पथ पर चलते दो जाज्वल्यमान नक्षत्र, जिनका दिव्य मिलन निश्चित था।"`,
         chapter_2: "अध्याय २",
         chapter_2_title: "दिव्य मिलन",
+        chapter_2_text: `"जब विज्ञान की सूक्ष्मता का मिलन नवोन्मेष की दूरदर्शिता से हुआ, तो एक अद्भुत कीमिया का उदय हुआ। तत्वों पर उनकी गहरी समझ और सुव्यवस्थित प्रणालियों के निर्माण के प्रति उनके समर्पण ने एक अनोखा सूत्र बाँध दिया। यह दिल और दिमाग का एक संपूर्ण सामंजस्य था—जहाँ तर्क ने प्रेम का रूप ले लिया, और दो अलग-अलग राहें मिलकर एक साझा यात्रा बन गईं।"`,
         chapter_3: "अध्याय ३",
-        chapter_3_title: "दर्पण आत्मा"
+        chapter_3_title: "दर्पण आत्मा",
+        chapter_3_text: `"एक-दूसरे के साहचर्य में, उन्होंने जीवन की सबसे सुंदर रचना को पाया। उन्हें वह मुख्य तत्व मिल गया जिसने उनके सभी विचारों को पूर्णता दी, और उन्हें एक ऐसी दास्ताँ मिली जो हर परिभाषा से परे थी। अब, एक-दूसरे का हाथ थामे, वे अपने सपनों के एक नए संसार का निर्माण कर रहे हैं—जहाँ हर दिन खुशियों, साझा उत्सवों और असीम प्रेम से भरा है।"`,
+        presence_msg: `"आपका आगमन हमारे लिए एक अमूल्य उपहार है। हम प्रयागराज के पावन हृदय स्थल पर एक साथ सुंदर और अमिट यादें बनाने के लिए उत्सुक हैं।"`
     }
 };
 
@@ -392,8 +400,18 @@ const initBRollEngine = () => {
         if (Math.abs(diff) > 40) navigate(curS + (diff > 0 ? 1 : -1));
     }, { passive: true });
 
-    // Expose to global for menu links
-    window.goTo = (i) => navigate(i);
+    // Expose to global for menu links with index mapping for split story chapters
+    window.goTo = (i) => {
+        const mapping = {
+            0: 0, // Home
+            1: 1, // Story (Chapter I)
+            2: 4, // Events
+            3: 5, // Venue
+            4: 6  // RSVP
+        };
+        const target = mapping[i] !== undefined ? mapping[i] : i;
+        navigate(target);
+    };
 };
 
 // ════════════════ PRELOADER SEQUENCE ════════════════
