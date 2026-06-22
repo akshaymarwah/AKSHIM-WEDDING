@@ -264,6 +264,9 @@
                         <button id="tab-btn-whatsapp" onclick="switchTab('whatsapp')" class="royal-font text-xs sm:text-sm tracking-widest text-gold/40 font-bold border-b-2 border-transparent pb-3 px-2 hover:text-gold/80 transition uppercase">
                             WA Contacts
                         </button>
+                        <button id="tab-btn-messaging" onclick="switchTab('messaging')" class="royal-font text-xs sm:text-sm tracking-widest text-gold/40 font-bold border-b-2 border-transparent pb-3 px-2 hover:text-gold/80 transition uppercase">
+                            Messaging
+                        </button>
                     </div>
 
                     <!-- Toolbar Actions -->
@@ -323,32 +326,34 @@
                     </div>
                 </div>
 
-                <!-- Push Notification Management -->
-                <div class="bg-royal-bg/30 border border-sky-500/20 p-6 rounded-lg mb-8">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="royal-font text-sm text-sky-400 tracking-widest font-bold uppercase">
-                            <i class="fa-solid fa-bell animate-bounce mr-2"></i>Push Alert Manager
-                        </h3>
-                    </div>
-                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
-                        <div class="lg:col-span-2">
-                            <input type="text" id="push-title" placeholder="Notification Title (e.g. 🥂 Sangeet Starting!)" class="w-full bg-royal-bg/50 border border-gold/20 rounded px-4 py-3 text-xs text-gold-light outline-none focus:border-sky-500 transition">
-                            <textarea id="push-body" placeholder="Message details..." class="w-full bg-royal-bg/50 border border-gold/20 rounded px-4 py-3 text-xs text-gold-light mt-2 outline-none focus:border-sky-500 transition h-20"></textarea>
+                <div id="tab-content-messaging" class="hidden">
+                    <!-- Push Notification Management -->
+                    <div class="bg-royal-bg/30 border border-sky-500/20 p-6 rounded-lg mb-8">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="royal-font text-sm text-sky-400 tracking-widest font-bold uppercase">
+                                <i class="fa-solid fa-bell animate-bounce mr-2"></i>Push Alert Manager
+                            </h3>
                         </div>
-                        <div class="flex flex-col gap-2">
-                            <select id="push-target" onchange="togglePushTargetFields()" class="bg-royal-bg border border-gold/20 rounded px-4 py-3 text-xs text-gold outline-none focus:border-sky-500">
-                                <option value="all">Broadcast to All</option>
-                                <option value="group">Specific Group</option>
-                                <option value="individual">Single Guest</option>
-                            </select>
-                            <select id="push-group-id" class="hidden bg-royal-bg border border-gold/20 rounded px-4 py-3 text-xs text-gold outline-none focus:border-sky-500">
-                                <option value="">-- Select Group --</option>
-                            </select>
-                            <input type="text" id="push-guest-id" placeholder="Guest ID..." class="hidden bg-royal-bg border border-gold/20 rounded px-4 py-3 text-xs text-gold outline-none focus:border-sky-500">
+                        <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+                            <div class="lg:col-span-2">
+                                <input type="text" id="push-title" placeholder="Notification Title (e.g. 🥂 Sangeet Starting!)" class="w-full bg-royal-bg/50 border border-gold/20 rounded px-4 py-3 text-xs text-gold-light outline-none focus:border-sky-500 transition">
+                                <textarea id="push-body" placeholder="Message details..." class="w-full bg-royal-bg/50 border border-gold/20 rounded px-4 py-3 text-xs text-gold-light mt-2 outline-none focus:border-sky-500 transition h-20"></textarea>
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <select id="push-target" onchange="togglePushTargetFields()" class="bg-royal-bg border border-gold/20 rounded px-4 py-3 text-xs text-gold outline-none focus:border-sky-500">
+                                    <option value="all">Broadcast to All</option>
+                                    <option value="group">Specific Group</option>
+                                    <option value="individual">Single Guest</option>
+                                </select>
+                                <select id="push-group-id" class="hidden bg-royal-bg border border-gold/20 rounded px-4 py-3 text-xs text-gold outline-none focus:border-sky-500">
+                                    <option value="">-- Select Group --</option>
+                                </select>
+                                <input type="text" id="push-guest-id" placeholder="Guest ID..." class="hidden bg-royal-bg border border-gold/20 rounded px-4 py-3 text-xs text-gold outline-none focus:border-sky-500">
+                            </div>
+                            <button onclick="sendPushNotification()" class="bg-sky-500 hover:bg-sky-400 text-white text-[10px] px-6 py-4 font-bold rounded uppercase tracking-widest transition shadow-lg h-fit">
+                                <i class="fa-solid fa-paper-plane mr-2"></i>Send Push
+                            </button>
                         </div>
-                        <button onclick="sendPushNotification()" class="bg-sky-500 hover:bg-sky-400 text-white text-[10px] px-6 py-4 font-bold rounded uppercase tracking-widest transition shadow-lg h-fit">
-                            <i class="fa-solid fa-paper-plane mr-2"></i>Send Push
-                        </button>
                     </div>
                 </div>
 
@@ -761,28 +766,31 @@
             activeTab = tab;
             const btnDir = document.getElementById('tab-btn-directory');
             const btnWA = document.getElementById('tab-btn-whatsapp');
+            const btnMsg = document.getElementById('tab-btn-messaging');
             const contentDir = document.getElementById('tab-content-directory');
             const contentWA = document.getElementById('tab-content-whatsapp');
+            const contentMsg = document.getElementById('tab-content-messaging');
             const toolbarDir = document.getElementById('directory-toolbar');
             const toolbarWA = document.getElementById('whatsapp-toolbar');
 
+            // Reset all
+            [btnDir, btnWA, btnMsg].forEach(b => b.className = 'royal-font text-xs sm:text-sm tracking-widest text-gold/40 font-bold border-b-2 border-transparent pb-3 px-2 hover:text-gold/80 transition uppercase');
+            [contentDir, contentWA, contentMsg, toolbarDir, toolbarWA].forEach(c => c.classList.add('hidden'));
+
             if (tab === 'directory') {
                 btnDir.className = 'royal-font text-xs sm:text-sm tracking-widest text-gold font-bold border-b-2 border-gold pb-3 px-2 transition uppercase';
-                btnWA.className = 'royal-font text-xs sm:text-sm tracking-widest text-gold/40 font-bold border-b-2 border-transparent pb-3 px-2 hover:text-gold/80 transition uppercase';
                 contentDir.classList.remove('hidden');
-                contentWA.classList.add('hidden');
                 toolbarDir.classList.remove('hidden');
-                toolbarWA.classList.add('hidden');
                 renderGuests();
-            } else {
+            } else if (tab === 'whatsapp') {
                 btnWA.className = 'royal-font text-xs sm:text-sm tracking-widest text-gold font-bold border-b-2 border-gold pb-3 px-2 transition uppercase';
-                btnDir.className = 'royal-font text-xs sm:text-sm tracking-widest text-gold/40 font-bold border-b-2 border-transparent pb-3 px-2 hover:text-gold/80 transition uppercase';
                 contentWA.classList.remove('hidden');
-                contentDir.classList.add('hidden');
                 toolbarWA.classList.remove('hidden');
-                toolbarDir.classList.add('hidden');
                 if (whatsappContacts.length === 0) syncWhatsAppContacts();
                 else filterGuests();
+            } else if (tab === 'messaging') {
+                btnMsg.className = 'royal-font text-xs sm:text-sm tracking-widest text-gold font-bold border-b-2 border-gold pb-3 px-2 transition uppercase';
+                contentMsg.classList.remove('hidden');
             }
         }
 
