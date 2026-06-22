@@ -329,8 +329,31 @@ const initBRollEngine = () => {
     const sections = document.querySelectorAll('.S');
     let curS = 0;
     let isT = false;
+    let nudgeTimer;
 
     if (!sections.length) return;
+
+    const startNudgeTimer = (index) => {
+        if (nudgeTimer) clearTimeout(nudgeTimer);
+        nudgeTimer = setTimeout(() => {
+            const activeSection = sections[index];
+            if (!activeSection) return;
+            const activeCard = activeSection.querySelector('.matte-royal-card');
+            if (activeCard) {
+                // Glow prominently and bounce-nudge up/down once
+                gsap.timeline()
+                    .to(activeCard, { 
+                        boxShadow: '0 0 50px rgba(212, 175, 55, 0.45)', 
+                        borderColor: 'rgba(212, 175, 55, 0.8)', 
+                        duration: 0.6, 
+                        yoyo: true, 
+                        repeat: 3 
+                    }, 0)
+                    .to(activeCard, { y: -15, duration: 0.3, ease: 'power2.out' }, 0)
+                    .to(activeCard, { y: 0, duration: 0.8, ease: 'bounce.out' }, 0.3);
+            }
+        }, 10000);
+    };
 
     const show = (i) => {
         sections.forEach((s, idx) => {
@@ -338,16 +361,36 @@ const initBRollEngine = () => {
             if (idx === i) {
                 s.classList.add('active-scene');
                 if (content) gsap.set(content, { opacity: 1, scale: 1, filter: 'blur(0px)', y: 0, xPercent: 0 });
+                s.scrollTop = 0; // Reset scroll position when arriving
             } else {
                 s.classList.remove('active-scene');
                 if (content) gsap.set(content, { opacity: 0 });
             }
         });
+        startNudgeTimer(i);
     };
     show(0);
 
-    const navigate = (targetIndex) => {
+    const navigate = (targetIndex, force = false) => {
         if (isT || targetIndex < 0 || targetIndex >= sections.length || targetIndex === curS) return;
+
+        // Prevent page change if current section is scrolling internally
+        const activeSection = sections[curS];
+        if (activeSection && !force) {
+            const scrollTop = activeSection.scrollTop;
+            const scrollHeight = activeSection.scrollHeight;
+            const clientHeight = activeSection.clientHeight;
+
+            if (scrollHeight > clientHeight + 5) {
+                const dir = targetIndex > curS ? 1 : -1;
+                if (dir === 1 && scrollTop + clientHeight < scrollHeight - 15) {
+                    return; // Scroll down internally
+                }
+                if (dir === -1 && scrollTop > 15) {
+                    return; // Scroll up internally
+                }
+            }
+        }
 
         isT = true;
         const dir = targetIndex > curS ? 1 : -1;
@@ -444,7 +487,7 @@ const initBRollEngine = () => {
             4: 9  // RSVP
         };
         const target = mapping[i] !== undefined ? mapping[i] : i;
-        navigate(target);
+        navigate(target, true);
     };
 };
 
