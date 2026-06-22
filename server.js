@@ -321,8 +321,11 @@ async function initWhatsApp(id = 'default') {
                 '--disable-accelerated-2d-canvas',
                 '--no-first-run',
                 '--no-zygote',
-                '--single-process', // Faster on low resource cloud
-                '--disable-gpu'
+                '--single-process',
+                '--disable-gpu',
+                '--js-flags="--max-old-space-size=512"',
+                '--memory-pressure-thresholds=1',
+                '--disable-extensions'
             ] 
         }
     });
