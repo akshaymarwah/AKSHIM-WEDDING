@@ -129,6 +129,16 @@
                         </div>
                     </div>
                     
+                    <!-- Cloud Controls -->
+                    <div class="grid grid-cols-2 gap-2 mb-5">
+                        <button onclick="forceBackup()" title="Save current session to Supabase" class="border border-gold/30 text-gold text-[9px] uppercase font-black tracking-widest px-2 py-2.5 hover:bg-gold/10 rounded transition flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-cloud-arrow-up text-[10px]"></i> Backup
+                        </button>
+                        <button onclick="syncFromCloud()" title="Restore session from Supabase" class="border border-blue-500/30 text-blue-400 text-[9px] uppercase font-black tracking-widest px-2 py-2.5 hover:bg-blue-500/10 rounded transition flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-cloud-arrow-down text-[10px]"></i> Sync Cloud
+                        </button>
+                    </div>
+                    
                     <!-- Connection States -->
                     <div id="wa-disconnected" class="flex flex-col items-center justify-center py-2">
                         <div class="bg-white p-2 rounded-lg relative w-40 h-40 flex items-center justify-center border border-gold/30 shadow-2xl">
@@ -155,14 +165,6 @@
                         <button onclick="logoutWA()" class="mt-5 border border-red-500/30 text-red-400 text-[9px] uppercase font-black tracking-widest px-5 py-2 hover:bg-red-500/10 rounded transition w-full">
                             Terminate Link
                         </button>
-                        <div class="grid grid-cols-2 gap-2 mt-2 w-full">
-                            <button onclick="forceBackup()" class="border border-gold/30 text-gold text-[9px] uppercase font-black tracking-widest px-2 py-2 hover:bg-gold/10 rounded transition">
-                                <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Backup
-                            </button>
-                            <button onclick="syncFromCloud()" class="border border-blue-500/30 text-blue-400 text-[9px] uppercase font-black tracking-widest px-2 py-2 hover:bg-blue-500/10 rounded transition">
-                                <i class="fa-solid fa-cloud-arrow-down mr-1"></i> Sync Cloud
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
