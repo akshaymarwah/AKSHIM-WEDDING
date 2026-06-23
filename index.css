@@ -336,6 +336,17 @@ html, body {
 #fixed-header {
     pointer-events: none;
     text-shadow: 0 0 20px rgba(212,175,55,0.3);
+    will-change: opacity, filter;
+}
+
+.header-blur-out {
+    filter: blur(15px);
+    opacity: 0;
+}
+
+.header-blur-in {
+    filter: blur(0px);
+    opacity: 1;
 }
 
 .matte-royal-card {
@@ -403,15 +414,15 @@ html, body {
 /* ── RESPONSIVE & MOBILE OVERFLOW SAFEGUARDS ── */
 @media (max-width: 768px) {
     #nav { 
-        padding: 1.5rem 2rem !important; 
-        height: 80px !important;
+        padding: 2.5rem 2.5rem !important; /* Significantly more padding to pull logo away from corner */
+        height: 100px !important;
     }
     .nav-logo {
-        width: 3.5rem !important;
-        height: 3.5rem !important;
+        width: 4rem !important;
+        height: 4rem !important;
     }
     #frame {
-        inset: 8px !important; /* Give more layout space */
+        inset: 12px !important; /* Move the frame further out */
     }
     .nav-links { display: none; }
     .S { 

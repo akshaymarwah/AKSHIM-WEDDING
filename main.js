@@ -389,18 +389,43 @@ const initBRollEngine = () => {
 
         const isSlidingTransition = isStoryTransition || isEventsTransition;
 
-        // FIXED HEADER LOGIC
+        // FIXED HEADER LOGIC - Blurred Fade Transitions
         const fixedHeader = document.getElementById('fixed-header');
         const fixedTitle = document.getElementById('fixed-title');
+        const prevId = sections[curS]?.id || '';
         const targetId = sections[targetIndex]?.id || '';
 
-        if (targetId.startsWith('s1_') || targetId.startsWith('s2_')) {
-            if (fixedTitle) {
-                fixedTitle.textContent = targetId.startsWith('s1_') ? 'Our Eternal Story' : 'Grand Celebrations';
+        const isStoryTarget = targetId.startsWith('s1_');
+        const isEventsTarget = targetId.startsWith('s2_');
+        
+        if (isStoryTarget || isEventsTarget) {
+            const newTitle = isStoryTarget ? 'Our Eternal Story' : 'Grand Celebrations';
+            
+            // Update only if title changed or header is currently hidden
+            if (fixedTitle && (fixedTitle.textContent !== newTitle || (fixedHeader && parseFloat(getComputedStyle(fixedHeader).opacity) < 0.1))) {
+                gsap.to(fixedHeader, {
+                    filter: 'blur(12px)',
+                    opacity: 0,
+                    duration: 0.35,
+                    ease: 'power2.in',
+                    onComplete: () => {
+                        fixedTitle.textContent = newTitle;
+                        gsap.to(fixedHeader, {
+                            filter: 'blur(0px)',
+                            opacity: 1,
+                            duration: 0.6,
+                            ease: 'power2.out'
+                        });
+                    }
+                });
             }
-            if (fixedHeader) fixedHeader.style.opacity = '1';
-        } else {
-            if (fixedHeader) fixedHeader.style.opacity = '0';
+        } else if (fixedHeader && parseFloat(getComputedStyle(fixedHeader).opacity) > 0.1) {
+            gsap.to(fixedHeader, {
+                filter: 'blur(12px)',
+                opacity: 0,
+                duration: 0.45,
+                ease: 'power2.in'
+            });
         }
 
         const tl = gsap.timeline({
