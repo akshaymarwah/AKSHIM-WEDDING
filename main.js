@@ -398,25 +398,29 @@ const initBRollEngine = () => {
         });
 
         if (isSlidingTransition) {
-            // Kindle Book-style smooth slide transition
-            if (dir === 1) {
-                if (prevContent) tl.to(prevContent, { xPercent: -100, opacity: 0, duration: 0.8, ease: 'power2.inOut' }, 0);
-                if (nextContent) {
-                    sections[targetIndex].classList.add('active-scene');
-                    tl.fromTo(nextContent, 
-                        { xPercent: 100, opacity: 0 }, 
-                        { xPercent: 0, opacity: 1, duration: 0.8, ease: 'power2.inOut' }, 0.02
-                    );
-                }
-            } else {
-                if (prevContent) tl.to(prevContent, { xPercent: 100, opacity: 0, duration: 0.8, ease: 'power2.inOut' }, 0);
-                if (nextContent) {
-                    sections[targetIndex].classList.add('active-scene');
-                    tl.fromTo(nextContent, 
-                        { xPercent: -100, opacity: 0 }, 
-                        { xPercent: 0, opacity: 1, duration: 0.8, ease: 'power2.inOut' }, 0.02
-                    );
-                }
+            // Keep the headers completely stable and static, only fade-animate the content cards
+            const prevHeader = prevContent?.firstElementChild;
+            const prevCard = prevContent?.lastElementChild;
+            const nextHeader = nextContent?.firstElementChild;
+            const nextCard = nextContent?.lastElementChild;
+
+            sections[targetIndex].classList.add('active-scene');
+
+            // Stabilize titles immediately
+            if (prevHeader) gsap.set(prevHeader, { xPercent: 0, opacity: 1, scale: 1, filter: 'none' });
+            if (nextHeader) gsap.set(nextHeader, { xPercent: 0, opacity: 1, scale: 1, filter: 'none' });
+
+            // Dissolve/Appear animation for cards
+            if (prevCard) {
+                tl.to(prevCard, { opacity: 0, scale: 0.96, filter: 'blur(8px)', duration: 0.45, ease: 'power2.out' }, 0);
+                tl.to(prevContent, { opacity: 0, duration: 0.05 }, 0.45);
+            }
+            if (nextContent) gsap.set(nextContent, { opacity: 1 });
+            if (nextCard) {
+                tl.fromTo(nextCard, 
+                    { opacity: 0, scale: 0.96, filter: 'blur(8px)' }, 
+                    { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.55, ease: 'power2.out' }, 0.22
+                );
             }
         } else {
             // Standard major section cosmic broll warp
