@@ -7,11 +7,8 @@ const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
 const csv = require('csv-parser');
 const qrcode = require('qrcode');
-const { Client, LocalAuth } = require('whatsapp-web.js');
-const { createClient } = require('@supabase/supabase-js');
-const AdmZip = require('adm-zip');
-const WebSocket = require('ws');
 const webpush = require('web-push');
+const axios = require('axios'); // Added axios for API calls
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -44,8 +41,42 @@ process.on('unhandledRejection', (reason) => console.error('CRITICAL REJECTION:'
 const sessions = new Map(); // Admin sessions
 const guestSessions = new Map(); // Guest sessions
 const guestOtps = new Map(); // WhatsApp OTPs
-const whatsappSessions = {}; // WA Clients
+const whatsappSessions = {}; // Legacy support for UI
+const WASENDER_API_KEY = "944761c74d762fedce7a72fed5de7230d306c7264bf6e2cd7ece49618a6afb9a";
+const WASENDER_BASE_URL = "https://www.wasenderapi.com/api";
+
 let bulkSendState = { sending: false, total: 0, sent: 0, failed: 0, currentContact: '', errors: [], cancelRequested: false };
+
+async function sendWhatsAppMessage(phone, text) {
+    try {
+        // Clean phone number: remove all non-digits, then ensure it has country code
+        let formatted = phone.replace(/\D/g, '');
+        if (!formatted.startsWith('91') && formatted.length === 10) formatted = '91' + formatted;
+        
+        console.log(`[WASenderAPI] Sending to ${formatted}...`);
+        
+        const response = await fetch(`${WASENDER_BASE_URL}/send-message`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${WASENDER_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                to: formatted,
+                text: text
+            })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'API Error');
+        
+        console.log(`[WASenderAPI] Success for ${formatted}`);
+        return data;
+    } catch (err) {
+        console.error('[WASenderAPI] Failed:', err.message);
+        throw err;
+    }
+}
 
 // ════════════════ DATA HELPERS (SUPABASE) ════════════════
 async function getUsers() {
@@ -319,58 +350,25 @@ function getSession(id = 'default') {
     return whatsappSessions[cid];
 }
 
+// Legacy session helper - no longer used but kept for route compatibility
+function getSession(id) {
+    if (!whatsappSessions[id]) whatsappSessions[id] = { id: id, status: 'ready', qrCode: null, info: { pushname: 'WASenderAPI' }, client: null };
+    return whatsappSessions[id];
+}
+
 async function initWhatsApp(id = 'default') {
-    const s = getSession(id);
-    if (s.client) return;
-    await downloadSession(id);
-    s.status = 'connecting';
-    const client = new Client({
-        authStrategy: new LocalAuth({ clientId: id, dataPath: AUTH_DIR }),
-        puppeteer: { 
-            headless: true, 
-            args: [
-                '--disable-gpu',
-                '--js-flags="--max-old-space-size=512"',
-                '--memory-pressure-thresholds=1',
-                '--disable-extensions',
-                '--disable-dev-shm-usage',
-                '--disable-setuid-sandbox',
-                '--no-first-run',
-                '--no-sandbox',
-                '--no-zygote',
-                '--single-process'
-            ] 
-        }
-    });
-    s.client = client;
-    client.on('qr', async qr => { s.status = 'disconnected'; s.qrCode = await qrcode.toDataURL(qr); });
-    client.on('authenticated', () => {
-        console.log(`[WhatsApp] [${id}] Authenticated. Syncing to cloud in 5s...`);
-        setTimeout(() => uploadSession(id), 5000);
-    });
-    client.on('ready', () => { 
-        s.status = 'ready'; 
-        s.qrCode = null; 
-        s.info = client.info; 
-        console.log(`[WhatsApp] [${id}] Ready. Session active for ${client.info.pushname || id}.`);
-        console.log(`[WhatsApp] [${id}] Refreshing cloud backup in 10s...`);
-        setTimeout(() => uploadSession(id), 10000); 
-    });
-    client.on('disconnected', () => { s.status = 'disconnected'; s.client = null; setTimeout(() => initWhatsApp(id), 5000); });
-    client.initialize().catch(e => { s.status = 'disconnected'; console.error(e); });
+    console.log(`[WASenderAPI] Integration active for session: ${id}. No local client initialization required.`);
 }
 
 app.get('/api/status', async (req, res) => {
-    const id = req.query.session || 'default';
-    const s = getSession(id);
-    if (!s.client && s.status === 'disconnected') initWhatsApp(id);
-    const users = await getUsers();
-    const all = Object.keys(whatsappSessions).map(k => {
-        const sess = whatsappSessions[k];
-        const user = users.find(u => u.username === k);
-        return { id: k, label: user ? `${user.name}'s WhatsApp` : k, status: sess.status, info: sess.info, qrCode: sess.qrCode };
+    // Always return ready since we are using a third-party API now
+    res.json({ 
+        activeSession: 'default', 
+        status: 'ready', 
+        qrCode: null, 
+        info: { pushname: 'WASenderAPI' }, 
+        allSessions: [{ id: 'default', label: 'Main API Gateway', status: 'ready' }] 
     });
-    res.json({ activeSession: id, status: s.status, qrCode: s.qrCode, info: s.info, allSessions: all });
 });
 
 app.get('/api/contacts', requireAuth, async (req, res) => {
@@ -397,10 +395,11 @@ app.get('/api/groups', requireAuth, async (req, res) => res.json(await getGroups
 app.post('/api/groups', requireAuth, async (req, res) => { for (const g of req.body.groups) await saveGroup(g); res.json({ success: true }); });
 
 app.post('/api/send-message', requireAuth, async (req, res) => {
-    const { phone, message, session: sid } = req.body;
-    const s = getSession(sid || 'default');
-    if (s.status !== 'ready') return res.status(400).json({ error: 'Not connected' });
-    try { await s.client.sendMessage(formatPhone(phone), message); res.json({ success: true }); }
+    const { phone, message } = req.body;
+    try { 
+        await sendWhatsAppMessage(phone, message); 
+        res.json({ success: true }); 
+    }
     catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -493,7 +492,8 @@ app.post('/api/bulk-send', requireAuth, async (req, res) => {
             try {
                 const rawMsg = customMessage || (tmpl ? tmpl.body : 'Hello');
                 const m = rawMsg.replace(/{name}/g, t.name);
-                await s.client.sendMessage(formatPhone(t.phone), m);
+                
+                await sendWhatsAppMessage(t.phone, m);
                 
                 // Update status in DB
                 t.status = 'sent'; 
@@ -507,12 +507,12 @@ app.post('/api/bulk-send', requireAuth, async (req, res) => {
                 bulkSendState.failed++; 
                 bulkSendState.errors.push({ name: t.name, error: errMsg }); 
             }
-            // Dynamic delay
+            // Dynamic delay - still useful to prevent rate limiting even on 3rd party
             const delay = Math.floor(Math.random() * (maxD - minD + 1)) + minD;
             await new Promise(r => setTimeout(r, delay));
         }
         bulkSendState.sending = false;
-        console.log(`[Broadcast] [${sid}] Finished. Sent: ${bulkSendState.sent}, Failed: ${bulkSendState.failed}`);
+        console.log(`[Broadcast] Finished. Sent: ${bulkSendState.sent}, Failed: ${bulkSendState.failed}`);
     })();
 });
 
@@ -544,39 +544,7 @@ app.post('/api/create-session', requireAuth, (req, res) => {
 });
 
 app.get('/api/whatsapp-contacts', requireAuth, async (req, res) => {
-    const id = req.query.session || 'default';
-    const s = getSession(id);
-    if (s.status !== 'ready') return res.status(400).json({ error: 'Not connected' });
-    try {
-        // Add a timeout to prevent large contact lists from hanging the server
-        const contactsPromise = s.client.getContacts();
-        const timeoutPromise = new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Contact fetch timed out. Try keeping your phone screen on.')), 30000)
-        );
-
-        const raw = await Promise.race([contactsPromise, timeoutPromise]);
-        const seen = new Set();
-        const clean = [];
-        for (const c of raw) {
-            // Only process valid contacts, skip groups and broadcasts
-            if (c.isGroup || !c.number || c.number.length > 15) continue;
-            
-            const numOnly = c.number.replace(/\D/g, '');
-            if (!numOnly || seen.has(numOnly)) continue;
-            seen.add(numOnly);
-            
-            clean.push({ 
-                name: c.name || c.pushname || c.number, 
-                phone: c.number 
-            });
-            // Stop at 500 contacts to prevent browser crash
-            if (clean.length >= 500) break;
-        }
-        res.json(clean);
-    } catch (e) { 
-        console.error('[WhatsApp] Contact Sync Error:', e.message);
-        res.status(500).json({ error: e.message }); 
-    }
+    res.json({ error: 'Please manage contacts through the WASenderAPI dashboard for maximum accuracy.' });
 });
 
 app.post('/api/backup-session', requireAuth, async (req, res) => {
