@@ -34,6 +34,13 @@
             height: auto !important;
             overscroll-behavior: auto !important;
         }
+        @media (max-width: 768px) {
+            html, body {
+                overflow: auto !important;
+                height: auto !important;
+                position: relative !important;
+            }
+        }
         body {
             background-color: #050010;
             color: #fdf2cf;
@@ -61,6 +68,15 @@
         ::-webkit-scrollbar-thumb {
             background: #D4AF37;
             border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.3);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 175, 55, 0.6);
         }
         /* Mobile Optimizations */
         @media (max-width: 640px) {
@@ -381,7 +397,7 @@
                     </div>
 
                     <!-- Mobile Cards -->
-                    <div id="guests-list-mobile" class="md:hidden space-y-3">
+                    <div id="guests-list-mobile" class="md:hidden max-h-[80vh] overflow-y-auto space-y-3 pr-2 custom-scrollbar">
                         <!-- Loaded dynamically -->
                     </div>
 
@@ -408,7 +424,7 @@
                         </table>
                     </div>
                     <!-- Mobile Cards for WhatsApp -->
-                    <div id="whatsapp-contacts-list-mobile" class="md:hidden space-y-3 mt-4">
+                    <div id="whatsapp-contacts-list-mobile" class="md:hidden max-h-[80vh] overflow-y-auto space-y-3 mt-4 pr-2 custom-scrollbar">
                         <!-- Loaded dynamically -->
                     </div>
                     <div id="wa-contacts-disconnected-state" class="py-20 text-center">
@@ -926,7 +942,6 @@
                         </div>
                         <div class="flex items-center text-xs text-gold/60 gap-2">
                             <i class="fa-brands fa-whatsapp text-green-500"></i> ${g.phone}
-                        </div>
                         </div>
                         <div class="flex items-center text-[10px] text-gold/40 gap-3 pt-1">
                             ${g.arrivalMode ? `<span><i class="fa-solid ${g.arrivalMode === 'Flight' ? 'fa-plane' : (g.arrivalMode === 'Train' ? 'fa-train' : 'fa-car')} mr-1"></i> ${g.arrivalMode}</span>` : ''}
@@ -1480,8 +1495,22 @@
 
         async function syncWhatsAppContacts() {
             const list = document.getElementById('whatsapp-contacts-list');
-            if (!list) return;
-            list.innerHTML = '<tr><td colspan="3" class="py-12 text-center"><i class="fa-solid fa-spinner animate-spin text-gold text-2xl mb-2"></i><p class="text-[10px] text-gold/40 uppercase font-bold tracking-widest mt-2">Fetching WhatsApp Contacts...<br><span class="opacity-50 font-normal mt-1 block">(Keep phone screen ON for large lists)</span></p></td></tr>';
+            const mobileList = document.getElementById('whatsapp-contacts-list-mobile');
+            if (!list || !mobileList) return;
+            
+            const loadingHtml = `
+                <div class="py-12 text-center">
+                    <i class="fa-solid fa-spinner animate-spin text-gold text-2xl mb-2"></i>
+                    <p class="text-[10px] text-gold/40 uppercase font-bold tracking-widest mt-2">
+                        Fetching WhatsApp Contacts...<br>
+                        <span class="opacity-50 font-normal mt-1 block">(Keep phone screen ON for large lists)</span>
+                    </p>
+                </div>
+            `;
+            
+            list.innerHTML = `<tr><td colspan="3">${loadingHtml}</td></tr>`;
+            mobileList.innerHTML = loadingHtml;
+
             try {
                 const res = await fetch(`/api/whatsapp-contacts?session=${currentSessionId}`);
                 if (res.status === 401) return window.location.href = 'login.html';
@@ -1491,8 +1520,12 @@
                 renderWhatsAppContacts();
             } catch (e) {
                 console.error('Sync failed:', e);
-                showToast(e.message || 'Failed to sync contacts', 'error');
-                list.innerHTML = `<tr><td colspan="3" class="py-12 text-center text-red-400/60 uppercase tracking-widest text-[10px] font-bold">Sync Failed: ${e.message}</td></tr>`;
+                const isTimeout = e.message.includes('LONGER THAN EXPECTED');
+                const errMsg = isTimeout ? 'API Timeout: Listing contacts took too long. Please ensure your phone is ON and WhatsApp is active, then try again.' : (e.message || 'Failed to sync contacts');
+                showToast(errMsg, 'error');
+                const errorHtml = `<div class="py-12 text-center text-red-400/60 uppercase tracking-widest text-[10px] font-bold">Sync Failed: ${errMsg}</div>`;
+                list.innerHTML = `<tr><td colspan="3">${errorHtml}</td></tr>`;
+                mobileList.innerHTML = errorHtml;
             }
         }
 

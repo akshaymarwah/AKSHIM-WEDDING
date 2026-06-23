@@ -570,7 +570,10 @@ app.get('/api/whatsapp-contacts', requireAuth, async (req, res) => {
         });
         
         const result = await response.json();
-        if (!result.success) throw new Error(result.message || 'API failed to return contacts');
+        if (!result.success) {
+            console.error('[WASenderAPI] Sync failed. Response:', result);
+            throw new Error(result.message || 'API failed to return contacts');
+        }
         
         // Map to format expected by frontend: { name, phone }
         const contacts = (result.data || []).map(c => ({
@@ -580,7 +583,7 @@ app.get('/api/whatsapp-contacts', requireAuth, async (req, res) => {
 
         res.json(contacts);
     } catch (e) { 
-        console.error('[WASenderAPI] Sync error:', e);
+        console.error('[WASenderAPI] Sync error:', e.message);
         res.status(500).json({ error: e.message }); 
     }
 });
