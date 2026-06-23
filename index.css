@@ -54,10 +54,44 @@ html, body {
     text-transform: uppercase;
 }
 
-.font-cormorant { font-family: 'Cormorant Garamond', serif; }
+.font-cormorant { 
+    font-family: 'Cormorant Garamond', serif; 
+    line-height: 1.6 !important;
+}
 .font-pinyon { font-family: 'Alex Brush', cursive; }
+.font-script { font-family: 'Alex Brush', cursive; }
 .font-decorative { font-family: 'Cinzel Decorative', serif; }
 .font-montserrat { font-family: 'Montserrat', sans-serif; }
+
+/* ── CARD TYPOGRAPHY SCROLL SCALING ── */
+.matte-royal-card .font-script {
+    font-size: clamp(2rem, 4.5vw, 2.8rem) !important;
+    background: var(--metallic);
+    background-size: 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    opacity: 0.95 !important;
+    display: inline-block;
+    margin-bottom: 0.2rem !important;
+}
+
+.matte-royal-card h3 {
+    font-size: clamp(1.2rem, 2.5vw, 1.7rem) !important;
+    letter-spacing: 0.18em !important;
+    margin-bottom: 0.4rem !important;
+}
+
+.matte-royal-card .font-cormorant {
+    font-size: clamp(1.15rem, 1.8vw, 1.35rem) !important;
+    color: rgba(253, 242, 207, 0.9) !important;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+    line-height: 1.65 !important;
+}
+
+.matte-royal-card p.font-montserrat {
+    font-size: clamp(10.5px, 1.2vw, 12px) !important;
+    letter-spacing: 0.35em !important;
+}
 
 .gold-metallic {
     background: var(--metallic);
