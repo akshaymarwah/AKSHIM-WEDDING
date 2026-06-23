@@ -28,6 +28,12 @@
         }
     </script>
     <style>
+        html, body {
+            overflow: auto !important;
+            position: static !important;
+            height: auto !important;
+            overscroll-behavior: auto !important;
+        }
         body {
             background-color: #050010;
             color: #fdf2cf;
@@ -352,7 +358,7 @@
                 <!-- Content Area -->
                 <div id="tab-content-directory">
                     <!-- Desktop Table -->
-                    <div class="hidden md:block overflow-x-auto">
+                    <div class="hidden md:block max-h-[600px] overflow-y-auto overflow-x-auto pr-2 custom-scrollbar">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="text-left text-gold/40 text-[9px] uppercase tracking-[0.2em] border-b border-gold/15">
@@ -387,7 +393,7 @@
                 </div>
 
                 <div id="tab-content-whatsapp" class="hidden">
-                    <div class="overflow-x-auto">
+                    <div class="max-h-[600px] overflow-y-auto overflow-x-auto pr-2 custom-scrollbar">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="text-gold/40 text-[9px] uppercase tracking-[0.2em] border-b border-gold/15">
