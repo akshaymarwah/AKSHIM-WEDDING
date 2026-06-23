@@ -1446,14 +1446,18 @@
         async function syncWhatsAppContacts() {
             const list = document.getElementById('whatsapp-contacts-list');
             if (!list) return;
-            list.innerHTML = '<tr><td colspan="3" class="py-12 text-center"><i class="fa-solid fa-spinner animate-spin text-gold text-2xl mb-2"></i><p class="text-[10px] text-gold/40 uppercase font-bold tracking-widest">Fetching WhatsApp Contacts...</p></td></tr>';
+            list.innerHTML = '<tr><td colspan="3" class="py-12 text-center"><i class="fa-solid fa-spinner animate-spin text-gold text-2xl mb-2"></i><p class="text-[10px] text-gold/40 uppercase font-bold tracking-widest mt-2">Fetching WhatsApp Contacts...<br><span class="opacity-50 font-normal mt-1 block">(Keep phone screen ON for large lists)</span></p></td></tr>';
             try {
                 const res = await fetch(`/api/whatsapp-contacts?session=${currentSessionId}`);
                 if (res.status === 401) return window.location.href = 'login.html';
-                whatsappContacts = await res.json();
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+                whatsappContacts = data;
                 renderWhatsAppContacts();
             } catch (e) {
-                showToast('Failed to sync contacts', 'error');
+                console.error('Sync failed:', e);
+                showToast(e.message || 'Failed to sync contacts', 'error');
+                list.innerHTML = `<tr><td colspan="3" class="py-12 text-center text-red-400/60 uppercase tracking-widest text-[10px] font-bold">Sync Failed: ${e.message}</td></tr>`;
             }
         }
 

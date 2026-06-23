@@ -329,17 +329,16 @@ async function initWhatsApp(id = 'default') {
         puppeteer: { 
             headless: true, 
             args: [
-                '--no-sandbox', 
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-accelerated-2d-canvas',
-                '--no-first-run',
-                '--no-zygote',
-                '--single-process',
                 '--disable-gpu',
                 '--js-flags="--max-old-space-size=512"',
                 '--memory-pressure-thresholds=1',
-                '--disable-extensions'
+                '--disable-extensions',
+                '--disable-dev-shm-usage',
+                '--disable-setuid-sandbox',
+                '--no-first-run',
+                '--no-sandbox',
+                '--no-zygote',
+                '--single-process'
             ] 
         }
     });
@@ -549,26 +548,35 @@ app.get('/api/whatsapp-contacts', requireAuth, async (req, res) => {
     const s = getSession(id);
     if (s.status !== 'ready') return res.status(400).json({ error: 'Not connected' });
     try {
-        const raw = await s.client.getContacts();
+        // Add a timeout to prevent large contact lists from hanging the server
+        const contactsPromise = s.client.getContacts();
+        const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Contact fetch timed out. Try keeping your phone screen on.')), 30000)
+        );
+
+        const raw = await Promise.race([contactsPromise, timeoutPromise]);
         const seen = new Set();
         const clean = [];
         for (const c of raw) {
-            if (c.isGroup || !c.isMyContact || !c.number || c.number.length > 13) continue;
+            // Only process valid contacts, skip groups and broadcasts
+            if (c.isGroup || !c.number || c.number.length > 15) continue;
             
-            // Deduplicate by the last 10 digits to catch same number in different formats
             const numOnly = c.number.replace(/\D/g, '');
-            const normalized = numOnly.length >= 10 ? numOnly.slice(-10) : numOnly;
-            
-            if (seen.has(normalized)) continue;
-            seen.add(normalized);
+            if (!numOnly || seen.has(numOnly)) continue;
+            seen.add(numOnly);
             
             clean.push({ 
                 name: c.name || c.pushname || c.number, 
                 phone: c.number 
             });
+            // Stop at 500 contacts to prevent browser crash
+            if (clean.length >= 500) break;
         }
         res.json(clean);
-    } catch (e) { res.status(500).json({ error: e.message }); }
+    } catch (e) { 
+        console.error('[WhatsApp] Contact Sync Error:', e.message);
+        res.status(500).json({ error: e.message }); 
+    }
 });
 
 app.post('/api/backup-session', requireAuth, async (req, res) => {
