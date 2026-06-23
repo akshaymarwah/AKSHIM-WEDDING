@@ -8,6 +8,8 @@ const upload = multer({ storage: multer.memoryStorage() });
 const csv = require('csv-parser');
 const qrcode = require('qrcode');
 const webpush = require('web-push');
+const { createClient } = require('@supabase/supabase-js');
+const WebSocket = require('ws');
 
 
 const app = express();
