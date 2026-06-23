@@ -378,7 +378,9 @@ html, body {
     .inner, .card {
         height: 100% !important;
         max-height: calc(100vh - 85px) !important;
-        overflow: hidden !important;
+        overflow-y: auto !important; /* Invisible scroller if screen is too small */
+        scrollbar-width: none;
+        -ms-overflow-style: none;
         width: 100% !important;
         display: flex !important;
         flex-direction: column !important;
@@ -388,7 +390,7 @@ html, body {
         padding: 0 !important;
     }
     .inner::-webkit-scrollbar, .card::-webkit-scrollbar {
-        display: none;
+        display: none !important;
     }
     /* Scale down the big gold titles on mobile so they don't consume too much height */
     .inner h2.font-decorative, .card h2.font-decorative {
@@ -398,10 +400,13 @@ html, body {
         text-align: center !important;
     }
     .matte-royal-card { 
-        padding: 1.5rem 1.1rem !important; 
-        max-height: 48vh !important; /* Perfect fit to prevent overflowing bottom bar */
-        overflow-y: auto !important;
-        scrollbar-width: none;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+        padding: 0 !important; 
+        max-height: none !important; /* Allow natural fit on taller phones */
+        overflow: visible !important;
         width: 100% !important;
     }
     .matte-royal-card::-webkit-scrollbar {
