@@ -547,7 +547,28 @@ app.post('/api/create-session', requireAuth, (req, res) => {
 });
 
 app.get('/api/whatsapp-contacts', requireAuth, async (req, res) => {
-    res.json({ error: 'Please manage contacts through the WASenderAPI dashboard for maximum accuracy.' });
+    try {
+        const response = await fetch('https://wasenderapi.com/api/contacts', {
+            headers: {
+                'Authorization': `Bearer ${process.env.WA_API_KEY || '944761c74d762fedce7a72fed5de7230d306c7264bf6e2cd7ece49618a6afb9a'}`,
+                'Accept': 'application/json'
+            }
+        });
+        
+        const result = await response.json();
+        if (!result.success) throw new Error(result.message || 'API failed to return contacts');
+        
+        // Map to format expected by frontend: { name, phone }
+        const contacts = (result.data || []).map(c => ({
+            name: c.name || c.verifiedName || c.notify || 'Unknown Contact',
+            phone: c.id ? c.id.split('@')[0] : 'No Number'
+        })).filter(c => c.phone !== 'No Number');
+
+        res.json(contacts);
+    } catch (e) { 
+        console.error('[WASenderAPI] Sync error:', e);
+        res.status(500).json({ error: e.message }); 
+    }
 });
 
 app.post('/api/backup-session', requireAuth, async (req, res) => {
