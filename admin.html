@@ -1819,9 +1819,12 @@
                 });
                 if (res.ok) {
                     showToast('Sync started. Handshaking...');
-                    pollStatus();
+                    checkWhatsAppStatus();
+                } else {
+                    const data = await res.json();
+                    showToast(data.error || 'Sync failed', 'error');
                 }
-            } catch (err) { showToast('Sync failed', 'error'); }
+            } catch (err) { showToast('Network error during sync', 'error'); }
         }
 
         // Start App

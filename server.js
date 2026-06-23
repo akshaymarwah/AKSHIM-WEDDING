@@ -194,8 +194,8 @@ async function downloadSession(sessionId) {
         console.log(`[Supabase] [${sessionId}] Checking cloud backup...`);
         const { data, error } = await supabase.storage.from(BUCKET_NAME).download(`${sessionId}.zip`);
         if (error) {
-            console.log(`[Supabase] [${sessionId}] No cloud backup found.`);
-            return;
+            console.log(`[Supabase] [${sessionId}] No cloud backup found in bucket "${BUCKET_NAME}".`);
+            return false;
         }
         const sessionPath = path.join(AUTH_DIR, `session-${sessionId}`);
         
@@ -210,7 +210,11 @@ async function downloadSession(sessionId) {
         const zip = new AdmZip(Buffer.from(await data.arrayBuffer()));
         zip.extractAllTo(sessionPath, true);
         console.log(`[Supabase] [${sessionId}] Session restored successfully. 👑`);
-    } catch (err) { console.error(`[Supabase] [${sessionId}] Download/Restore failed:`, err.message); }
+        return true;
+    } catch (err) { 
+        console.error(`[Supabase] [${sessionId}] Download/Restore failed:`, err.message); 
+        return false;
+    }
 }
 
 // ════════════════ AUTH MIDDLEWARE ════════════════
@@ -585,7 +589,11 @@ app.post('/api/sync-from-cloud', requireAuth, async (req, res) => {
         s.client = null;
     }
     
-    await downloadSession(id);
+    const success = await downloadSession(id);
+    if (!success) {
+        return res.status(404).json({ error: 'No cloud backup found for this profile.' });
+    }
+    
     initWhatsApp(id); // Re-initialize after restore
     res.json({ success: true, message: 'Sync started. Handshaking...' });
 });
