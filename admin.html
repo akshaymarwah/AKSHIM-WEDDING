@@ -152,12 +152,17 @@
                         </div>
                         <p class="text-xs font-black tracking-widest text-green-400 uppercase" id="connected-user">Linked</p>
                         <p class="text-[9px] text-gold/40 mt-1 uppercase tracking-tighter" id="connected-phone">Session Active</p>
-                        <button onclick="logoutWA()" class="mt-5 border border-red-500/30 text-red-400 text-[9px] uppercase font-black tracking-widest px-5 py-2 hover:bg-red-500/10 rounded transition">
+                        <button onclick="logoutWA()" class="mt-5 border border-red-500/30 text-red-400 text-[9px] uppercase font-black tracking-widest px-5 py-2 hover:bg-red-500/10 rounded transition w-full">
                             Terminate Link
                         </button>
-                        <button onclick="forceBackup()" class="mt-2 border border-gold/30 text-gold text-[9px] uppercase font-black tracking-widest px-5 py-2 hover:bg-gold/10 rounded transition">
-                            <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Backup to Cloud
-                        </button>
+                        <div class="grid grid-cols-2 gap-2 mt-2 w-full">
+                            <button onclick="forceBackup()" class="border border-gold/30 text-gold text-[9px] uppercase font-black tracking-widest px-2 py-2 hover:bg-gold/10 rounded transition">
+                                <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Backup
+                            </button>
+                            <button onclick="syncFromCloud()" class="border border-blue-500/30 text-blue-400 text-[9px] uppercase font-black tracking-widest px-2 py-2 hover:bg-blue-500/10 rounded transition">
+                                <i class="fa-solid fa-cloud-arrow-down mr-1"></i> Sync Cloud
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1799,6 +1804,22 @@
                 if (res.ok) showToast('Session Backed Up! 👑');
                 else showToast('Backup failed', 'error');
             } catch (err) { showToast('Network error', 'error'); }
+        }
+
+        async function syncFromCloud() {
+            if (!confirm('This will restart the WhatsApp client and restore the session from cloud. Proceed?')) return;
+            try {
+                showToast('Initiating Cloud Restore...');
+                const res = await fetch('/api/sync-from-cloud', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ session: currentSessionId })
+                });
+                if (res.ok) {
+                    showToast('Sync started. Handshaking...');
+                    pollStatus();
+                }
+            } catch (err) { showToast('Sync failed', 'error'); }
         }
 
         // Start App

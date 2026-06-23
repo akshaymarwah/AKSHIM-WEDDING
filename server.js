@@ -115,7 +115,7 @@ async function saveContact(contact) {
     console.log(`[Supabase] Saving guest ${contact.id} (${contact.name || 'Partial Update'})`);
     const { error } = await supabase.from('guests').upsert(payload);
     if (error) {
-        console.error('[Supabase] saveContact error:', error);
+        console.error(`[Supabase] saveContact error for ${contact.id}:`, error.message, error.details);
         throw error;
     }
 }
@@ -571,6 +571,23 @@ app.post('/api/backup-session', requireAuth, async (req, res) => {
     const id = req.body.session || 'default';
     await uploadSession(id);
     res.json({ success: true });
+});
+
+app.post('/api/sync-from-cloud', requireAuth, async (req, res) => {
+    const id = req.body.session || 'default';
+    const s = getSession(id);
+    console.log(`[WhatsApp] [${id}] Manual cloud sync requested.`);
+    
+    // If client is running, we must stop it before restoring files
+    if (s.client) {
+        console.log(`[WhatsApp] [${id}] Stopping client for session restore...`);
+        await s.client.destroy().catch(() => {});
+        s.client = null;
+    }
+    
+    await downloadSession(id);
+    initWhatsApp(id); // Re-initialize after restore
+    res.json({ success: true, message: 'Sync started. Handshaking...' });
 });
 
 app.get('/api/admin/backups', requireAuth, async (req, res) => {
