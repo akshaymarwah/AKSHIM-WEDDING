@@ -398,12 +398,26 @@ app.get('/api/groups', requireAuth, async (req, res) => res.json(await getGroups
 app.post('/api/groups', requireAuth, async (req, res) => { for (const g of req.body.groups) await saveGroup(g); res.json({ success: true }); });
 
 app.post('/api/send-message', requireAuth, async (req, res) => {
-    const { phone, message } = req.body;
+    const { phone, message, contactId } = req.body;
     try { 
         await sendWhatsAppMessage(phone, message); 
+        
+        // If a contact ID was provided, mark them as 'sent' in the database
+        if (contactId) {
+            const { data: contact } = await supabase.from('guests').select('*').eq('id', contactId).maybeSingle();
+            if (contact) {
+                contact.status = 'sent';
+                contact.sent_at = new Date().toISOString();
+                await saveContact(contact);
+            }
+        }
+        
         res.json({ success: true }); 
     }
-    catch (e) { res.status(500).json({ error: e.message }); }
+    catch (e) { 
+        console.error('[Send Message] Error:', e.message);
+        res.status(500).json({ error: e.message }); 
+    }
 });
 
 // ════════════════ FILE UPLOAD ════════════════
