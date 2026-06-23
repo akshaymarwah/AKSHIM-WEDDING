@@ -63,7 +63,17 @@ async function getContacts() {
     return data || [];
 }
 async function saveContact(contact) {
-    if (!contact.id) contact.id = 'guest_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+    if (!contact.id) {
+        contact.id = 'guest_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+    } else {
+        // Fetch existing contact if name or phone is missing to prevent NOT NULL constraint errors on upsert
+        if (contact.name === undefined || contact.phone === undefined) {
+            const { data: existing, error: getErr } = await supabase.from('guests').select('*').eq('id', contact.id).maybeSingle();
+            if (!getErr && existing) {
+                contact = { ...existing, ...contact };
+            }
+        }
+    }
     
     // Build a sparse payload to support partial updates (like one-tap approval)
     const payload = { id: contact.id };

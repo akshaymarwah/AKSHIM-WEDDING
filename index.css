@@ -162,7 +162,6 @@ html, body {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: radial-gradient(ellipse at 50% 0%, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
     z-index: 1;
 }
 
@@ -304,7 +303,7 @@ html, body {
 }
 
 .inner, .card {
-    pointer-events: auto; /* Only content is interactive */
+    pointer-events: auto;
     will-change: transform, opacity, filter;
     opacity: 0;
     transform: translateZ(0);
@@ -313,10 +312,59 @@ html, body {
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    height: 100% !important;
-    max-height: 100vh !important;
-    overflow: hidden !important;
+    min-height: 100vh !important;
     width: 100% !important;
+    padding-top: 140px !important; /* Space for fixed header */
+    padding-bottom: 60px !important;
+}
+
+/* Edge Masking for smooth blending */
+.S::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(to bottom, 
+        rgba(5,0,16,1) 0%, 
+        transparent 15%, 
+        transparent 85%, 
+        rgba(5,0,16,1) 100%
+    );
+    z-index: 20;
+}
+
+#fixed-header {
+    pointer-events: none;
+    text-shadow: 0 0 20px rgba(212,175,55,0.3);
+}
+
+.matte-royal-card {
+    background: rgba(15, 10, 25, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 4px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Responsive tweaks for very small phones */
+@media (max-height: 700px) {
+    .inner, .card {
+        padding-top: 100px !important;
+        justify-content: flex-start !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+    .matte-royal-card {
+        padding: 1.5rem !important;
+    }
+    #fixed-header {
+        padding-top: 2rem !important;
+    }
+    #fixed-title {
+        font-size: 1.5rem !important;
+    }
 }
 
 /* Ambient section gradients - Floral & Royal Tones */
@@ -355,19 +403,19 @@ html, body {
 /* ── RESPONSIVE & MOBILE OVERFLOW SAFEGUARDS ── */
 @media (max-width: 768px) {
     #nav { 
-        padding: 0.5rem 1rem !important; 
-        height: 60px !important;
+        padding: 1.5rem 2rem !important; 
+        height: 80px !important;
     }
     .nav-logo {
-        width: 3.25rem !important;
-        height: 3.25rem !important;
+        width: 3.5rem !important;
+        height: 3.5rem !important;
     }
     #frame {
         inset: 8px !important; /* Give more layout space */
     }
     .nav-links { display: none; }
     .S { 
-        padding: 65px 12px 16px !important; /* Only clear the nav and bottom border */
+        padding: 0 !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
@@ -377,8 +425,8 @@ html, body {
     }
     .inner, .card {
         height: 100% !important;
-        max-height: calc(100vh - 85px) !important;
-        overflow-y: auto !important; /* Invisible scroller if screen is too small */
+        max-height: 100vh !important;
+        overflow-y: auto !important;
         scrollbar-width: none;
         -ms-overflow-style: none;
         width: 100% !important;
@@ -386,8 +434,11 @@ html, body {
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        gap: 0.75rem !important; /* Tighten gap to pull elements closer together */
-        padding: 0 !important;
+        gap: 1.5rem !important;
+        padding-top: 130px !important; /* Proper space for fixed header */
+        padding-bottom: 40px !important;
+        padding-left: 20px !important;
+        padding-right: 20px !important;
     }
     .inner::-webkit-scrollbar, .card::-webkit-scrollbar {
         display: none !important;

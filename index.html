@@ -37,7 +37,7 @@
 
     <!-- ── CANVAS LAYERS (CINEMATIC DEPTH) ── -->
     <canvas id="c-bg" class="fixed inset-0 z-0 pointer-events-none"></canvas>
-    <canvas id="c-rays" class="fixed inset-0 z-[1] pointer-events-none mix-blend-screen opacity-35"></canvas>
+    <canvas id="c-rays" class="fixed inset-0 z-[1] pointer-events-none mix-blend-screen opacity-[0.15]"></canvas>
     <canvas id="c-dust" class="fixed inset-0 z-[2] pointer-events-none"></canvas>
 
     <!-- ── ROYAL FRAME & CORNERS ── -->
@@ -154,6 +154,14 @@
     <!-- ── ARTISTIC PERSPECTIVE LAYER (Fixed Sections) ── -->
     <div id="perspective-layer" class="fixed inset-0 z-10 pointer-events-none">
         <!-- S0: HERO -->
+        <!-- FIXED SECTION HEADERS (Stationary Titles) -->
+        <div id="fixed-header" class="fixed top-0 left-0 w-full z-[100] pointer-events-none pt-12 sm:pt-16 flex flex-col items-center opacity-0 transition-opacity duration-500">
+            <div class="flex flex-col items-center gap-2">
+                <h2 id="fixed-title" class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]">Our Eternal Story</h2>
+                <div class="h-[1px] w-24 sm:w-48 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
+            </div>
+        </div>
+
         <section class="S active-scene" id="s0">
             <div class="inner relative z-10 text-center h-full max-w-5xl mx-auto px-6 flex flex-col items-center justify-center gap-6 sm:gap-12" id="heroContent">
                 <img src="images/akshim_logo.png" alt="Royal Logo" class="w-32 sm:w-64 md:w-[360px] object-contain">
@@ -196,17 +204,15 @@
         </section>
 
         <!-- S1: STORY - CHAPTER I -->
-        <section class="S pt-32 sm:pt-40 pb-20" id="s1_1">
-            <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center gap-12" id="storyContent1">
-                <div class="flex flex-col items-center gap-2">
-                    <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]" data-t="story_title">Our Eternal Story</h2>
-                    <div class="h-[1px] w-24 sm:w-48 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
-                </div>
-
+        <section class="S" id="s1_1">
+            <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center justify-center min-h-screen" id="storyContent1">
                 <div class="w-full flex justify-center">
                     <!-- Chapter I -->
-                    <div class="matte-royal-card p-10 flex flex-col items-center gap-5 group max-w-2xl">
-                        <span class="font-script gold-metallic text-5xl opacity-80 group-hover:scale-110 transition-transform" data-t="chapter_1">Chapter I</span>
+                    <div class="matte-royal-card p-8 sm:p-10 flex flex-col items-center gap-5 group max-w-2xl">
+                        <div class="flex flex-col items-center">
+                            <span class="font-script gold-metallic text-4xl opacity-60">Chapter</span>
+                            <span class="font-decorative gold-metallic text-6xl -mt-4 opacity-90 group-hover:scale-110 transition-transform" data-t="chapter_1_num">01</span>
+                        </div>
                         <h3 class="font-decorative text-sm tracking-[0.3em] text-[#D4AF37]" data-t="chapter_1_title">The Solitary Stars</h3>
                         <p class="font-cormorant italic text-lg sm:text-xl text-[#fdf2cf]/80 leading-relaxed" data-t="chapter_1_text">
                             "Born near the sacred confluences of Prayagraj, a mind of relentless innovation was shaped—a creator of solutions and an architect of possibilities. Miles away, under the regal skies of Gwalior, a brilliant spirit decoded the secrets of elements and the music of language, guiding young minds with grace and wisdom. Two solitary stars, revolving in their own orbits, destined to align."
@@ -226,17 +232,15 @@
         </section>
 
         <!-- S1: STORY - CHAPTER II -->
-        <section class="S pt-32 sm:pt-40 pb-20" id="s1_2">
-            <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center gap-12" id="storyContent2">
-                <div class="flex flex-col items-center gap-2">
-                    <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]" data-t="story_title">Our Eternal Story</h2>
-                    <div class="h-[1px] w-24 sm:w-48 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
-                </div>
-
+        <section class="S" id="s1_2">
+            <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center justify-center min-h-screen" id="storyContent2">
                 <div class="w-full flex justify-center">
                     <!-- Chapter II -->
-                    <div class="matte-royal-card p-10 flex flex-col items-center gap-5 group max-w-2xl">
-                        <span class="font-script gold-metallic text-5xl opacity-80 group-hover:scale-110 transition-transform" data-t="chapter_2">Chapter II</span>
+                    <div class="matte-royal-card p-8 sm:p-10 flex flex-col items-center gap-5 group max-w-2xl">
+                        <div class="flex flex-col items-center">
+                            <span class="font-script gold-metallic text-4xl opacity-60">Chapter</span>
+                            <span class="font-decorative gold-metallic text-6xl -mt-4 opacity-90 group-hover:scale-110 transition-transform" data-t="chapter_2_num">02</span>
+                        </div>
                         <h3 class="font-decorative text-sm tracking-[0.3em] text-[#D4AF37]" data-t="chapter_2_title">The Celestial Convergence</h3>
                         <p class="font-cormorant italic text-lg sm:text-xl text-[#fdf2cf]/80 leading-relaxed" data-t="chapter_2_text">
                             "When the precision of science met the vision of innovation, a beautiful alchemy unfolded. Her deep understanding of elements and his passion for creating seamless systems sparked an unexpected connection. It was a perfect integration of heart and mind—where logic transformed into poetry, and two distinct paths merged into a single journey of endless possibilities."
@@ -262,17 +266,15 @@
         </section>
 
         <!-- S1: STORY - CHAPTER III -->
-        <section class="S pt-32 sm:pt-40 pb-20" id="s1_3">
-            <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center gap-12" id="storyContent3">
-                <div class="flex flex-col items-center gap-2">
-                    <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]" data-t="story_title">Our Eternal Story</h2>
-                    <div class="h-[1px] w-24 sm:w-48 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
-                </div>
-
+        <section class="S" id="s1_3">
+            <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center justify-center min-h-screen" id="storyContent3">
                 <div class="w-full flex justify-center">
                     <!-- Chapter III -->
-                    <div class="matte-royal-card p-10 flex flex-col items-center gap-5 group max-w-2xl border-[#D4AF37]/50">
-                        <span class="font-script gold-metallic text-5xl opacity-80 group-hover:scale-110 transition-transform" data-t="chapter_3">Chapter III</span>
+                    <div class="matte-royal-card p-8 sm:p-10 flex flex-col items-center gap-5 group max-w-2xl border-[#D4AF37]/50">
+                        <div class="flex flex-col items-center">
+                            <span class="font-script gold-metallic text-4xl opacity-60">Chapter</span>
+                            <span class="font-decorative gold-metallic text-6xl -mt-4 opacity-90 group-hover:scale-110 transition-transform" data-t="chapter_3_num">03</span>
+                        </div>
                         <h3 class="font-decorative text-sm tracking-[0.3em] text-[#D4AF37]" data-t="chapter_3_title">The Mirror Soul</h3>
                         <p class="font-cormorant italic text-lg sm:text-xl text-[#fdf2cf]/80 leading-relaxed" data-t="chapter_3_text">
                             "In each other's eyes, they found their most beautiful design. He found the focal element that gave meaning to all his ideas, while she discovered a story deeper than any textbook. Now, walking hand in hand, they are building a modern-day kingdom—a shared space of love, laughter, and lifelong discovery."
@@ -298,13 +300,8 @@
         </section>
 
         <!-- S2: GRAND CELEBRATIONS - EVENT I (MEHENDI) -->
-        <section class="S pt-32 sm:pt-40 pb-20" id="s2_1">
-            <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center gap-12" id="eventContent1">
-                <div class="flex flex-col items-center gap-2">
-                    <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]">Grand Celebrations</h2>
-                    <div class="h-[1px] w-24 sm:w-48 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
-                </div>
-
+        <section class="S" id="s2_1">
+            <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center justify-center min-h-screen" id="eventContent1">
                 <div class="w-full flex justify-center">
                     <div class="matte-royal-card p-10 flex flex-col items-center gap-4 group hover:border-[#D4AF37]/40 transition-all max-w-2xl w-full">
                         <span class="font-script gold-metallic text-4xl opacity-70">Day I — Morning</span>
@@ -344,13 +341,8 @@
         </section>
 
         <!-- S2: GRAND CELEBRATIONS - EVENT II (SAGAN & COCKTAIL) -->
-        <section class="S pt-32 sm:pt-40 pb-20" id="s2_2">
-            <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center gap-12" id="eventContent2">
-                <div class="flex flex-col items-center gap-2">
-                    <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]">Grand Celebrations</h2>
-                    <div class="h-[1px] w-24 sm:w-48 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
-                </div>
-
+        <section class="S" id="s2_2">
+            <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center justify-center min-h-screen" id="eventContent2">
                 <div class="w-full flex justify-center">
                     <div class="matte-royal-card p-10 flex flex-col items-center gap-4 group hover:border-[#D4AF37]/40 transition-all max-w-2xl w-full">
                         <span class="font-script gold-metallic text-4xl opacity-70">Day I — Evening</span>
@@ -388,13 +380,8 @@
         </section>
 
         <!-- S2: GRAND CELEBRATIONS - EVENT III (HALDI) -->
-        <section class="S pt-32 sm:pt-40 pb-20" id="s2_3">
-            <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center gap-12" id="eventContent3">
-                <div class="flex flex-col items-center gap-2">
-                    <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]">Grand Celebrations</h2>
-                    <div class="h-[1px] w-24 sm:w-48 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
-                </div>
-
+        <section class="S" id="s2_3">
+            <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center justify-center min-h-screen" id="eventContent3">
                 <div class="w-full flex justify-center">
                     <div class="matte-royal-card p-10 flex flex-col items-center gap-4 group hover:border-[#D4AF37]/40 transition-all max-w-2xl w-full">
                         <span class="font-script gold-metallic text-4xl opacity-70">Day II — Morning</span>
@@ -432,13 +419,8 @@
         </section>
 
         <!-- S2: GRAND CELEBRATIONS - EVENT IV (BARAT & WEDDING) -->
-        <section class="S pt-32 sm:pt-40 pb-20" id="s2_4">
-            <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center gap-12" id="eventContent4">
-                <div class="flex flex-col items-center gap-2">
-                    <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]">Grand Celebrations</h2>
-                    <div class="h-[1px] w-24 sm:w-48 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
-                </div>
-
+        <section class="S" id="s2_4">
+            <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center justify-center min-h-screen" id="eventContent4">
                 <div class="w-full flex justify-center">
                     <div class="matte-royal-card p-10 flex flex-col items-center gap-4 group border-[#D4AF37]/40 scale-[1.03] shadow-[0_0_40px_rgba(212,175,55,0.1)] max-w-2xl w-full">
                         <span class="font-script gold-metallic text-4xl opacity-70">Day II — Evening</span>

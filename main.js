@@ -389,6 +389,20 @@ const initBRollEngine = () => {
 
         const isSlidingTransition = isStoryTransition || isEventsTransition;
 
+        // FIXED HEADER LOGIC
+        const fixedHeader = document.getElementById('fixed-header');
+        const fixedTitle = document.getElementById('fixed-title');
+        const targetId = sections[targetIndex]?.id || '';
+
+        if (targetId.startsWith('s1_') || targetId.startsWith('s2_')) {
+            if (fixedTitle) {
+                fixedTitle.textContent = targetId.startsWith('s1_') ? 'Our Eternal Story' : 'Grand Celebrations';
+            }
+            if (fixedHeader) fixedHeader.style.opacity = '1';
+        } else {
+            if (fixedHeader) fixedHeader.style.opacity = '0';
+        }
+
         const tl = gsap.timeline({
             onComplete: () => {
                 curS = targetIndex;
@@ -398,29 +412,31 @@ const initBRollEngine = () => {
         });
 
         if (isSlidingTransition) {
-            // Keep the headers completely stable and static, only fade-animate the content cards
-            const prevHeader = prevContent?.firstElementChild;
-            const prevCard = prevContent?.lastElementChild;
-            const nextHeader = nextContent?.firstElementChild;
-            const nextCard = nextContent?.lastElementChild;
+            const prevCard = prevContent?.querySelector('.matte-royal-card');
+            const nextCard = nextContent?.querySelector('.matte-royal-card');
 
             sections[targetIndex].classList.add('active-scene');
 
-            // Stabilize titles immediately
-            if (prevHeader) gsap.set(prevHeader, { xPercent: 0, opacity: 1, scale: 1, filter: 'none' });
-            if (nextHeader) gsap.set(nextHeader, { xPercent: 0, opacity: 1, scale: 1, filter: 'none' });
-
             // Dissolve/Appear animation for cards
             if (prevCard) {
-                tl.to(prevCard, { opacity: 0, scale: 0.96, filter: 'blur(8px)', duration: 0.45, ease: 'power2.out' }, 0);
-                tl.to(prevContent, { opacity: 0, duration: 0.05 }, 0.45);
+                tl.to(prevCard, { opacity: 0, y: -20, filter: 'blur(10px)', duration: 0.4, ease: 'power2.in' }, 0);
+                tl.to(prevContent, { opacity: 0, duration: 0.05 }, 0.4);
             }
             if (nextContent) gsap.set(nextContent, { opacity: 1 });
             if (nextCard) {
                 tl.fromTo(nextCard, 
-                    { opacity: 0, scale: 0.96, filter: 'blur(8px)' }, 
-                    { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.55, ease: 'power2.out' }, 0.22
+                    { opacity: 0, y: 30, filter: 'blur(15px)' }, 
+                    { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.7, ease: 'power3.out' }, 0.2
                 );
+                
+                // Animate paragraphs inside the card for a "story appearing" effect
+                const paras = nextCard.querySelectorAll('p, h3, span, div');
+                if (paras.length) {
+                    tl.fromTo(paras, 
+                        { opacity: 0, y: 15 },
+                        { opacity: 1, y: 0, stagger: 0.1, duration: 0.8, ease: 'power2.out' }, 0.4
+                    );
+                }
             }
         } else {
             // Standard major section cosmic broll warp
