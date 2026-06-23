@@ -461,6 +461,23 @@ html, body {
         line-height: 1.25 !important;
         text-align: center !important;
     }
+
+    #fixed-header {
+        padding-top: 105px !important; /* Start below the logo and nav area */
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        width: 100% !important;
+    }
+
+    #fixed-title {
+        font-size: 1.25rem !important; /* Smaller text to avoid wrapping and collisions */
+        letter-spacing: 0.2em !important;
+        width: 85% !important;
+        text-align: center !important;
+        margin-top: 5px !important;
+    }
+
     .matte-royal-card { 
         background: transparent !important;
         border: none !important;
