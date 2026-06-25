@@ -150,7 +150,7 @@ html, body {
 .animate-bounce-slow { animation: bounce-slow 3s ease-in-out infinite; }
 
 /* ── MATTE ROYAL CARDS (MAJESTIC WEDDING) ── */
-.matte-royal-card, .card .matte-royal-card, .S .matte-royal-card {
+.matte-royal-card, .card .matte-royal-card, .S .matte-royal-card, .matte-royal-card::before, .matte-royal-card::after {
     background: none !important;
     background-color: transparent !important;
     border: none !important;
@@ -349,12 +349,7 @@ html, body {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: linear-gradient(to bottom, 
-        rgba(5,0,16,0.6) 0%, 
-        transparent 15%, 
-        transparent 85%, 
-        rgba(5,0,16,0.8) 100%
-    );
+    background: transparent !important; /* Removed dark edge masking */
     z-index: 20;
 }
 
@@ -449,19 +444,23 @@ html, body {
 /* ── RESPONSIVE & MOBILE OVERFLOW SAFEGUARDS ── */
 @media (max-width: 768px) {
     #nav { 
-        padding: 0.75rem 1.25rem !important; 
+        padding: 2rem 2.5rem !important; 
         height: auto !important;
     }
     .nav-logo {
-        width: 3rem !important;
-        height: 3rem !important;
+        width: 7rem !important; /* Massive logo as requested */
+        height: 7rem !important;
+        margin-top: 1rem !important;
+        margin-left: 0.5rem !important;
     }
     #fixed-header {
-        padding-top: 5rem !important;
+        padding-top: 8rem !important;
     }
     #fixed-title {
-        font-size: 1.25rem !important;
-        letter-spacing: 0.2em !important;
+        font-family: 'Cinzel Decorative', serif !important;
+        font-size: 2rem !important;
+        letter-spacing: 0.25em !important;
+        font-weight: 900 !important;
     }
     .inner, .card {
         padding-top: 10rem !important;
