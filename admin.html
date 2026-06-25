@@ -632,7 +632,7 @@
                 <i class="fa-solid fa-xmark"></i>
             </button>
             <h3 class="royal-font text-lg text-gold mb-2 font-bold uppercase tracking-wider">Send Message</h3>
-            <p class="text-[10px] text-gold/50 mb-6 uppercase tracking-widest font-bold" id="custom-msg-recipient">To: -</p>
+            <p class="text-[10px] text-gold/50 mb-6 uppercase tracking-widest font-bold" id="custom-msg-recipient">To: <span id="custom-msg-name">-</span></p>
             <div class="space-y-4">
                 <div>
                     <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Quick Templates</label>
@@ -1238,9 +1238,27 @@
             document.getElementById('custom-msg-name').textContent = name;
             document.getElementById('custom-msg-phone').value = phone;
             document.getElementById('custom-msg-body').value = '';
+            document.getElementById('custom-msg-img-url').value = '';
             
+            // Render template buttons
+            const btnContainer = document.getElementById('custom-msg-templates');
+            btnContainer.innerHTML = templates.map(t => `
+                <button onclick="applyTemplateToMsg('${t.id}')" class="bg-gold/5 hover:bg-gold/15 border border-gold/20 text-gold text-[8px] px-2 py-1 rounded uppercase font-bold transition">
+                    ${t.title}
+                </button>
+            `).join('');
+
             document.getElementById('modal-custom-msg').classList.remove('hidden');
             document.getElementById('modal-custom-msg').classList.add('flex');
+        }
+
+        function applyTemplateToMsg(id) {
+            const tmpl = templates.find(t => t.id === id);
+            if (!tmpl) return;
+            const name = document.getElementById('custom-msg-name').textContent;
+            document.getElementById('custom-msg-body').value = tmpl.body.replace(/{name}/g, name);
+            document.getElementById('custom-msg-img-url').value = tmpl.imageUrl || tmpl.image_url || '';
+            showToast('Template Applied');
         }
 
         function closeCustomMsgModal() {
