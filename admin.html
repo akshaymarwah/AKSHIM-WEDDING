@@ -642,7 +642,10 @@
                     <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Message Body</label>
                     <textarea id="custom-msg-body" rows="6" class="w-full bg-royal-bg border border-gold/20 rounded p-4 text-sm text-gold-light outline-none focus:border-gold font-sans"></textarea>
                 </div>
-                <button onclick="sendIndividualCustomMessage()" class="w-full bg-gold hover:bg-gold-light text-royal-bg font-bold py-4 text-xs tracking-widest uppercase transition mt-6 rounded shadow-lg">
+                <input type="hidden" id="custom-msg-img-url" value="">
+                <input type="hidden" id="custom-msg-id" value="">
+                <input type="hidden" id="custom-msg-phone" value="">
+                <button onclick="sendCustomMsg()" class="w-full bg-gold hover:bg-gold-light text-royal-bg font-bold py-4 text-xs tracking-widest uppercase transition mt-6 rounded shadow-lg">
                     Send Now
                 </button>
             </div>
@@ -1254,10 +1257,11 @@
 
             try {
                 showToast('Sending message...');
+                const imageUrl = document.getElementById('custom-msg-img-url').value;
                 const res = await fetch('/api/send-message', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ phone, message, contactId: id })
+                    body: JSON.stringify({ phone, message, contactId: id, imageUrl: imageUrl || null })
                 });
 
                 if (res.ok) {
@@ -1874,7 +1878,8 @@
                 });
                 const data = await res.json();
                 if (data.success) {
-                    updateTemplateField(idx, 'imageUrl', data.url);
+                    templates[idx].image_url = data.url;
+                    templates[idx].imageUrl = data.url; // Keep both for safety during transition
                     renderTemplatesEditor();
                     showToast('Image uploaded! 👑');
                 } else throw new Error(data.error);

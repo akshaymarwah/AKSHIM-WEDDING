@@ -379,7 +379,7 @@
             <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center justify-center min-h-screen" id="eventContent3">
                 <div class="w-full flex justify-center">
                     <div class="matte-royal-card p-12 sm:p-16 flex flex-col items-center gap-6 group hover:border-[#D4AF37]/40 transition-all max-w-2xl w-full">
-                        <span class="font-script gold-metallic">Day II</span>
+                        <span class="font-decorative gold-metallic tracking-widest text-sm uppercase">Day 2</span>
                         <h3 class="text-xl sm:text-3xl tracking-[0.1em] gold-metallic uppercase font-bold">The Auspicious Haldi</h3>
                         <p class="font-montserrat text-[11px] sm:text-xs tracking-[0.5em] text-[#D4AF37] opacity-90 mb-2">JULY 7, 2026 • 10:30 AM</p>
                         <p class="font-cormorant italic text-lg text-[#fdf2cf]/70">Hotel Golden Tree, Prayagraj</p>
@@ -416,7 +416,7 @@
             <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center justify-center min-h-screen" id="eventContent4">
                 <div class="w-full flex justify-center">
                     <div class="matte-royal-card p-12 sm:p-16 flex flex-col items-center gap-6 group border-[#D4AF37]/40 scale-[1.03] shadow-[0_0_40px_rgba(212,175,55,0.1)] max-w-2xl w-full">
-                        <span class="font-script gold-metallic">Day II</span>
+                        <span class="font-decorative gold-metallic tracking-widest text-sm uppercase">Day 2</span>
                         <h3 class="text-xl sm:text-3xl tracking-[0.1em] gold-metallic uppercase font-bold">Barat & Sacred Wedding</h3>
                         <p class="font-montserrat text-[11px] sm:text-xs tracking-[0.5em] text-[#D4AF37] opacity-90 mb-2">JULY 7, 2026 • 7:00 PM ONWARDS</p>
                         <p class="font-cormorant italic text-lg text-[#fdf2cf]/70">Radisson Blu, Prayagraj</p>
@@ -497,38 +497,38 @@
         </section>
 
         <!-- S4: RSVP -->
-        <section class="S pt-32 sm:pt-40 pb-20" id="s4">
-            <div class="inner relative z-10 max-w-2xl mx-auto px-6 flex flex-col items-center gap-12" id="rsvpContent">
-                <div class="flex flex-col items-center gap-2 text-center">
-                    <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]" style="font-family: 'Playfair Display', serif;">Sacred Acceptance</h2>
-                    <p class="font-script gold-metallic text-2xl mt-4">We await your presence</p>
+        <section class="S" id="s4">
+            <div class="inner relative z-10 max-w-2xl mx-auto px-6 py-12 flex flex-col items-center justify-start min-h-screen" id="rsvpContent">
+                
+                <!-- Close Button -->
+                <button onclick="goToSlide(8)" class="absolute top-10 right-10 text-[#D4AF37]/60 hover:text-[#D4AF37] transition-all p-2 z-[110]">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+
+                <div class="flex flex-col items-center gap-4 w-full text-center mb-12">
+                    <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]">Sacred Acceptance</h2>
+                    <p class="font-decorative gold-metallic text-lg tracking-widest opacity-80 mt-2">We await your presence</p>
                 </div>
 
-                <div class="matte-royal-card w-full py-12 px-8 sm:px-12 flex flex-col gap-10" id="rsvpBox">
-                    <div class="flex flex-col gap-8">
-                        <div class="field flex flex-col gap-2">
-                            <label class="font-decorative text-[9px] tracking-[0.3em] text-[#D4AF37] uppercase opacity-60">Full Name</label>
-                            <input type="text" id="rN" placeholder="As it appears on your heart" class="bg-transparent border-b border-[#D4AF37]/20 py-3 outline-none font-cormorant italic text-xl text-[#fdf2cf] placeholder:text-[#fdf2cf]/20 focus:border-[#D4AF37] transition-all">
+                <div class="matte-royal-card w-full py-10 px-6 sm:px-12 flex flex-col gap-10">
+                    <form id="rsvpForm" class="flex flex-col gap-10 w-full">
+                        <div class="field group relative">
+                            <label class="font-decorative text-[10px] tracking-[0.3em] text-[#D4AF37] uppercase mb-4 block opacity-70">Full Name</label>
+                            <input type="text" name="name" required placeholder="As it appears on your heart" 
+                                class="w-full bg-transparent border-b border-[#D4AF37]/30 py-4 font-cormorant text-xl text-[#fdf2cf] placeholder:text-[#fdf2cf]/30 focus:border-[#D4AF37] outline-none transition-all">
                         </div>
 
-                        <div class="field flex flex-col gap-2">
-                            <label class="font-decorative text-[9px] tracking-[0.3em] text-[#D4AF37] uppercase opacity-60">Number of Souls</label>
-                            <select id="rG" class="bg-transparent border-b border-[#D4AF37]/20 py-3 outline-none font-cormorant italic text-xl text-[#fdf2cf] focus:border-[#D4AF37] transition-all cursor-pointer">
+                        <div class="field group relative">
+                            <label class="font-decorative text-[10px] tracking-[0.3em] text-[#D4AF37] uppercase mb-4 block opacity-70">Number of Souls</label>
+                            <select name="guests" class="w-full bg-transparent border-b border-[#D4AF37]/30 py-4 font-cormorant text-xl text-[#fdf2cf] focus:border-[#D4AF37] outline-none transition-all appearance-none cursor-pointer">
                                 <option value="1" class="bg-[#050010]">One Soul</option>
                                 <option value="2" class="bg-[#050010]">Two Souls</option>
                                 <option value="3" class="bg-[#050010]">Three Souls</option>
-                                <option value="4" class="bg-[#050010]">Family Presence</option>
+                                <option value="4" class="bg-[#050010]">Four Souls</option>
+                                <option value="5" class="bg-[#050010]">Five Souls</option>
                             </select>
-                        </div>
-
-                        <div class="field flex flex-col gap-2">
-                            <label class="font-decorative text-[9px] tracking-[0.3em] text-[#D4AF37] uppercase opacity-60">Message to the Couple</label>
-                            <textarea id="rM" rows="3" placeholder="A blessing or a wish..." class="bg-transparent border-b border-[#D4AF37]/20 py-3 outline-none font-cormorant italic text-xl text-[#fdf2cf] placeholder:text-[#fdf2cf]/20 focus:border-[#D4AF37] transition-all resize-none"></textarea>
-                        </div>
-                    </div>
-
-                    <button onclick="sendR()" class="font-decorative text-[11px] tracking-[0.5em] text-[#050010] bg-[#D4AF37] px-12 py-5 hover:bg-[#fdf2cf] transition-all uppercase font-bold shadow-[0_0_30px_rgba(212,175,55,0.2)]">
-                        Accept Invitation
                     </button>
                     <!-- Fixed header states controlled by JS -->
                     <style>

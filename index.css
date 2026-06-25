@@ -442,53 +442,59 @@ html, body {
     border-bottom-color: rgba(212, 175, 55, 0.7);
 }
 
-/* ── RESPONSIVE & MOBILE OVERFLOW SAFEGUARDS ── */
+/* ── ADAPTIVE & IMMERSIVE MOBILE LAYOUT (iPhone & Android) ── */
 @media (max-width: 768px) {
     #nav { 
-        padding: 1.5rem 2rem !important; 
-        height: auto !important;
+        padding: 1rem 1.5rem !important; 
+        height: 5rem !important;
+        display: flex;
+        align-items: center;
+        background: linear-gradient(to bottom, #050010 0%, transparent 100%);
     }
     .nav-logo {
-        width: 3.8rem !important; /* Slightly smaller for better frame clearance */
-        height: 3.8rem !important;
-        margin-top: 0.25rem !important;
-        margin-left: 0.1rem !important;
+        width: clamp(3rem, 10vw, 4rem) !important;
+        height: auto !important;
+        margin: 0 !important;
     }
     #fixed-header {
-        padding-top: 6.5rem !important; /* Reduced from 9rem to pull everything up */
-        top: 0 !important;
+        top: 5rem !important; /* Positioned exactly below the nav height */
+        padding-top: 1rem !important;
+        height: auto !important;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
     #fixed-title {
         font-family: 'Cinzel Decorative', serif !important;
-        font-size: 1.25rem !important; /* Reduced from 1.6rem to prevent overflow */
-        letter-spacing: 0.15em !important; /* Tighter letter spacing to keep it on one line */
-        font-weight: 700 !important;
-        line-height: 1.1 !important;
-        width: 85% !important; /* Ensure it stays within frame borders */
+        font-size: clamp(1rem, 4.5vw, 1.4rem) !important; 
+        letter-spacing: 0.15em !important;
+        width: 90% !important;
         margin: 0 auto !important;
+        text-align: center !important;
     }
     .inner, .card {
-        padding-top: 8.5rem !important; /* Tightened for venue/story consistency */
-        padding-bottom: 4rem !important;
-        width: 100% !important;
-        overflow-x: hidden !important;
+        padding-top: 9rem !important; /* nav(5rem) + fixed-header space */
+        padding-bottom: 2rem !important;
+        min-height: 100vh !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important; /* Immersive centering */
     }
     .matte-royal-card {
-        padding: 1rem 0.5rem !important;
+        padding: 1.5rem 1rem !important;
         width: 100% !important;
-        max-width: 100% !important;
+        flex-grow: 0 !important; /* Don't force stretch if content is small */
+        margin: auto 0 !important; /* Vertical centering in the flex container */
     }
-    /* Keep buttons within borders */
+    /* Universal Button Scaling */
     .royal-nav-btn {
-        padding: 0.5rem 1rem !important;
-        font-size: 9px !important;
-        letter-spacing: 0.15em !important;
-        white-space: nowrap;
+        padding: 0.75rem 1.25rem !important;
+        font-size: clamp(10px, 2.5vw, 12px) !important;
+        letter-spacing: 0.1em !important;
     }
     .flex.justify-center.gap-4 {
-        gap: 0.35rem !important; /* Extra tight to keep within frame */
-        width: 100%;
-        padding: 0 15px;
+        gap: 0.5rem !important;
+        padding: 1rem 0 !important;
     }
 }
 
