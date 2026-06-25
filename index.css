@@ -186,19 +186,18 @@ html, body {
     transform: scale(0.95);
 }
 
-.matte-royal-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 1;
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, transparent 100%);
+.matte-royal-card:hover {
+    transform: translateY(-5px);
 }
 
-.matte-royal-card:hover {
-    border-color: rgba(212, 175, 55, 0.45);
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 40px rgba(212, 175, 55, 0.07);
-    transform: translateY(-5px);
+/* Ensure absolutely no backgrounds or borders exist for the 'no-box' look */
+.matte-royal-card, .matte-royal-card::before, .matte-royal-card::after {
+    background: transparent !important;
+    background-image: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
 }
 
 /* ════════════════ SCENES ════════════════ */
@@ -470,16 +469,27 @@ html, body {
         margin: 0 auto !important;
     }
     .inner, .card {
-        padding-top: 14rem !important; /* Pushes card content down to clear the fixed header */
-        padding-bottom: 2rem !important;
+        padding-top: 15rem !important; /* Pushes card content down more */
+        padding-bottom: 5rem !important; /* Lift buttons away from the bottom border */
+        width: 100% !important;
+        overflow-x: hidden !important;
     }
     .matte-royal-card {
-        padding: 1.5rem 1.25rem !important;
-        max-height: 75vh !important; /* Increased for better visibility of footer buttons */
-        width: 94%;
-        overflow-y: auto !important;
-        display: flex;
-        flex-direction: column;
+        padding: 1rem 0.5rem !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    /* Keep buttons within borders */
+    .royal-nav-btn {
+        padding: 0.5rem 1rem !important;
+        font-size: 9px !important;
+        letter-spacing: 0.15em !important;
+        white-space: nowrap;
+    }
+    .flex.justify-center.gap-4 {
+        gap: 0.5rem !important; /* Tighten gap between bottom buttons */
+        width: 100%;
+        padding: 0 10px;
     }
 }
 
