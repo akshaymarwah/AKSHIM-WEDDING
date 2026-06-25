@@ -455,8 +455,8 @@ html, body {
     border-bottom-color: rgba(212, 175, 55, 0.7);
 }
 
-/* ── ADAPTIVE & IMMERSIVE MOBILE LAYOUT (iPhone & Android) ── */
-@media (max-width: 768px) {
+/* ── ADAPTIVE & IMMERSIVE MOBILE LAYOUT (Handhelds to Tablets) ── */
+@media (max-width: 1024px) {
     #nav { 
         padding: calc(0.5rem + env(safe-area-inset-top)) var(--frame-safe) 0.5rem !important; 
         height: auto !important;
@@ -492,7 +492,7 @@ html, body {
         line-height: 1.2 !important;
     }
     .inner, .card {
-        padding-top: calc(9.5rem + env(safe-area-inset-top)) !important;
+        padding-top: clamp(7rem, 15vh, 9.5rem) !important;
         padding-bottom: 4rem !important;
         padding-left: var(--frame-safe) !important;
         padding-right: var(--frame-safe) !important;
@@ -514,6 +514,12 @@ html, body {
     .flex.justify-center.gap-4 {
         gap: 0.5rem !important;
         padding: 1rem 0 !important;
+    }
+
+    /* RSVP Title Fix */
+    #rsvpContent h2 {
+        letter-spacing: 0.25em !important;
+        font-size: clamp(1.5rem, 5vw, 2.5rem) !important;
     }
 }
 

@@ -60,12 +60,11 @@ async function sendWhatsAppMessage(phone, text, imageUrl = null) {
         
         console.log(`[WASenderAPI] Sending ${imageUrl ? 'MEDIA' : 'TEXT'} to ${to}...`);
         
-        // Use /send-message for everything (including media) as /send-media is returning HTML
+        // Use /send-message for everything (including media)
         const endpoint = `${WASENDER_BASE_URL}/send-message`;
         const body = { to, text };
         if (imageUrl) {
-            body.media_url = imageUrl;
-            body.type = 'image';
+            body.imageUrl = imageUrl;
         }
 
         const response = await fetch(endpoint, {
