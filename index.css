@@ -449,28 +449,27 @@ html, body {
         height: auto !important;
     }
     .nav-logo {
-        width: 4.5rem !important; /* Reduced size for better balance */
-        height: 4.5rem !important;
-        margin-top: 0.5rem !important;
-        margin-left: 0.2rem !important;
+        width: 3.8rem !important; /* Slightly smaller for better frame clearance */
+        height: 3.8rem !important;
+        margin-top: 0.25rem !important;
+        margin-left: 0.1rem !important;
     }
     #fixed-header {
-        padding-top: 9rem !important; /* More space to prevent logo overlap */
+        padding-top: 6.5rem !important; /* Reduced from 9rem to pull everything up */
         top: 0 !important;
     }
     #fixed-title {
         font-family: 'Cinzel Decorative', serif !important;
-        font-size: 1.6rem !important; /* Enhanced for mobile */
-        letter-spacing: 0.25em !important;
-        font-weight: 900 !important;
-        line-height: 1.2 !important;
-        width: 100% !important;
-        text-align: center !important;
+        font-size: 1.25rem !important; /* Reduced from 1.6rem to prevent overflow */
+        letter-spacing: 0.15em !important; /* Tighter letter spacing to keep it on one line */
+        font-weight: 700 !important;
+        line-height: 1.1 !important;
+        width: 85% !important; /* Ensure it stays within frame borders */
         margin: 0 auto !important;
     }
     .inner, .card {
-        padding-top: 15rem !important; /* Pushes card content down more */
-        padding-bottom: 5rem !important; /* Lift buttons away from the bottom border */
+        padding-top: 10rem !important; /* Reduced from 15rem to bring content up */
+        padding-bottom: 4rem !important;
         width: 100% !important;
         overflow-x: hidden !important;
     }
