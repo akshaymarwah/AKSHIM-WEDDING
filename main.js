@@ -457,12 +457,23 @@ const initBRollEngine = () => {
                     { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.7, ease: 'power3.out' }, 0.2
                 );
                 
-                // Animate paragraphs inside the card for a "story appearing" effect
-                const paras = nextCard.querySelectorAll('p, h3, span, div');
+                // Line-by-line (paragraph by paragraph) appearance effect
+                const paras = nextCard.querySelectorAll('h2, h3, p, span, .chapter-number, .btn-matte-gold');
                 if (paras.length) {
                     tl.fromTo(paras, 
-                        { opacity: 0, y: 15 },
-                        { opacity: 1, y: 0, stagger: 0.1, duration: 0.8, ease: 'power2.out' }, 0.4
+                        { 
+                            opacity: 0, 
+                            y: 20, 
+                            filter: 'blur(8px)' 
+                        },
+                        { 
+                            opacity: 1, 
+                            y: 0, 
+                            filter: 'blur(0px)',
+                            stagger: 0.15, 
+                            duration: 1.2, 
+                            ease: 'power3.out' 
+                        }, 0.5
                     );
                 }
             }
