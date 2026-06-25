@@ -1882,8 +1882,12 @@
                 showToast('Upload failed', 'error');
             }
         }
-        function updateTemplateField(idx, field, val) { templates[idx][field] = val; }
-        function addNewTemplate() { templates.push({ id: 'tmpl_' + Date.now(), title: 'New Template', body: 'Hello {name}, ', isQuickAction: true }); renderTemplatesEditor(); }
+        function updateTemplateField(idx, field, val) { 
+            // Normalize field name to match database image_url
+            const targetField = field === 'imageUrl' ? 'image_url' : field;
+            templates[idx][targetField] = val; 
+        }
+        function addNewTemplate() { templates.push({ id: 'tmpl_' + Date.now(), title: 'New Template', body: 'Hello {name}, ', is_quick_action: true, image_url: null }); renderTemplatesEditor(); }
         function removeTemplate(idx) { templates.splice(idx, 1); renderTemplatesEditor(); }
         async function saveAllTemplates() {
             try {
@@ -1939,8 +1943,8 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        sessionId: currentSessionId,
-                        recipientIds: selectedIds,
+                        session: currentSessionId,
+                        contactIds: selectedIds,
                         templateId: tmplId
                     })
                 });
