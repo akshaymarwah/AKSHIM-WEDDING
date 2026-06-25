@@ -11,6 +11,17 @@
     --purple-rich: #25034d;
     --metallic: linear-gradient(135deg, #b8860b 0%, #d4af37 20%, #fdf2cf 45%, #d4af37 70%, #b8860b 100%);
     --soft-glow: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+
+    /* ── DYNAMIC FRAME CONSTRAINTS ── */
+    --frame-inset: 18px;
+    --frame-safe: calc(var(--frame-inset) + 1rem);
+}
+
+@media (max-width: 640px) {
+    :root {
+        --frame-inset: 12px;
+        --frame-safe: calc(var(--frame-inset) + 0.75rem);
+    }
 }
 
 * {
@@ -334,6 +345,8 @@ html, body {
     width: 100% !important;
     padding-top: clamp(180px, 25vh, 280px) !important; /* Default for sections with fixed headers */
     padding-bottom: 8vh !important;
+    padding-left: var(--frame-safe) !important;
+    padding-right: var(--frame-safe) !important;
 }
 
 /* Overrides for sections without fixed headers */
@@ -354,10 +367,10 @@ html, body {
 
 #fixed-header {
     position: fixed;
-    top: 50px; /* More clearance from top */
-    left: 0;
-    width: 100%;
-    padding-top: 5rem;
+    top: var(--frame-inset); /* Positioned relative to the frame top */
+    left: var(--frame-inset);
+    right: var(--frame-inset);
+    padding-top: 4.5rem; /* Room for nav */
     z-index: 90;
     pointer-events: none;
     text-shadow: 0 0 15px rgba(212,175,55,0.25);
@@ -445,52 +458,56 @@ html, body {
 /* ── ADAPTIVE & IMMERSIVE MOBILE LAYOUT (iPhone & Android) ── */
 @media (max-width: 768px) {
     #nav { 
-        padding: 1rem 1.5rem !important; 
-        height: 5rem !important;
+        padding: calc(0.5rem + env(safe-area-inset-top)) var(--frame-safe) 0.5rem !important; 
+        height: auto !important;
+        min-height: 4rem !important;
         display: flex;
         align-items: center;
-        background: linear-gradient(to bottom, #050010 0%, transparent 100%);
+        background: linear-gradient(to bottom, #050010 85%, transparent 100%);
+        top: var(--frame-inset) !important;
     }
     .nav-logo {
-        width: clamp(3rem, 10vw, 4rem) !important;
+        width: clamp(2.2rem, 8vw, 2.8rem) !important;
         height: auto !important;
         margin: 0 !important;
     }
     #fixed-header {
-        top: 5rem !important; /* Positioned exactly below the nav height */
-        padding-top: 1rem !important;
+        top: calc(var(--frame-inset) + 4rem + env(safe-area-inset-top)) !important;
+        padding-top: 0.5rem !important;
         height: auto !important;
         display: flex;
         flex-direction: column;
         justify-content: center;
+        left: var(--frame-inset) !important;
+        right: var(--frame-inset) !important;
     }
     #fixed-title {
         font-family: 'Cinzel Decorative', serif !important;
-        font-size: clamp(1rem, 4.5vw, 1.4rem) !important; 
-        letter-spacing: 0.15em !important;
-        width: 90% !important;
+        font-size: clamp(0.9rem, 4vw, 1.2rem) !important; 
+        letter-spacing: 0.12em !important;
+        width: 85% !important;
         margin: 0 auto !important;
         text-align: center !important;
     }
     .inner, .card {
-        padding-top: 9rem !important; /* nav(5rem) + fixed-header space */
-        padding-bottom: 2rem !important;
+        padding-top: calc(7.5rem + env(safe-area-inset-top)) !important;
+        padding-bottom: 3.5rem !important;
+        padding-left: var(--frame-safe) !important;
+        padding-right: var(--frame-safe) !important;
         min-height: 100vh !important;
         display: flex !important;
         flex-direction: column !important;
-        justify-content: center !important; /* Immersive centering */
+        justify-content: center !important;
     }
     .matte-royal-card {
         padding: 1.5rem 1rem !important;
         width: 100% !important;
-        flex-grow: 0 !important; /* Don't force stretch if content is small */
-        margin: auto 0 !important; /* Vertical centering in the flex container */
+        flex-grow: 0 !important;
+        margin: auto 0 !important;
     }
-    /* Universal Button Scaling */
     .royal-nav-btn {
-        padding: 0.75rem 1.25rem !important;
-        font-size: clamp(10px, 2.5vw, 12px) !important;
-        letter-spacing: 0.1em !important;
+        padding: 0.7rem 1.1rem !important;
+        font-size: 10px !important;
     }
     .flex.justify-center.gap-4 {
         gap: 0.5rem !important;
