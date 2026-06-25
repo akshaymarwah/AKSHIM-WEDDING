@@ -194,9 +194,19 @@ const BUCKET_NAME = 'whatsapp-sessions';
 async function ensureBucket() {
     try {
         const { data: buckets } = await supabase.storage.listBuckets();
-        if (!buckets.find(b => b.name === BUCKET_NAME)) {
-            await supabase.storage.createBucket(BUCKET_NAME, { public: false });
-            console.log(`[Supabase] Created bucket: ${BUCKET_NAME}`);
+        const requiredBuckets = [
+            { name: 'whatsapp-sessions', public: false },
+            { name: 'templates', public: true },
+            { name: 'guest-images', public: true },
+            { name: 'guest-documents', public: true },
+            { name: 'shared-vault', public: true }
+        ];
+
+        for (const b of requiredBuckets) {
+            if (!buckets.find(bucket => bucket.name === b.name)) {
+                await supabase.storage.createBucket(b.name, { public: b.public });
+                console.log(`[Supabase] Created bucket: ${b.name} (Public: ${b.public})`);
+            }
         }
     } catch (e) { console.error('[Supabase] Storage check failed:', e.message); }
 }
