@@ -55,16 +55,12 @@ async function sendWhatsAppMessage(phone, text, imageUrl = null) {
         let formatted = phone.replace(/\D/g, '');
         if (!formatted.startsWith('91') && formatted.length === 10) formatted = '91' + formatted;
         
-        // WASender requires JID format: [number]@s.whatsapp.net
         const jid = formatted.includes('@') ? formatted : `${formatted}@s.whatsapp.net`;
         
         console.log(`[WASenderAPI] Sending ${imageUrl ? 'MEDIA' : 'TEXT'} to ${jid}...`);
         
         const endpoint = imageUrl ? `${WASENDER_BASE_URL}/send-media` : `${WASENDER_BASE_URL}/send-message`;
-        const body = {
-            to: jid,
-            text: text
-        };
+        const body = { to: jid, text: text };
         if (imageUrl) {
             body.media_url = imageUrl;
             body.type = 'image';
@@ -80,6 +76,15 @@ async function sendWhatsAppMessage(phone, text, imageUrl = null) {
         });
 
         const data = await response.json();
+
+        // Handle Rate Limiting (Free Trial 1 min limit)
+        if (data.retry_after) {
+            const waitTime = (data.retry_after + 2) * 1000;
+            console.log(`[WASenderAPI] Rate limited. Waiting ${waitTime/1000}s before retry...`);
+            await new Promise(r => setTimeout(r, waitTime));
+            return sendWhatsAppMessage(phone, text, imageUrl); // Recursive retry
+        }
+
         if (!response.ok || data.success === false) {
             throw new Error(data.message || 'API Error');
         }
