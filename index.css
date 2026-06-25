@@ -77,13 +77,14 @@ html, body {
 }
 
 .matte-royal-card h3 {
-    font-size: clamp(1.2rem, 3.5vw, 1.8rem) !important; /* Increased size for impact */
-    letter-spacing: 0.3em !important;
+    font-size: clamp(1.2rem, 3.5vw, 1.8rem) !important;
+    letter-spacing: 0.15em !important; /* Slightly tighter for Decorative font */
     margin-top: 1.5rem !important;
     margin-bottom: 1.5rem !important;
     font-weight: 700 !important;
     line-height: 1.4 !important;
-    font-family: 'Cinzel Decorative', serif !important; /* Restored to Decorative */
+    font-family: 'Cinzel Decorative', serif !important; /* Forced Cinzel Decorative */
+    color: var(--deep-gold) !important;
 }
 
 .matte-royal-card .font-cormorant {
@@ -146,17 +147,26 @@ html, body {
 .animate-bounce-slow { animation: bounce-slow 3s ease-in-out infinite; }
 
 /* ── MATTE ROYAL CARDS (MAJESTIC WEDDING) ── */
+.matte-royal-card, .card .matte-royal-card, .S .matte-royal-card {
+    background: none !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
 .matte-royal-card {
     position: relative;
     width: 96%;
     max-width: 650px;
     padding: 2rem 1rem !important;
-    background: transparent !important; /* Removed box background */
-    border: none !important; /* Removed border */
+    background: transparent !important; /* Force transparent */
+    border: none !important; /* Force no border */
     backdrop-filter: none !important;
     box-shadow: none !important;
     transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    overflow: visible !important; /* Allow content to breathe */
+    overflow: visible !important;
     max-height: none !important;
     display: flex;
     flex-direction: column;
