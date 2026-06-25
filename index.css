@@ -65,15 +65,18 @@ html, body {
 
 /* ── CARD TYPOGRAPHY SCROLL SCALING ── */
 .matte-royal-card .font-script {
-    font-size: clamp(2.2rem, 8vw, 3.8rem) !important; /* Increased for better presence */
+    font-size: clamp(1rem, 4vw, 1.4rem) !important;
+    letter-spacing: 0.5em !important;
+    text-transform: uppercase !important;
+    font-family: 'Cinzel Decorative', serif !important; /* Changed to Cinzel for consistent branding */
     background: var(--metallic);
     background-size: 200%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    opacity: 0.98 !important;
+    opacity: 0.9 !important;
     display: inline-block;
-    margin-bottom: 0.5rem !important;
-    filter: drop-shadow(0 2px 10px rgba(212,175,55,0.2));
+    margin-bottom: 0.25rem !important;
+    font-weight: 700 !important;
 }
 
 .matte-royal-card h3 {
