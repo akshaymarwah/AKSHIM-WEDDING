@@ -444,27 +444,30 @@ html, body {
 /* ── RESPONSIVE & MOBILE OVERFLOW SAFEGUARDS ── */
 @media (max-width: 768px) {
     #nav { 
-        padding: 2rem 2.5rem !important; 
+        padding: 1.5rem 2rem !important; 
         height: auto !important;
     }
     .nav-logo {
-        width: 7rem !important; /* Massive logo as requested */
-        height: 7rem !important;
-        margin-top: 1rem !important;
-        margin-left: 0.5rem !important;
+        width: 4.5rem !important; /* Reduced size for better balance */
+        height: 4.5rem !important;
+        margin-top: 0.5rem !important;
+        margin-left: 0.2rem !important;
     }
     #fixed-header {
-        padding-top: 8rem !important;
+        padding-top: 9rem !important; /* More space to prevent logo overlap */
+        top: 0 !important;
     }
     #fixed-title {
         font-family: 'Cinzel Decorative', serif !important;
-        font-size: 2rem !important;
-        letter-spacing: 0.25em !important;
-        font-weight: 900 !important;
+        font-size: 1.4rem !important; /* Reduced to fit on one line and look elegant */
+        letter-spacing: 0.2em !important;
+        font-weight: 700 !important;
+        line-height: 1.2 !important;
+        width: 90% !important;
+        margin: 0 auto !important;
     }
     .inner, .card {
-        padding-top: 10rem !important;
-        justify-content: flex-start !important;
+        padding-top: 14rem !important; /* Pushes card content down to clear the fixed header */
         padding-bottom: 2rem !important;
     }
     .matte-royal-card {
