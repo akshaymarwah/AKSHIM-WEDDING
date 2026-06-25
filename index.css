@@ -65,7 +65,7 @@ html, body {
 
 /* ── CARD TYPOGRAPHY SCROLL SCALING ── */
 .matte-royal-card .font-script {
-    font-size: clamp(1.6rem, 5vw, 2.8rem) !important; /* Slightly more compact */
+    font-size: clamp(2.2rem, 8vw, 3.8rem) !important; /* Increased for better presence */
     background: var(--metallic);
     background-size: 200%;
     -webkit-background-clip: text;
@@ -77,20 +77,20 @@ html, body {
 }
 
 .matte-royal-card h3 {
-    font-size: clamp(0.85rem, 2.2vw, 1.25rem) !important; /* Refined compact size */
-    letter-spacing: 0.25em !important;
+    font-size: clamp(1.2rem, 3.5vw, 1.8rem) !important; /* Increased size for impact */
+    letter-spacing: 0.3em !important;
     margin-top: 1.5rem !important;
-    margin-bottom: 1.25rem !important;
+    margin-bottom: 1.5rem !important;
     font-weight: 700 !important;
-    line-height: 1.5 !important;
-    font-family: 'Cinzel', serif !important; /* Changed to Cinzel for royal subheaders */
+    line-height: 1.4 !important;
+    font-family: 'Cinzel', serif !important;
 }
 
 .matte-royal-card .font-cormorant {
-    font-size: clamp(1rem, 2.2vw, 1.4rem) !important; /* More balanced content size */
+    font-size: clamp(1.15rem, 2.8vw, 1.6rem) !important; /* Increased content font size */
     color: rgba(253, 242, 207, 1) !important;
     text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
-    line-height: 1.4 !important;
+    line-height: 1.6 !important;
 }
 
 .matte-royal-card p.font-montserrat {
@@ -100,10 +100,10 @@ html, body {
 }
 
 .matte-royal-card .chapter-number {
-    font-size: clamp(1.2rem, 4vw, 2.2rem) !important; /* More elegant compact size */
+    font-size: clamp(1.8rem, 6vw, 3rem) !important; /* Increased chapter number size */
     line-height: 1 !important;
     margin-bottom: 0.5rem !important;
-    font-family: 'Cinzel Decorative', serif !important; /* Decorative for chapter numbers */
+    font-family: 'Cinzel Decorative', serif !important;
 }
 
 .gold-metallic {
@@ -150,7 +150,7 @@ html, body {
     position: relative;
     width: 92%;
     max-width: 600px;
-    padding: 2.5rem 2rem !important;
+    padding: 3rem 2.5rem !important; /* Increased padding */
     border: 1px solid rgba(212, 175, 55, 0.25);
     background: rgba(10, 5, 25, 0.75);
     backdrop-filter: blur(20px);
@@ -158,7 +158,7 @@ html, body {
     box-shadow: 0 40px 100px rgba(0, 0, 0, 0.9);
     transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     overflow-y: auto !important;
-    max-height: 75vh !important;
+    max-height: 80vh !important; /* Increased max-height */
     scrollbar-width: none;
     -ms-overflow-style: none;
     overscroll-behavior: contain !important;
@@ -337,10 +337,10 @@ html, body {
     inset: 0;
     pointer-events: none;
     background: linear-gradient(to bottom, 
-        rgba(5,0,16,1) 0%, 
+        rgba(5,0,16,0.6) 0%, 
         transparent 15%, 
         transparent 85%, 
-        rgba(5,0,16,1) 100%
+        rgba(5,0,16,0.8) 100%
     );
     z-index: 20;
 }
@@ -361,10 +361,11 @@ html, body {
 
 #fixed-title {
     font-family: 'Playfair Display', serif !important;
-    font-size: clamp(0.8rem, 1.8vw, 1.2rem) !important; /* Elegantly smaller */
-    letter-spacing: 0.6em !important;
-    font-weight: 600 !important;
+    font-size: clamp(1.4rem, 4vw, 2.2rem) !important; /* Significantly increased for mobile visibility */
+    letter-spacing: 0.4em !important;
+    font-weight: 700 !important;
     text-transform: uppercase;
+    text-shadow: 0 2px 15px rgba(0,0,0,0.8);
 }
 
 .header-blur-out {

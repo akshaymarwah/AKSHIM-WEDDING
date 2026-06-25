@@ -580,19 +580,33 @@
             </button>
             <h3 class="royal-font text-lg text-gold mb-4 font-bold uppercase tracking-wider">Broadcast Settings</h3>
             <div class="space-y-4">
-                <div class="bg-royal-bg/60 p-4 rounded border border-gold/10">
-                    <p class="text-[10px] text-gold/40 uppercase font-bold mb-1">Recipients</p>
-                    <p id="bulk-selection-count" class="text-sm font-bold text-gold">0 guests selected</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-royal-bg/60 p-4 rounded border border-gold/10">
+                        <p class="text-[10px] text-gold/40 uppercase font-bold mb-1">Recipients</p>
+                        <p id="bulk-selection-count" class="text-sm font-bold text-gold"><span id="bulk-count">0</span> guests selected</p>
+                    </div>
+                    <div class="bg-royal-bg/60 p-4 rounded border border-gold/10">
+                        <p class="text-[10px] text-gold/40 uppercase font-bold mb-1">Status</p>
+                        <p class="text-sm font-bold text-green-500 uppercase">Ready</p>
+                    </div>
                 </div>
+                
                 <div>
                     <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Message Template</label>
-                    <select id="bulk-select-tmpl" onchange="updateBulkPreview()" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold outline-none focus:border-gold">
+                    <select id="bulk-select-tmpl" onchange="updateBulkUI()" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold outline-none focus:border-gold">
                         <option value="">-- Select Template --</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Custom Message (Overrides Template)</label>
-                    <textarea id="bulk-custom-msg" onkeyup="updateBulkPreview()" rows="3" class="w-full bg-royal-bg border border-gold/20 rounded p-4 text-sm text-gold-light outline-none focus:border-gold font-sans"></textarea>
+                    <textarea id="bulk-custom-msg" onkeyup="updateBulkUI()" rows="3" placeholder="Type custom message here..." class="w-full bg-royal-bg border border-gold/20 rounded p-4 text-sm text-gold-light outline-none focus:border-gold font-sans"></textarea>
+                </div>
+
+                <div class="p-4 bg-gold/5 rounded-lg border border-gold/10">
+                    <p class="text-[9px] text-gold/40 uppercase font-bold mb-3 tracking-widest">Message Preview</p>
+                    <div id="bulk-preview-content" class="min-h-[60px] flex items-center justify-center border border-dashed border-gold/10 rounded-lg p-2">
+                        <p class="text-[10px] text-gold/20 uppercase tracking-widest italic text-center py-4">No message selected</p>
+                    </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
@@ -1330,6 +1344,37 @@
             document.getElementById('modal-group-manager').classList.remove('flex');
         }
 
+        function updateBulkUI() {
+            const selectedIds = getSelectedGuestIds();
+            document.getElementById('bulk-count').textContent = selectedIds.length;
+            
+            const templateId = document.getElementById('bulk-select-tmpl').value;
+            const customMsg = document.getElementById('bulk-custom-msg').value;
+            const previewContainer = document.getElementById('bulk-preview-content');
+            
+            if (!previewContainer) return;
+
+            if (customMsg.trim()) {
+                previewContainer.innerHTML = `
+                    <div class="bg-[#075e54] p-3 rounded-lg shadow-lg border border-white/5 max-w-[85%]">
+                        <p class="text-[11px] text-white whitespace-pre-wrap">${customMsg.replace(/{name}/g, 'Guest Name')}</p>
+                    </div>
+                `;
+            } else if (templateId) {
+                const tmpl = templates.find(t => t.id === templateId);
+                if (tmpl) {
+                    previewContainer.innerHTML = `
+                        <div class="bg-[#075e54] p-3 rounded-lg shadow-lg border border-white/5 max-w-[85%]">
+                            ${tmpl.imageUrl || tmpl.image_url ? `<img src="${tmpl.imageUrl || tmpl.image_url}" class="w-full rounded mb-2 border border-white/10 shadow-md">` : ''}
+                            <p class="text-[11px] text-white whitespace-pre-wrap">${tmpl.body.replace(/{name}/g, 'Guest Name')}</p>
+                        </div>
+                    `;
+                }
+            } else {
+                previewContainer.innerHTML = '<p class="text-[10px] text-gold/20 uppercase tracking-widest italic text-center py-4">No message selected</p>';
+            }
+        }
+
         function openTemplateManager() {
             document.getElementById('modal-template-manager').classList.remove('hidden');
             document.getElementById('modal-template-manager').classList.add('flex');
@@ -1778,9 +1823,64 @@
                             <button onclick="removeTemplate(${i})" class="text-red-400/50 hover:text-red-400"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
-                    <textarea onchange="updateTemplateField(${i}, 'body', this.value)" rows="4" class="w-full bg-royal-bg/80 border border-gold/10 rounded p-4 text-xs text-gold-light outline-none focus:border-gold font-sans">${t.body}</textarea>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="text-[10px] text-gold/40 uppercase tracking-widest block font-bold">Message Content</label>
+                            <textarea onchange="updateTemplateField(${i}, 'body', this.value)" rows="6" class="w-full bg-royal-bg/80 border border-gold/10 rounded p-4 text-xs text-gold-light outline-none focus:border-gold font-sans">${t.body}</textarea>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] text-gold/40 uppercase tracking-widest block font-bold">Template Image</label>
+                            <div class="border border-dashed border-gold/20 rounded-lg p-4 flex flex-col items-center justify-center gap-3 bg-royal-bg/20 min-h-[150px]">
+                                ${t.imageUrl || t.image_url ? `
+                                    <img src="${t.imageUrl || t.image_url}" class="max-h-32 rounded shadow-lg border border-gold/20">
+                                    <button onclick="updateTemplateField(${i}, 'imageUrl', null); renderTemplatesEditor();" class="text-[8px] text-red-400 uppercase font-bold hover:underline">Remove Image</button>
+                                ` : `
+                                    <i class="fa-solid fa-image text-gold/10 text-3xl"></i>
+                                    <label class="cursor-pointer bg-gold/10 hover:bg-gold/20 text-gold text-[9px] px-4 py-2 rounded border border-gold/30 uppercase font-bold transition">
+                                        Upload Image
+                                        <input type="file" class="hidden" accept="image/*" onchange="uploadTemplateImage(this, ${i})">
+                                    </label>
+                                `}
+                            </div>
+                            <input type="hidden" id="tmpl-img-${i}" value="${t.imageUrl || t.image_url || ''}">
+                        </div>
+                    </div>
+                    
+                    <div class="p-3 bg-gold/5 rounded border border-gold/10">
+                        <p class="text-[9px] text-gold/40 uppercase font-bold mb-2 tracking-widest">Live Preview</p>
+                        <div class="bg-[#075e54] p-3 rounded-lg max-w-[80%] shadow-lg">
+                            ${t.imageUrl || t.image_url ? `<img src="${t.imageUrl || t.image_url}" class="w-full rounded mb-2">` : ''}
+                            <p class="text-[11px] text-white whitespace-pre-wrap leading-relaxed">${(t.body || '').replace(/{name}/g, 'Guest Name')}</p>
+                        </div>
+                    </div>
                 </div>
             `).join('');
+        }
+
+        async function uploadTemplateImage(input, idx) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('bucket', 'templates');
+
+            try {
+                showToast('Uploading image...');
+                const res = await fetch('/api/upload-file', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.success) {
+                    updateTemplateField(idx, 'imageUrl', data.url);
+                    renderTemplatesEditor();
+                    showToast('Image uploaded! 👑');
+                } else throw new Error(data.error);
+            } catch (err) {
+                showToast('Upload failed', 'error');
+            }
         }
         function updateTemplateField(idx, field, val) { templates[idx][field] = val; }
         function addNewTemplate() { templates.push({ id: 'tmpl_' + Date.now(), title: 'New Template', body: 'Hello {name}, ', isQuickAction: true }); renderTemplatesEditor(); }

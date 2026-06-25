@@ -50,24 +50,30 @@ const WASENDER_BASE_URL = "https://www.wasenderapi.com/api";
 
 let bulkSendState = { sending: false, total: 0, sent: 0, failed: 0, currentContact: '', errors: [], cancelRequested: false };
 
-async function sendWhatsAppMessage(phone, text) {
+async function sendWhatsAppMessage(phone, text, imageUrl = null) {
     try {
-        // Clean phone number: remove all non-digits, then ensure it has country code
         let formatted = phone.replace(/\D/g, '');
         if (!formatted.startsWith('91') && formatted.length === 10) formatted = '91' + formatted;
         
-        console.log(`[WASenderAPI] Sending to ${formatted}...`);
+        console.log(`[WASenderAPI] Sending ${imageUrl ? 'MEDIA' : 'TEXT'} to ${formatted}...`);
         
-        const response = await fetch(`${WASENDER_BASE_URL}/send-message`, {
+        const endpoint = imageUrl ? `${WASENDER_BASE_URL}/send-media` : `${WASENDER_BASE_URL}/send-message`;
+        const body = {
+            to: formatted,
+            text: text
+        };
+        if (imageUrl) {
+            body.media_url = imageUrl;
+            body.type = 'image';
+        }
+
+        const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${WASENDER_API_KEY}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                to: formatted,
-                text: text
-            })
+            body: JSON.stringify(body)
         });
 
         const data = await response.json();
@@ -167,6 +173,7 @@ async function saveTemplate(t) {
         id: t.id,
         title: t.title,
         body: t.body,
+        image_url: t.imageUrl || t.image_url || null,
         is_quick_action: t.isQuickAction || t.is_quick_action || false
     };
     const { error } = await supabase.from('templates').upsert(payload);
@@ -398,11 +405,10 @@ app.get('/api/groups', requireAuth, async (req, res) => res.json(await getGroups
 app.post('/api/groups', requireAuth, async (req, res) => { for (const g of req.body.groups) await saveGroup(g); res.json({ success: true }); });
 
 app.post('/api/send-message', requireAuth, async (req, res) => {
-    const { phone, message, contactId } = req.body;
+    const { phone, message, contactId, imageUrl } = req.body;
     try { 
-        await sendWhatsAppMessage(phone, message); 
+        await sendWhatsAppMessage(phone, message, imageUrl); 
         
-        // If a contact ID was provided, mark them as 'sent' in the database
         if (contactId) {
             const { data: contact } = await supabase.from('guests').select('*').eq('id', contactId).maybeSingle();
             if (contact) {
@@ -508,9 +514,10 @@ app.post('/api/bulk-send', requireAuth, async (req, res) => {
             bulkSendState.currentContact = t.name;
             try {
                 const rawMsg = customMessage || (tmpl ? tmpl.body : 'Hello');
+                const imageUrl = tmpl ? tmpl.image_url : null;
                 const m = rawMsg.replace(/{name}/g, t.name);
                 
-                await sendWhatsAppMessage(t.phone, m);
+                await sendWhatsAppMessage(t.phone, m, imageUrl);
                 
                 // Update status in DB
                 t.status = 'sent'; 
