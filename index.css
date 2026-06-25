@@ -468,7 +468,7 @@ html, body {
         margin: 0 auto !important;
     }
     .inner, .card {
-        padding-top: 10rem !important; /* Reduced from 15rem to bring content up */
+        padding-top: 8.5rem !important; /* Tightened for venue/story consistency */
         padding-bottom: 4rem !important;
         width: 100% !important;
         overflow-x: hidden !important;
@@ -486,9 +486,9 @@ html, body {
         white-space: nowrap;
     }
     .flex.justify-center.gap-4 {
-        gap: 0.5rem !important; /* Tighten gap between bottom buttons */
+        gap: 0.35rem !important; /* Extra tight to keep within frame */
         width: 100%;
-        padding: 0 10px;
+        padding: 0 15px;
     }
 }
 
