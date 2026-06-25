@@ -83,7 +83,7 @@ html, body {
     margin-bottom: 1.5rem !important;
     font-weight: 700 !important;
     line-height: 1.4 !important;
-    font-family: 'Cinzel', serif !important;
+    font-family: 'Cinzel Decorative', serif !important; /* Restored to Decorative */
 }
 
 .matte-royal-card .font-cormorant {
@@ -360,12 +360,13 @@ html, body {
 }
 
 #fixed-title {
-    font-family: 'Playfair Display', serif !important;
+    font-family: 'Cinzel Decorative', serif !important; /* Restored to Grand Royal font */
     font-size: clamp(1.4rem, 4vw, 2.2rem) !important; /* Significantly increased for mobile visibility */
     letter-spacing: 0.4em !important;
-    font-weight: 700 !important;
+    font-weight: 900 !important;
     text-transform: uppercase;
     text-shadow: 0 2px 15px rgba(0,0,0,0.8);
+    color: var(--deep-gold);
 }
 
 .header-blur-out {
