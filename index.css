@@ -56,7 +56,7 @@ html, body {
 
 .font-cormorant { 
     font-family: 'Cormorant Garamond', serif; 
-    line-height: 1.6 !important;
+    line-height: 1.4 !important; /* Optimized for premium feel */
 }
 .font-pinyon { font-family: 'Great Vibes', cursive; }
 .font-script { font-family: 'Great Vibes', cursive; }
@@ -65,36 +65,45 @@ html, body {
 
 /* ── CARD TYPOGRAPHY SCROLL SCALING ── */
 .matte-royal-card .font-script {
-    font-size: clamp(3.5rem, 12vw, 5.5rem) !important;
+    font-size: clamp(1.6rem, 5vw, 2.8rem) !important; /* Slightly more compact */
     background: var(--metallic);
     background-size: 200%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     opacity: 0.98 !important;
     display: inline-block;
-    margin-bottom: 0.5rem !important; /* Increased margin */
+    margin-bottom: 0.5rem !important;
     filter: drop-shadow(0 2px 10px rgba(212,175,55,0.2));
 }
 
 .matte-royal-card h3 {
-    font-size: clamp(1.8rem, 6vw, 3.2rem) !important; /* Slightly more aggressive scaling */
+    font-size: clamp(0.85rem, 2.2vw, 1.25rem) !important; /* Refined compact size */
     letter-spacing: 0.25em !important;
-    margin-bottom: 1.2rem !important; /* Increased margin */
+    margin-top: 1.5rem !important;
+    margin-bottom: 1.25rem !important;
     font-weight: 700 !important;
-    line-height: 1.2 !important;
+    line-height: 1.5 !important;
+    font-family: 'Cinzel', serif !important; /* Changed to Cinzel for royal subheaders */
 }
 
 .matte-royal-card .font-cormorant {
-    font-size: clamp(1.75rem, 4vw, 2.6rem) !important; /* Increased readability for 35-55 age group */
+    font-size: clamp(1rem, 2.2vw, 1.4rem) !important; /* More balanced content size */
     color: rgba(253, 242, 207, 1) !important;
     text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
-    line-height: 1.5 !important;
+    line-height: 1.4 !important;
 }
 
 .matte-royal-card p.font-montserrat {
-    font-size: clamp(14px, 1.8vw, 18px) !important;
-    letter-spacing: 0.4em !important;
+    font-size: clamp(10px, 1.2vw, 14px) !important;
+    letter-spacing: 0.3em !important;
     font-weight: 600 !important;
+}
+
+.matte-royal-card .chapter-number {
+    font-size: clamp(1.2rem, 4vw, 2.2rem) !important; /* More elegant compact size */
+    line-height: 1 !important;
+    margin-bottom: 0.5rem !important;
+    font-family: 'Cinzel Decorative', serif !important; /* Decorative for chapter numbers */
 }
 
 .gold-metallic {
@@ -139,19 +148,17 @@ html, body {
 /* ── MATTE ROYAL CARDS (MAJESTIC WEDDING) ── */
 .matte-royal-card {
     position: relative;
-    width: 90%;
+    width: 92%;
     max-width: 600px;
-    padding: 3rem 2.5rem !important;
+    padding: 2.5rem 2rem !important;
     border: 1px solid rgba(212, 175, 55, 0.25);
-    background: rgba(10, 5, 25, 0.6);
-    backdrop-filter: blur(15px);
-    border-radius: 4px;
-    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
-    overflow: visible;
+    background: rgba(10, 5, 25, 0.75);
+    backdrop-filter: blur(20px);
+    border-radius: 8px;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.9);
     transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    position: relative;
     overflow-y: auto !important;
-    max-height: 65vh !important;
+    max-height: 75vh !important;
     scrollbar-width: none;
     -ms-overflow-style: none;
     overscroll-behavior: contain !important;
@@ -172,6 +179,7 @@ html, body {
     inset: 0;
     pointer-events: none;
     z-index: 1;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, transparent 100%);
 }
 
 .matte-royal-card:hover {
@@ -180,18 +188,7 @@ html, body {
     transform: translateY(-5px);
 }
 
-/* ── BUTTONS ── */
-.gbtn {
-    transition: all 0.4s cubic-bezier(0.2, 1, 0.3, 1);
-}
-.gbtn:hover {
-    background-color: var(--deep-gold);
-    color: var(--purple-deep);
-    border-color: var(--deep-gold);
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
-}
-
-/* ── ROYAL CREATIVE BUTTONS ── */
+/* ════════════════ SCENES ════════════════ */
 .royal-nav-btn {
     position: relative;
     display: inline-flex;
@@ -323,8 +320,14 @@ html, body {
     justify-content: center !important;
     min-height: 100vh !important;
     width: 100% !important;
-    padding-top: 140px !important; /* Space for fixed header */
-    padding-bottom: 60px !important;
+    padding-top: clamp(180px, 25vh, 280px) !important; /* Default for sections with fixed headers */
+    padding-bottom: 8vh !important;
+}
+
+/* Overrides for sections without fixed headers */
+#s0 .inner, #s3 .inner, #s4 .inner {
+    padding-top: 8vh !important;
+    justify-content: center !important;
 }
 
 /* Edge Masking for smooth blending */
@@ -343,9 +346,25 @@ html, body {
 }
 
 #fixed-header {
+    position: fixed;
+    top: 50px; /* More clearance from top */
+    left: 0;
+    width: 100%;
+    padding-top: 5rem;
+    z-index: 90;
     pointer-events: none;
-    text-shadow: 0 0 20px rgba(212,175,55,0.3);
+    text-shadow: 0 0 15px rgba(212,175,55,0.25);
     will-change: opacity, filter;
+    opacity: 0;
+    overflow: visible !important;
+}
+
+#fixed-title {
+    font-family: 'Playfair Display', serif !important;
+    font-size: clamp(0.8rem, 1.8vw, 1.2rem) !important; /* Elegantly smaller */
+    letter-spacing: 0.6em !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
 }
 
 .header-blur-out {
@@ -358,15 +377,7 @@ html, body {
     opacity: 1;
 }
 
-.matte-royal-card {
-    background: rgba(15, 10, 25, 0.7);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(212, 175, 55, 0.2);
-    border-radius: 4px;
-    width: 100%;
-    position: relative;
-    overflow: hidden;
-}
+/* Section spacing fixed */
 
 /* Responsive tweaks for very small phones */
 @media (max-height: 700px) {
@@ -423,87 +434,40 @@ html, body {
 /* ── RESPONSIVE & MOBILE OVERFLOW SAFEGUARDS ── */
 @media (max-width: 768px) {
     #nav { 
-        padding: 2.5rem 2.5rem !important; /* Significantly more padding to pull logo away from corner */
-        height: 100px !important;
+        padding: 0.75rem 1.25rem !important; 
+        height: auto !important;
     }
     .nav-logo {
-        width: 4rem !important;
-        height: 4rem !important;
+        width: 3rem !important;
+        height: 3rem !important;
     }
-    #frame {
-        inset: 12px !important; /* Move the frame further out */
+    #fixed-header {
+        padding-top: 5rem !important;
     }
-    .nav-links { display: none; }
-    .S { 
-        padding: 0 !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        height: 100vh !important;
-        overflow: hidden !important;
+    #fixed-title {
+        font-size: 1.25rem !important;
+        letter-spacing: 0.2em !important;
     }
     .inner, .card {
-        height: 100% !important;
-        max-height: 100vh !important;
+        padding-top: 10rem !important;
+        justify-content: flex-start !important;
+        padding-bottom: 2rem !important;
+    }
+    .matte-royal-card {
+        padding: 1.5rem 1.25rem !important;
+        max-height: 75vh !important; /* Increased for better visibility of footer buttons */
+        width: 94%;
         overflow-y: auto !important;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-        width: 100% !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        gap: 1.5rem !important;
-        padding-top: 130px !important; /* Proper space for fixed header */
-        padding-bottom: 40px !important;
-        padding-left: 20px !important;
-        padding-right: 20px !important;
+        display: flex;
+        flex-direction: column;
     }
-    .inner::-webkit-scrollbar, .card::-webkit-scrollbar {
-        display: none !important;
-    }
-    /* Scale down the big gold titles on mobile so they don't consume too much height */
-    .inner h2.font-decorative, .card h2.font-decorative {
-        font-size: clamp(1.3rem, 5.5vw, 1.75rem) !important;
-        letter-spacing: 0.22em !important;
-        line-height: 1.25 !important;
-        text-align: center !important;
-    }
+}
 
+@media (max-height: 700px) {
+    .inner, .card {
+        padding-top: 8rem !important;
+    }
     #fixed-header {
-        padding-top: 105px !important; /* Start below the logo and nav area */
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        width: 100% !important;
-    }
-
-    #fixed-title {
-        font-size: 1.25rem !important; /* Smaller text to avoid wrapping and collisions */
-        letter-spacing: 0.2em !important;
-        width: 85% !important;
-        text-align: center !important;
-        margin-top: 5px !important;
-    }
-
-    .matte-royal-card { 
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        backdrop-filter: none !important;
-        padding: 0 !important; 
-        max-height: none !important; /* Allow natural fit on taller phones */
-        overflow: visible !important;
-        width: 100% !important;
-    }
-    .matte-royal-card::-webkit-scrollbar {
-        display: none;
-    }
-    /* Optimize buttons slightly for small mobile screens to fit side-by-side */
-    .royal-nav-btn {
-        padding: 0.55rem 1.15rem !important;
-        font-size: 9.5px !important;
-        gap: 0.4rem !important;
+        padding-top: 4rem !important;
     }
 }

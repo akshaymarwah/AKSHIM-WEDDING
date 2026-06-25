@@ -9,6 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         [data-t] { transition: opacity 0.3s ease; }
         .lang-switching { opacity: 0; }
@@ -121,7 +122,7 @@
     </div>
 
     <!-- ── NAVIGATION BAR ── -->
-    <nav id="nav" class="fixed top-0 w-full z-[100] flex items-center justify-between px-6 sm:px-12 py-4 sm:py-6 opacity-0">
+    <nav id="nav" class="fixed top-0 w-full z-[100] flex items-center justify-between px-6 sm:px-12 py-4 sm:py-6">
         <img src="images/akshim_logo.png" alt="AKSHIM Logo" class="nav-logo w-14 h-14 sm:w-20 sm:h-20 object-contain cursor-pointer hover:scale-105 transition-transform duration-500" onclick="goTo(0)">
         <button class="flex flex-col gap-1.5 p-2 z-[900]" onclick="toggleMenu()">
             <div class="w-6 h-[1px] bg-[#D4AF37]"></div>
@@ -155,10 +156,9 @@
     <div id="perspective-layer" class="fixed inset-0 z-10 pointer-events-none">
         <!-- S0: HERO -->
         <!-- FIXED SECTION HEADERS (Stationary Titles) -->
-        <div id="fixed-header" class="fixed top-0 left-0 w-full z-[100] pointer-events-none pt-12 sm:pt-16 flex flex-col items-center opacity-0 transition-opacity duration-500">
+        <div id="fixed-header" class="pointer-events-none">
             <div class="flex flex-col items-center gap-2">
-                <h2 id="fixed-title" class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]">Our Eternal Story</h2>
-                <div class="h-[1px] w-24 sm:w-48 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
+                <h2 id="fixed-title" class="gold-metallic">Our Eternal Story</h2>
             </div>
         </div>
 
@@ -169,7 +169,6 @@
                     <!-- Guest Welcome Banner -->
                     <div id="guest-welcome" class="hidden animate-fadeIn mb-4">
                         <p class="font-script gold-metallic text-3xl sm:text-4xl text-center" id="guest-greeting"></p>
-                        <div class="h-[1px] w-full bg-gradient-to-r from-transparent via-[#D4AF37]/50 to-transparent mt-2"></div>
                     </div>
                     
                     <h1 class="font-decorative gold-metallic uppercase flex flex-col items-center gap-2 sm:gap-4">
@@ -208,17 +207,17 @@
             <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center justify-center min-h-screen" id="storyContent1">
                 <div class="w-full flex justify-center">
                     <!-- Chapter I -->
-                    <div class="matte-royal-card p-8 sm:p-10 flex flex-col items-center gap-5 group max-w-2xl">
-                        <div class="flex flex-col items-center">
-                            <span class="font-script gold-metallic text-4xl opacity-60">Chapter</span>
-                            <span class="font-decorative gold-metallic text-6xl opacity-90 group-hover:scale-110 transition-transform" data-t="chapter_1_num">01</span>
+                    <div class="matte-royal-card p-12 sm:p-16 flex flex-col items-center gap-8 group max-w-2xl">
+                        <div class="flex flex-col items-center mb-6">
+                            <span class="font-script gold-metallic opacity-70">Chapter</span>
+                            <span class="chapter-number font-bold gold-metallic opacity-90 group-hover:scale-110 transition-transform" data-t="chapter_1_num">01</span>
                         </div>
-                        <h3 class="font-decorative text-sm tracking-[0.3em] text-[#D4AF37]" data-t="chapter_1_title">The Solitary Stars</h3>
+                        <h3 class="text-xl sm:text-2xl tracking-[0.1em] text-[#D4AF37] mb-4 font-bold uppercase" data-t="chapter_1_title">The Solitary Stars</h3>
                         <p class="font-cormorant italic text-lg sm:text-xl text-[#fdf2cf]/80 leading-relaxed" data-t="chapter_1_text">
                             "Born near the sacred confluences of Prayagraj, a mind of relentless innovation was shaped—a creator of solutions and an architect of possibilities. Miles away, under the regal skies of Gwalior, a brilliant spirit decoded the secrets of elements and the music of language, guiding young minds with grace and wisdom. Two solitary stars, revolving in their own orbits, destined to align."
                         </p>
                         
-                        <div class="flex justify-center w-full mt-4">
+                        <div class="flex justify-center w-full mt-8">
                             <button onclick="goToSlide(2)" class="royal-nav-btn royal-nav-btn-next">
                                 Next Chapter
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -236,17 +235,17 @@
             <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center justify-center min-h-screen" id="storyContent2">
                 <div class="w-full flex justify-center">
                     <!-- Chapter II -->
-                    <div class="matte-royal-card p-8 sm:p-10 flex flex-col items-center gap-5 group max-w-2xl">
-                        <div class="flex flex-col items-center">
-                            <span class="font-script gold-metallic text-4xl opacity-60">Chapter</span>
-                            <span class="font-decorative gold-metallic text-6xl opacity-90 group-hover:scale-110 transition-transform" data-t="chapter_2_num">02</span>
+                    <div class="matte-royal-card p-12 sm:p-16 flex flex-col items-center gap-8 group max-w-2xl">
+                        <div class="flex flex-col items-center mb-6">
+                            <span class="font-script gold-metallic opacity-70">Chapter</span>
+                            <span class="chapter-number font-bold gold-metallic opacity-90 group-hover:scale-110 transition-transform" data-t="chapter_2_num">02</span>
                         </div>
-                        <h3 class="font-decorative text-sm tracking-[0.3em] text-[#D4AF37]" data-t="chapter_2_title">The Celestial Convergence</h3>
+                        <h3 class="text-xl sm:text-2xl tracking-[0.1em] text-[#D4AF37] mb-4 font-bold uppercase" data-t="chapter_2_title">The Celestial Convergence</h3>
                         <p class="font-cormorant italic text-lg sm:text-xl text-[#fdf2cf]/80 leading-relaxed" data-t="chapter_2_text">
                             "When the precision of science met the vision of innovation, a beautiful alchemy unfolded. Her deep understanding of elements and his passion for creating seamless systems sparked an unexpected connection. It was a perfect integration of heart and mind—where logic transformed into poetry, and two distinct paths merged into a single journey of endless possibilities."
                         </p>
                         
-                        <div class="flex justify-center gap-4 w-full mt-4">
+                        <div class="flex justify-center gap-4 w-full mt-8">
                             <button onclick="goToSlide(1)" class="royal-nav-btn royal-nav-btn-prev">
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path>
@@ -270,17 +269,17 @@
             <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center justify-center min-h-screen" id="storyContent3">
                 <div class="w-full flex justify-center">
                     <!-- Chapter III -->
-                    <div class="matte-royal-card p-8 sm:p-10 flex flex-col items-center gap-5 group max-w-2xl border-[#D4AF37]/50">
-                        <div class="flex flex-col items-center">
-                            <span class="font-script gold-metallic text-4xl opacity-60">Chapter</span>
-                            <span class="font-decorative gold-metallic text-6xl opacity-90 group-hover:scale-110 transition-transform" data-t="chapter_3_num">03</span>
+                    <div class="matte-royal-card p-12 sm:p-16 flex flex-col items-center gap-8 group max-w-2xl border-[#D4AF37]/50">
+                        <div class="flex flex-col items-center mb-6">
+                            <span class="font-script gold-metallic opacity-70">Chapter</span>
+                            <span class="chapter-number font-bold gold-metallic opacity-90 group-hover:scale-110 transition-transform" data-t="chapter_3_num">03</span>
                         </div>
-                        <h3 class="font-decorative text-sm tracking-[0.3em] text-[#D4AF37]" data-t="chapter_3_title">The Mirror Soul</h3>
+                        <h3 class="text-xl sm:text-2xl tracking-[0.1em] text-[#D4AF37] mb-4 font-bold uppercase" data-t="chapter_3_title">The Mirror Soul</h3>
                         <p class="font-cormorant italic text-lg sm:text-xl text-[#fdf2cf]/80 leading-relaxed" data-t="chapter_3_text">
                             "In each other's eyes, they found their most beautiful design. He found the focal element that gave meaning to all his ideas, while she discovered a story deeper than any textbook. Now, walking hand in hand, they are building a modern-day kingdom—a shared space of love, laughter, and lifelong discovery."
                         </p>
                         
-                        <div class="flex justify-center gap-4 w-full mt-4">
+                        <div class="flex justify-center gap-4 w-full mt-8">
                             <button onclick="goToSlide(2)" class="royal-nav-btn royal-nav-btn-prev">
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path>
@@ -303,9 +302,9 @@
         <section class="S" id="s2_1">
             <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center justify-center min-h-screen" id="eventContent1">
                 <div class="w-full flex justify-center">
-                    <div class="matte-royal-card p-10 flex flex-col items-center gap-4 group hover:border-[#D4AF37]/40 transition-all max-w-2xl w-full">
-                        <span class="font-script gold-metallic text-5xl sm:text-6xl drop-shadow-lg">Day I</span>
-                        <h3 class="font-decorative text-xl sm:text-3xl tracking-[0.25em] gold-metallic uppercase -mt-2">The Royal Mehendi</h3>
+                    <div class="matte-royal-card p-12 sm:p-16 flex flex-col items-center gap-6 group hover:border-[#D4AF37]/40 transition-all max-w-2xl w-full">
+                        <span class="font-script gold-metallic">Day I</span>
+                        <h3 class="text-xl sm:text-3xl tracking-[0.1em] gold-metallic uppercase font-bold">The Royal Mehendi</h3>
                         <p class="font-montserrat text-[11px] sm:text-xs tracking-[0.5em] text-[#D4AF37] opacity-90 mb-2">JULY 6, 2026 • MORNING</p>
                         <p class="font-cormorant italic text-lg text-[#fdf2cf]/70">Hotel Golden Tree, Prayagraj</p>
                         
@@ -319,9 +318,7 @@
                             </a>
                         </div>
 
-                        <div class="h-[1px] w-full bg-[#D4AF37]/10 my-2"></div>
-
-                        <div class="flex justify-center gap-4 w-full">
+                        <div class="flex justify-center gap-4 w-full mt-6">
                             <button onclick="goToSlide(3)" class="royal-nav-btn royal-nav-btn-prev">
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path>
@@ -344,9 +341,9 @@
         <section class="S" id="s2_2">
             <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center justify-center min-h-screen" id="eventContent2">
                 <div class="w-full flex justify-center">
-                    <div class="matte-royal-card p-10 flex flex-col items-center gap-4 group hover:border-[#D4AF37]/40 transition-all max-w-2xl w-full">
-                        <span class="font-script gold-metallic text-5xl sm:text-6xl drop-shadow-lg">Day I</span>
-                        <h3 class="font-decorative text-xl sm:text-3xl tracking-[0.25em] gold-metallic uppercase -mt-2">Sagan & Cocktail</h3>
+                    <div class="matte-royal-card p-12 sm:p-16 flex flex-col items-center gap-6 group hover:border-[#D4AF37]/40 transition-all max-w-2xl w-full">
+                        <span class="font-script gold-metallic">Day I</span>
+                        <h3 class="text-xl sm:text-3xl tracking-[0.1em] gold-metallic uppercase font-bold">Sagan & Cocktail</h3>
                         <p class="font-montserrat text-[11px] sm:text-xs tracking-[0.5em] text-[#D4AF37] opacity-90 mb-2">JULY 6, 2026 • 7:00 PM ONWARDS</p>
                         <p class="font-cormorant italic text-lg text-[#fdf2cf]/70">Hotel Golden Tree, Prayagraj</p>
                         
@@ -358,9 +355,7 @@
                             Locate on Map
                         </a>
 
-                        <div class="h-[1px] w-full bg-[#D4AF37]/10 my-2"></div>
-
-                        <div class="flex justify-center gap-4 w-full">
+                        <div class="flex justify-center gap-4 w-full mt-6">
                             <button onclick="goToSlide(4)" class="royal-nav-btn royal-nav-btn-prev">
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path>
@@ -383,9 +378,9 @@
         <section class="S" id="s2_3">
             <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center justify-center min-h-screen" id="eventContent3">
                 <div class="w-full flex justify-center">
-                    <div class="matte-royal-card p-10 flex flex-col items-center gap-4 group hover:border-[#D4AF37]/40 transition-all max-w-2xl w-full">
-                        <span class="font-script gold-metallic text-5xl sm:text-6xl drop-shadow-lg">Day II</span>
-                        <h3 class="font-decorative text-xl sm:text-3xl tracking-[0.25em] gold-metallic uppercase -mt-2">The Auspicious Haldi</h3>
+                    <div class="matte-royal-card p-12 sm:p-16 flex flex-col items-center gap-6 group hover:border-[#D4AF37]/40 transition-all max-w-2xl w-full">
+                        <span class="font-script gold-metallic">Day II</span>
+                        <h3 class="text-xl sm:text-3xl tracking-[0.1em] gold-metallic uppercase font-bold">The Auspicious Haldi</h3>
                         <p class="font-montserrat text-[11px] sm:text-xs tracking-[0.5em] text-[#D4AF37] opacity-90 mb-2">JULY 7, 2026 • 10:30 AM</p>
                         <p class="font-cormorant italic text-lg text-[#fdf2cf]/70">Hotel Golden Tree, Prayagraj</p>
                         
@@ -397,9 +392,7 @@
                             Locate on Map
                         </a>
 
-                        <div class="h-[1px] w-full bg-[#D4AF37]/10 my-2"></div>
-
-                        <div class="flex justify-center gap-4 w-full">
+                        <div class="flex justify-center gap-4 w-full mt-6">
                             <button onclick="goToSlide(5)" class="royal-nav-btn royal-nav-btn-prev">
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path>
@@ -422,9 +415,9 @@
         <section class="S" id="s2_4">
             <div class="card relative z-10 max-w-3xl mx-auto px-6 py-12 text-center flex flex-col items-center justify-center min-h-screen" id="eventContent4">
                 <div class="w-full flex justify-center">
-                    <div class="matte-royal-card p-10 flex flex-col items-center gap-4 group border-[#D4AF37]/40 scale-[1.03] shadow-[0_0_40px_rgba(212,175,55,0.1)] max-w-2xl w-full">
-                        <span class="font-script gold-metallic text-5xl sm:text-6xl drop-shadow-lg">Day II</span>
-                        <h3 class="font-decorative text-xl sm:text-3xl tracking-[0.25em] gold-metallic uppercase -mt-2">Barat & Sacred Wedding</h3>
+                    <div class="matte-royal-card p-12 sm:p-16 flex flex-col items-center gap-6 group border-[#D4AF37]/40 scale-[1.03] shadow-[0_0_40px_rgba(212,175,55,0.1)] max-w-2xl w-full">
+                        <span class="font-script gold-metallic">Day II</span>
+                        <h3 class="text-xl sm:text-3xl tracking-[0.1em] gold-metallic uppercase font-bold">Barat & Sacred Wedding</h3>
                         <p class="font-montserrat text-[11px] sm:text-xs tracking-[0.5em] text-[#D4AF37] opacity-90 mb-2">JULY 7, 2026 • 7:00 PM ONWARDS</p>
                         <p class="font-cormorant italic text-lg text-[#fdf2cf]/70">Radisson Blu, Prayagraj</p>
                         
@@ -436,9 +429,7 @@
                             Locate on Map
                         </a>
 
-                        <div class="h-[1px] w-full bg-[#D4AF37]/10 my-2"></div>
-
-                        <div class="flex justify-center gap-4 w-full">
+                        <div class="flex justify-center gap-4 w-full mt-6">
                             <button onclick="goToSlide(6)" class="royal-nav-btn royal-nav-btn-prev">
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path>
@@ -446,7 +437,7 @@
                                 Previous Event
                             </button>
                             <button onclick="goToSlide(8)" class="royal-nav-btn royal-nav-btn-next">
-                                View Venue
+                                Our Wedding Venue
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"></path>
                                 </svg>
@@ -461,28 +452,34 @@
         <section class="S pt-32 sm:pt-40 pb-20" id="s3">
             <div class="inner relative z-10 max-w-5xl mx-auto px-6 flex flex-col items-center gap-12" id="venueContent">
                 <div class="flex flex-col items-center gap-2">
-                    <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]">The Palatial Sanctuary</h2>
-                    <div class="h-[1px] w-24 sm:w-48 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
+                    <h2 class="gold-metallic uppercase tracking-[0.4em]" style="font-family: 'Playfair Display', serif; font-size: clamp(1.2rem, 3vw, 2.2rem);">The Palatial Sanctuary</h2>
                 </div>
 
                 <div class="matte-royal-card w-full py-16 px-8 sm:px-20 text-center flex flex-col items-center gap-8 relative">
                     <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(212,175,55,0.05)_0%,transparent_70%)] pointer-events-none"></div>
-                    <h2 class="font-decorative text-4xl sm:text-7xl gold-metallic mb-2">The Taj Palace</h2>
-                    <p class="font-montserrat text-xs sm:text-sm tracking-[0.6em] text-[#D4AF37] uppercase opacity-80">New Delhi • Chanakyapuri</p>
+                    <h2 class="gold-metallic mb-2" style="font-family: 'Playfair Display', serif; font-size: clamp(2rem, 6vw, 4.5rem); font-weight: 700;">Radisson Blu</h2>
+                    <p class="font-montserrat text-xs sm:text-sm tracking-[0.6em] text-[#D4AF37] uppercase opacity-80">Prayagraj • Uttar Pradesh</p>
                     
-                    <div class="h-[1px] w-12 bg-[#D4AF37]/30"></div>
-                    
+                    <div class="flex flex-col items-center gap-2 mt-2">
+                        <p class="font-script gold-metallic text-3xl sm:text-4xl">Barat & Celebrations</p>
+                        <p class="font-montserrat text-[10px] tracking-[0.4em] text-[#D4AF37]/80 uppercase">Timings: 9:00 PM onwards</p>
+                    </div>
+
                     <p class="font-cormorant italic text-xl sm:text-3xl text-[#fdf2cf]/80 max-w-2xl">
                         "A landmark of timeless elegance, where the echoes of history meet the brilliance of our new beginning."
                     </p>
 
                     <div class="flex flex-col items-center gap-6 mt-4">
-                        <p class="font-montserrat text-[10px] tracking-[0.3em] text-[#D4AF37]/60 leading-relaxed uppercase">
+                        <a href="https://www.google.com/maps/search/?api=1&query=Radisson+Blu+Hotel+Prayagraj" target="_blank" rel="noopener noreferrer" class="royal-nav-btn royal-nav-btn-next">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            Locate on Map
+                        </a>
                     </div>
 
-                    <div class="h-[1px] w-full bg-[#D4AF37]/10 my-4"></div>
-
-                    <div class="flex justify-center gap-4 w-full">
+                    <div class="flex justify-center gap-4 w-full mt-6">
                         <button onclick="goToSlide(7)" class="royal-nav-btn royal-nav-btn-prev">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path>
@@ -504,8 +501,7 @@
         <section class="S pt-32 sm:pt-40 pb-20" id="s4">
             <div class="inner relative z-10 max-w-2xl mx-auto px-6 flex flex-col items-center gap-12" id="rsvpContent">
                 <div class="flex flex-col items-center gap-2 text-center">
-                    <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]">Sacred Acceptance</h2>
-                    <div class="h-[1px] w-24 sm:w-48 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
+                    <h2 class="font-decorative gold-metallic text-3xl sm:text-5xl uppercase tracking-[0.4em]" style="font-family: 'Playfair Display', serif;">Sacred Acceptance</h2>
                     <p class="font-script gold-metallic text-2xl mt-4">We await your presence</p>
                 </div>
 
@@ -535,19 +531,24 @@
                     <button onclick="sendR()" class="font-decorative text-[11px] tracking-[0.5em] text-[#050010] bg-[#D4AF37] px-12 py-5 hover:bg-[#fdf2cf] transition-all uppercase font-bold shadow-[0_0_30px_rgba(212,175,55,0.2)]">
                         Accept Invitation
                     </button>
+                    <!-- Fixed header states controlled by JS -->
+                    <style>
+                    .header-hidden {
+                        opacity: 0 !important;
+                        filter: blur(12px) !important;
+                    }
+                    </style>
 
                     <p class="font-cinzel text-[8px] tracking-[0.4em] text-[#D4AF37]/40 text-center uppercase">
                         Kindly respond by the first moon of July
                     </p>
 
-                    <div class="h-[1px] w-full bg-[#D4AF37]/10 my-4"></div>
-
-                    <div class="flex justify-center gap-4 w-full">
+                    <div class="flex justify-center gap-4 w-full mt-8 pb-4">
                         <button onclick="goToSlide(8)" class="royal-nav-btn royal-nav-btn-prev">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path>
                             </svg>
-                            Back to Venue
+                            Back
                         </button>
                         <button onclick="goToSlide(0)" class="royal-nav-btn royal-nav-btn-next">
                             Back to Top

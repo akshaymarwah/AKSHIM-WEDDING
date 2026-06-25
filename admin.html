@@ -88,29 +88,29 @@
 <body class="p-4 sm:p-8 min-h-screen">
 
     <!-- ── HEADER ── -->
-    <header class="flex flex-col md:flex-row items-center justify-between border-b border-gold/20 pb-6 mb-8 gap-6">
-        <div class="flex items-center gap-4">
-            <img src="images/akshim_logo.png" alt="AKSHIM Logo" class="w-16 h-16 object-contain">
+    <header class="flex flex-col md:flex-row items-center justify-between border-b border-gold/20 pb-6 mb-8 gap-6 flex-wrap">
+        <div class="flex items-center gap-4 min-w-fit">
+            <img src="images/akshim_logo.png" alt="AKSHIM Logo" class="w-14 h-14 sm:w-16 sm:h-16 object-contain">
             <div>
-                <h1 class="royal-font text-2xl sm:text-3xl tracking-widest gold-metallic uppercase">Akshim Union</h1>
-                <p class="text-xs text-gold/60 tracking-wider">GUEST INVITATION & BROADCAST CONTROL CENTER</p>
+                <h1 class="royal-font text-xl sm:text-2xl lg:text-3xl tracking-widest gold-metallic uppercase whitespace-nowrap">Akshim Union</h1>
+                <p class="text-[9px] sm:text-xs text-gold/60 tracking-wider uppercase font-semibold">Guest Invitation Control Center</p>
             </div>
         </div>
-        <div class="flex flex-wrap items-center justify-center md:justify-end gap-3 w-full md:w-auto">
-            <a href="index.html" target="_blank" class="royal-font text-[10px] tracking-widest border border-gold/40 px-4 py-2 hover:bg-gold/15 transition w-[48%] sm:w-auto text-center uppercase font-bold rounded">
+        <div class="flex flex-wrap items-center justify-center md:justify-end gap-2 sm:gap-3 w-full md:w-auto">
+            <a href="index.html" target="_blank" class="royal-font text-[9px] sm:text-[10px] tracking-widest border border-gold/40 px-3 sm:px-4 py-2 hover:bg-gold/15 transition w-[48%] sm:w-auto text-center uppercase font-bold rounded">
                 <i class="fa-solid fa-eye mr-1.5 text-blue-400"></i>Live Site
             </a>
-            <button onclick="openGroupManager()" class="royal-font text-[10px] tracking-widest bg-gold/10 border border-gold/30 text-gold px-4 py-2 hover:bg-gold/20 transition w-[48%] sm:w-auto uppercase font-bold rounded">
+            <button onclick="openGroupManager()" class="royal-font text-[9px] sm:text-[10px] tracking-widest bg-gold/10 border border-gold/30 text-gold px-3 sm:px-4 py-2 hover:bg-gold/20 transition w-[48%] sm:w-auto uppercase font-bold rounded">
                 <i class="fa-solid fa-layer-group mr-1.5 text-sky-400"></i>Groups
             </button>
-            <button onclick="openTemplateManager()" class="royal-font text-[10px] tracking-widest bg-gold/10 border border-gold/30 text-gold px-4 py-2 hover:bg-gold/20 transition w-[48%] sm:w-auto uppercase font-bold rounded">
+            <button onclick="openTemplateManager()" class="royal-font text-[9px] sm:text-[10px] tracking-widest bg-gold/10 border border-gold/30 text-gold px-3 sm:px-4 py-2 hover:bg-gold/20 transition w-[48%] sm:w-auto uppercase font-bold rounded">
                 <i class="fa-solid fa-file-pen mr-1.5 text-purple-400"></i>Templates
             </button>
-            <button onclick="openChangePasswordModal()" class="royal-font text-[10px] tracking-widest bg-gold/10 border border-gold/30 text-gold px-4 py-2 hover:bg-gold/20 transition w-[48%] sm:w-auto uppercase font-bold rounded">
+            <button onclick="openChangePasswordModal()" class="royal-font text-[9px] sm:text-[10px] tracking-widest bg-gold/10 border border-gold/30 text-gold px-3 sm:px-4 py-2 hover:bg-gold/20 transition w-[48%] sm:w-auto uppercase font-bold rounded">
                 <i class="fa-solid fa-key mr-1.5 text-yellow-500"></i>Pass
             </button>
-            <button onclick="logoutAdmin()" class="royal-font text-[10px] tracking-widest bg-red-950/40 border border-red-500/30 text-red-300 px-4 py-2 hover:bg-red-500/20 transition w-[48%] sm:w-auto uppercase font-bold rounded">
-                <i class="fa-solid fa-power-off mr-1.5"></i>
+            <button onclick="logoutAdmin()" class="royal-font text-[9px] sm:text-[10px] tracking-widest bg-red-950/40 border border-red-500/30 text-red-300 px-3 sm:px-4 py-2 hover:bg-red-500/20 transition w-[48%] sm:w-auto uppercase font-bold rounded">
+                <i class="fa-solid fa-power-off"></i>
             </button>
         </div>
     </header>
@@ -452,16 +452,10 @@
                     <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">WhatsApp Number</label>
                     <input type="text" id="add-guest-phone" required placeholder="91XXXXXXXXXX" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold-light outline-none focus:border-gold">
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Assign Group</label>
-                        <select id="add-guest-group" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold outline-none focus:border-gold">
-                            <option value="">-- No Group --</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Souls</label>
-                        <input type="number" id="add-guest-souls" value="1" min="1" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold-light outline-none focus:border-gold">
+                <div class="col-span-2">
+                    <label class="block text-[10px] text-gold/60 uppercase tracking-widest font-black mb-2">Assign Groups</label>
+                    <div id="add-guest-groups-container" class="grid grid-cols-2 gap-2 bg-royal-bg/50 border border-gold/20 rounded p-3 max-h-40 overflow-y-auto custom-scrollbar">
+                        <!-- Group checkboxes populated by JS -->
                     </div>
                 </div>
 
@@ -511,16 +505,10 @@
                     <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Phone</label>
                     <input type="text" id="edit-guest-phone" required class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold-light outline-none focus:border-gold">
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Group</label>
-                        <select id="edit-guest-group" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold outline-none focus:border-gold">
-                            <option value="">-- No Group --</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] text-gold/60 uppercase font-bold mb-2">Souls</label>
-                        <input type="number" id="edit-guest-souls" value="1" min="1" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold-light outline-none focus:border-gold">
+                <div class="col-span-2">
+                    <label class="block text-[10px] text-gold/60 uppercase tracking-widest font-black mb-2">Assign Groups</label>
+                    <div id="edit-guest-groups-container" class="grid grid-cols-2 gap-2 bg-royal-bg/50 border border-gold/20 rounded p-3 max-h-40 overflow-y-auto custom-scrollbar">
+                        <!-- Group checkboxes populated by JS -->
                     </div>
                 </div>
 
@@ -648,6 +636,18 @@
     </div>
 
     <!-- ── TOASTS ── -->
+    <!-- Custom Confirmation Modal -->
+    <div id="custom-modal-overlay" class="custom-modal-overlay">
+        <div class="custom-modal-content">
+            <h3 id="custom-modal-title" class="royal-font text-lg text-gold font-bold mb-4 uppercase tracking-widest">Confirmation</h3>
+            <p id="custom-modal-message" class="text-sm text-gold/70 mb-8 leading-relaxed">Are you sure you want to proceed?</p>
+            <div class="flex gap-4 justify-end">
+                <button id="custom-modal-cancel" class="px-6 py-2 rounded-lg text-xs font-bold uppercase tracking-widest text-gold/40 hover:text-gold transition">Cancel</button>
+                <button id="custom-modal-confirm" class="bg-gold text-royal-bg px-8 py-2 rounded-lg text-xs font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition shadow-lg">Confirm</button>
+            </div>
+        </div>
+    </div>
+
     <div id="toast-container" class="fixed bottom-6 right-6 z-[60] flex flex-col gap-2 pointer-events-none"></div>
 
     <!-- ── GROUP MANAGER MODAL ── -->
@@ -699,6 +699,37 @@
                 </button>
                 <button onclick="saveAllTemplates()" class="flex-1 bg-gold text-royal-bg text-[10px] px-6 py-4 hover:bg-gold-light font-bold uppercase tracking-widest rounded transition shadow-lg">
                     <i class="fa-solid fa-save mr-2"></i>Save All Templates
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── ASSIGN GROUP MODAL ── -->
+    <div id="modal-assign-group" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-royal-card border border-gold/30 w-full max-w-sm p-8 rounded-lg shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gold to-transparent opacity-50"></div>
+            <button onclick="closeAssignGroupModal()" class="absolute top-4 right-4 text-gold/40 hover:text-gold transition-all"><i class="fa-solid fa-times text-xl"></i></button>
+            <h3 class="royal-font text-xl text-gold mb-2 uppercase tracking-widest">Assign Category</h3>
+            <p class="text-[10px] text-gold/40 uppercase tracking-widest font-black mb-6 border-b border-gold/10 pb-4">Select a group for this guest</p>
+            
+            <div class="mb-8">
+                <label class="block text-[9px] text-gold/60 uppercase tracking-widest mb-2 font-bold">Guest Category</label>
+                <div class="relative">
+                    <select id="assign-group-id-select" class="w-full bg-royal-bg border border-gold/20 rounded px-4 py-3 text-sm text-gold-light outline-none focus:border-gold transition appearance-none">
+                        <option value="">No Group</option>
+                    </select>
+                    <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gold/40">
+                        <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex gap-3 pt-2">
+                <button onclick="closeAssignGroupModal()" class="flex-1 border border-gold/20 text-gold/60 text-[10px] px-6 py-3 hover:bg-gold/5 font-bold uppercase tracking-widest rounded transition">
+                    Cancel
+                </button>
+                <button onclick="confirmSaveContactAsGuest()" class="flex-1 bg-gold text-royal-bg text-[10px] px-6 py-3 hover:bg-gold-light font-bold uppercase tracking-widest rounded transition shadow-lg">
+                    Save Guest
                 </button>
             </div>
         </div>
@@ -1035,9 +1066,29 @@
 
         // ════════════════ MODALS ════════════════
         function openAddGuestModal() {
+            document.getElementById('add-guest-form').reset();
+            populateGroupCheckboxes('add-guest-groups-container');
             document.getElementById('modal-add-guest').classList.remove('hidden');
             document.getElementById('modal-add-guest').classList.add('flex');
         }
+
+        function populateGroupCheckboxes(containerId, selectedIds = []) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            if (!window.groups || !window.groups.length) {
+                container.innerHTML = '<p class="col-span-2 text-[10px] text-gold/40 italic">No groups defined</p>';
+                return;
+            }
+
+            container.innerHTML = window.groups.map(g => `
+                <label class="flex items-center gap-2 bg-gold/5 border border-gold/10 px-3 py-2 rounded cursor-pointer hover:bg-gold/10 transition">
+                    <input type="checkbox" value="${g.id}" ${selectedIds.includes(g.id) ? 'checked' : ''} class="accent-gold h-3 w-3">
+                    <span class="text-[10px] text-gold/80 uppercase font-bold truncate">${g.name}</span>
+                </label>
+            `).join('');
+        }
+
         function closeAddGuestModal() {
             document.getElementById('modal-add-guest').classList.add('hidden');
             document.getElementById('modal-add-guest').classList.remove('flex');
@@ -1048,18 +1099,19 @@
             e.preventDefault();
             const name = document.getElementById('add-guest-name').value;
             const phone = document.getElementById('add-guest-phone').value;
-            const groupId = document.getElementById('add-guest-group').value;
-            const souls = document.getElementById('add-guest-souls').value;
             const arrivalDate = document.getElementById('add-guest-arrival-date').value;
             const arrivalMode = document.getElementById('add-guest-arrival-mode').value;
             const arrivalDetails = document.getElementById('add-guest-arrival-details').value;
+            
+            const groupCheckboxes = document.querySelectorAll('#add-guest-groups-container input[type="checkbox"]:checked');
+            const groupIds = Array.from(groupCheckboxes).map(cb => cb.value);
 
             try {
                 const res = await fetch('/api/contacts', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        name, phone, groupId, souls, 
+                        name, phone, groupIds, 
                         arrivalDate, arrivalMode, arrivalDetails 
                     })
                 });
@@ -1076,11 +1128,14 @@
         function openEditGuestModal(id) {
             const guest = contacts.find(g => g.id === id);
             if (!guest) return;
+            
             document.getElementById('edit-guest-id').value = guest.id;
             document.getElementById('edit-guest-name').value = guest.name;
             document.getElementById('edit-guest-phone').value = guest.phone;
-            document.getElementById('edit-guest-group').value = guest.groupId || '';
-            document.getElementById('edit-guest-souls').value = guest.souls || 1;
+            
+            const selectedGroups = guest.groups ? guest.groups.map(g => g.id) : (guest.groupId ? [guest.groupId] : []);
+            populateGroupCheckboxes('edit-guest-groups-container', selectedGroups);
+            
             document.getElementById('edit-guest-arrival-date').value = guest.arrivalDate || '';
             document.getElementById('edit-guest-arrival-mode').value = guest.arrivalMode || '';
             document.getElementById('edit-guest-arrival-details').value = guest.arrivalDetails || '';
@@ -1088,9 +1143,8 @@
             document.getElementById('edit-guest-doc-url').value = guest.documentUrl || guest.document_url || '';
             document.getElementById('edit-guest-vault-access').checked = guest.vault_access !== false;
             
-            // Labels
-            document.getElementById('edit-guest-image-label').textContent = guest.profileImageUrl ? 'Photo Uploaded' : 'Choose Photo';
-            document.getElementById('edit-guest-doc-label').textContent = guest.documentUrl ? 'Ticket Uploaded' : 'Upload Ticket';
+            document.getElementById('edit-guest-image-label').textContent = (guest.profileImageUrl || guest.profile_image_url) ? 'Photo Uploaded' : 'Choose Photo';
+            document.getElementById('edit-guest-doc-label').textContent = (guest.documentUrl || guest.document_url) ? 'Ticket Uploaded' : 'Upload Ticket';
 
             document.getElementById('modal-edit-guest').classList.remove('hidden');
             document.getElementById('modal-edit-guest').classList.add('flex');
@@ -1105,8 +1159,6 @@
             const id = document.getElementById('edit-guest-id').value;
             const name = document.getElementById('edit-guest-name').value;
             const phone = document.getElementById('edit-guest-phone').value;
-            const groupId = document.getElementById('edit-guest-group').value;
-            const souls = document.getElementById('edit-guest-souls').value;
             const arrivalDate = document.getElementById('edit-guest-arrival-date').value;
             const arrivalMode = document.getElementById('edit-guest-arrival-mode').value;
             const arrivalDetails = document.getElementById('edit-guest-arrival-details').value;
@@ -1114,12 +1166,15 @@
             const documentUrl = document.getElementById('edit-guest-doc-url').value;
             const vaultAccess = document.getElementById('edit-guest-vault-access').checked;
 
+            const groupCheckboxes = document.querySelectorAll('#edit-guest-groups-container input[type="checkbox"]:checked');
+            const groupIds = Array.from(groupCheckboxes).map(cb => cb.value);
+
             try {
                 const res = await fetch(`/api/contacts/${id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        name, phone, groupId, souls, 
+                        name, phone, groupIds, 
                         arrivalDate, arrivalMode, arrivalDetails,
                         profileImageUrl, documentUrl, vaultAccess
                     })
@@ -1133,6 +1188,33 @@
                 }
             } catch (err) { showToast('Error updating guest', 'error'); }
         }
+
+        // ── CUSTOM MODAL LOGIC ──
+        function confirmCustomModal(title, message) {
+            return new Promise((resolve) => {
+                const overlay = document.getElementById('custom-modal-overlay');
+                const titleEl = document.getElementById('custom-modal-title');
+                const msgEl = document.getElementById('custom-modal-message');
+                const confirmBtn = document.getElementById('custom-modal-confirm');
+                const cancelBtn = document.getElementById('custom-modal-cancel');
+
+                titleEl.textContent = title;
+                msgEl.textContent = message;
+                overlay.classList.add('active');
+
+                const cleanup = (result) => {
+                    overlay.classList.remove('active');
+                    confirmBtn.onclick = null;
+                    cancelBtn.onclick = null;
+                    resolve(result);
+                };
+
+                confirmBtn.onclick = () => cleanup(true);
+                cancelBtn.onclick = () => cleanup(false);
+                overlay.onclick = (e) => { if(e.target === overlay) cleanup(false); };
+            });
+        }
+
         // ════════════════ CUSTOM MESSAGING ════════════════
         function openCustomMsgModal(id, name, phone) {
             document.getElementById('custom-msg-id').value = id;
@@ -1212,7 +1294,7 @@
         }
 
         async function deleteGuest(id) {
-            if (!confirm('Remove this guest?')) return;
+            if (!(await confirmCustomModal('Remove Guest', 'Are you sure you want to remove this guest from the directory?'))) return;
             try {
                 const res = await fetch(`/api/contacts/${id}`, { method: 'DELETE' });
                 if (res.ok) { showToast('Guest Removed'); loadContacts(); }
@@ -1576,13 +1658,40 @@
             document.getElementById('wa-contacts-disconnected-state').classList.add('hidden');
         }
 
+        let pendingGuestData = null;
+
+        function closeAssignGroupModal() {
+            document.getElementById('modal-assign-group').classList.add('hidden');
+            document.getElementById('modal-assign-group').classList.remove('flex');
+            pendingGuestData = null;
+        }
+
         async function saveContactAsGuest(name, phone) {
-            const groupId = prompt('Assign to Group Number?\n' + groups.map((g, i) => `${i+1}: ${g.name}`).join('\n') + '\n(Leave blank for no group)');
-            let gId = '';
-            if (groupId && !isNaN(groupId)) {
-                const idx = parseInt(groupId) - 1;
-                if (groups[idx]) gId = groups[idx].id;
+            pendingGuestData = { name, phone };
+            
+            // Populate groups in the select
+            const select = document.getElementById('assign-group-id-select');
+            select.innerHTML = '<option value="">No Group</option>';
+            
+            if (window.groups && Array.isArray(window.groups)) {
+                window.groups.forEach(g => {
+                    const opt = document.createElement('option');
+                    opt.value = g.id;
+                    opt.textContent = g.name;
+                    opt.className = 'bg-[#0a0020] text-gold-light';
+                    select.appendChild(opt);
+                });
             }
+            
+            document.getElementById('modal-assign-group').classList.remove('hidden');
+            document.getElementById('modal-assign-group').classList.add('flex');
+        }
+
+        async function confirmSaveContactAsGuest() {
+            if (!pendingGuestData) return;
+            const { name, phone } = pendingGuestData;
+            const gId = document.getElementById('assign-group-id-select').value;
+            
             try {
                 const res = await fetch('/api/contacts', {
                     method: 'POST',
@@ -1591,8 +1700,9 @@
                 });
                 if (res.ok) { 
                     showToast('Saved to Directory!'); 
+                    closeAssignGroupModal();
                     await loadContacts(); 
-                    switchTab('directory'); // Switch to guest list to show the new entry
+                    switchTab('directory');
                 }
                 else showToast('Error saving contact', 'error');
             } catch (e) { showToast('Network error', 'error'); }
@@ -1721,7 +1831,7 @@
             const tmpl = templates.find(t => t.id === tmplId);
             if (!tmpl) return;
 
-            if (!confirm(`Send "${tmpl.title}" to ${selectedIds.length} guests?`)) return;
+            if (!(await confirmCustomModal('Broadcast Message', `Send "${tmpl.title}" to ${selectedIds.length} guests?`))) return;
 
             // Start bulk send with this template
             try {
@@ -1749,7 +1859,7 @@
         }
 
         async function restartClient() {
-            if (!confirm('Restart WhatsApp Client?')) return;
+            if (!(await confirmCustomModal('Restart Client', 'Restart the WhatsApp client? This will take a few moments.'))) return;
             await fetch(`/api/restart?session=${currentSessionId}`, { method: 'POST' });
             showToast('Restarting...', 'error');
         }
@@ -1760,7 +1870,7 @@
         }
 
         async function logoutWA() {
-            if (!confirm('Logout WhatsApp?')) return;
+            if (!(await confirmCustomModal('WhatsApp Logout', 'Are you sure you want to logout from WhatsApp?'))) return;
             await fetch(`/api/logout?session=${currentSessionId}`, { method: 'POST' });
             showToast('Logged out');
         }
@@ -1881,7 +1991,7 @@
         }
 
         async function syncFromCloud() {
-            if (!confirm('This will restart the WhatsApp client and restore the session from cloud. Proceed?')) return;
+            if (!(await confirmCustomModal('Cloud Restore', 'This will restart the WhatsApp client and restore the session from cloud. Proceed?'))) return;
             try {
                 showToast('Initiating Cloud Restore...');
                 const res = await fetch('/api/sync-from-cloud', {

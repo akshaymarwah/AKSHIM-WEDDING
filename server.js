@@ -118,10 +118,10 @@ async function saveContact(contact) {
     add('phone', contact.phone);
     add('status', contact.status);
     
-    const gid = contact.groupId || contact.group_id;
-    if (gid !== undefined) payload.group_id = gid || null;
+    // Support multiple group IDs
+    const gids = contact.groupIds || contact.group_ids;
+    if (gids !== undefined) payload.group_ids = Array.isArray(gids) ? gids : (gids ? [gids] : []);
     
-    if (contact.souls !== undefined) payload.souls = contact.souls;
     if (contact.message !== undefined) payload.message = contact.message;
     if (contact.type !== undefined) payload.type = contact.type;
     
@@ -334,8 +334,8 @@ app.post('/api/guest/login', async (req, res) => {
 });
 
 app.post('/api/rsvp', async (req, res) => {
-    const { name, souls, message } = req.body;
-    const guest = { id: 'RSVP_' + Date.now(), name, souls: souls || 1, message: message || '', status: 'accepted', type: 'rsvp' };
+    const { name, message } = req.body;
+    const guest = { id: 'RSVP_' + Date.now(), name, message: message || '', status: 'accepted', type: 'rsvp' };
     await saveContact(guest);
     res.json({ success: true, guest });
 });

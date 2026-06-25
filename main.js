@@ -26,6 +26,7 @@ const I18N = {
         countdown_min: "MIN",
         countdown_sec: "SEC",
         story_title: "Our Eternal Story",
+        events_title: "Grand Celebrations",
         chapter_1: "Chapter I",
         chapter_1_title: "The Solitary Stars",
         chapter_1_text: `"Born near the sacred confluences of Prayagraj, a mind of relentless innovation was shaped—a creator of solutions and an architect of possibilities. Miles away, under the regal skies of Gwalior, a brilliant spirit decoded the secrets of elements and the music of language, guiding young minds with grace and wisdom. Two solitary stars, revolving in their own orbits, destined to align."`,
@@ -51,6 +52,7 @@ const I18N = {
         countdown_min: "मिनट",
         countdown_sec: "सेकंड",
         story_title: "हमारी शाश्वत कहानी",
+        events_title: "भव्य समारोह",
         chapter_1: "अध्याय १",
         chapter_1_title: "अकेले सितारे",
         chapter_1_text: `"प्रयागराज के पावन संगम तट पर एक विलक्षण प्रतिभा का जन्म हुआ—जो नए विचारों के सृजक और सुव्यवस्थित समाधानों के शिल्पी बने। वहीं दूसरी ओर, ग्वालियर के राजसी इतिहास के आँचल में, एक प्रबुद्ध आत्मा तत्वों के रहस्यों को सुलझाती और भाषा के सौंदर्य को संवारती थी, जो अपनी शिक्षा से युवा मनों को प्रेरित कर रही थीं। अपने-अपने पथ पर चलते दो जाज्वल्यमान नक्षत्र, जिनका दिव्य मिलन निश्चित था।"`,
@@ -399,7 +401,8 @@ const initBRollEngine = () => {
         const isEventsTarget = targetId.startsWith('s2_');
         
         if (isStoryTarget || isEventsTarget) {
-            const newTitle = isStoryTarget ? 'Our Eternal Story' : 'Grand Celebrations';
+            const newTitleKey = isStoryTarget ? 'story_title' : 'events_title';
+            const newTitle = I18N[G.lang || 'en'][newTitleKey] || (isStoryTarget ? 'Our Eternal Story' : 'Grand Celebrations');
             
             // Update only if title changed or header is currently hidden
             if (fixedTitle && (fixedTitle.textContent !== newTitle || (fixedHeader && parseFloat(getComputedStyle(fixedHeader).opacity) < 0.1))) {
@@ -964,9 +967,9 @@ function sendR() {
     }
 }
 
-function cpAddr() {
-    navigator.clipboard.writeText("Taj Palace, 2, Sardar Patel Marg, Diplomatic Enclave, Chanakyapuri, New Delhi – 110 021");
-    alert("Address copied to clipboard!");
+function copyVenue() {
+    navigator.clipboard.writeText("Radisson Blu, Prayagraj, 6, Canning Rd, Civil Lines, Prayagraj, Uttar Pradesh 211001");
+    alert("Venue address copied to clipboard!");
 }
 
 function toggleMenu() {
