@@ -368,11 +368,13 @@ html, body {
 }
 
 #fixed-title {
-    font-family: 'Cinzel Decorative', serif !important; /* Restored to Grand Royal font */
-    font-size: clamp(1.4rem, 4vw, 2.2rem) !important; /* Significantly increased for mobile visibility */
-    letter-spacing: 0.4em !important;
+    font-family: 'Cinzel Decorative', serif !important;
+    font-size: clamp(1.4rem, 5vw, 2.8rem) !important;
+    letter-spacing: 0.35em !important;
     font-weight: 900 !important;
     text-transform: uppercase;
+    text-align: center !important;
+    width: 100%;
     text-shadow: 0 2px 15px rgba(0,0,0,0.8);
     color: var(--deep-gold);
 }
@@ -459,11 +461,12 @@ html, body {
     }
     #fixed-title {
         font-family: 'Cinzel Decorative', serif !important;
-        font-size: 1.4rem !important; /* Reduced to fit on one line and look elegant */
-        letter-spacing: 0.2em !important;
-        font-weight: 700 !important;
+        font-size: 1.6rem !important; /* Enhanced for mobile */
+        letter-spacing: 0.25em !important;
+        font-weight: 900 !important;
         line-height: 1.2 !important;
-        width: 90% !important;
+        width: 100% !important;
+        text-align: center !important;
         margin: 0 auto !important;
     }
     .inner, .card {

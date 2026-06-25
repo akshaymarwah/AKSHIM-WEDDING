@@ -441,22 +441,33 @@ app.post('/api/upload-file', requireAuth, upload.single('file'), async (req, res
     try {
         const { bucket } = req.body;
         const file = req.file;
-        if (!file) return res.status(400).json({ error: 'No file uploaded' });
+        console.log(`[Upload DEBUG] Received request for bucket: ${bucket}, File: ${file?.originalname}`);
+
+        if (!file) {
+            console.warn('[Upload DEBUG] No file provided in request');
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
 
         const fileName = `${Date.now()}_${file.originalname.replace(/\s+/g, '_')}`;
+        console.log(`[Upload DEBUG] Target filename: ${fileName}`);
+
         const { data, error } = await supabase.storage.from(bucket).upload(fileName, file.buffer, {
             contentType: file.mimetype,
             upsert: true
         });
 
-        if (error) throw error;
+        if (error) {
+            console.error(`[Upload DEBUG] Supabase error for bucket "${bucket}":`, error.message);
+            return res.status(500).json({ error: `Storage Error: ${error.message}` });
+        }
 
         // Get public URL
         const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(fileName);
+        console.log(`[Upload DEBUG] Successfully uploaded. Public URL: ${publicUrl}`);
         res.json({ success: true, url: publicUrl });
     } catch (err) {
-        console.error('[Upload] Error:', err.message);
-        res.status(500).json({ error: err.message });
+        console.error('[Upload DEBUG] Critical endpoint failure:', err.message);
+        res.status(500).json({ error: `Server Error: ${err.message}` });
     }
 });
 
