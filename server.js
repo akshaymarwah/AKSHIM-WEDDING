@@ -55,11 +55,14 @@ async function sendWhatsAppMessage(phone, text, imageUrl = null) {
         let formatted = phone.replace(/\D/g, '');
         if (!formatted.startsWith('91') && formatted.length === 10) formatted = '91' + formatted;
         
-        console.log(`[WASenderAPI] Sending ${imageUrl ? 'MEDIA' : 'TEXT'} to ${formatted}...`);
+        // WASender requires JID format: [number]@s.whatsapp.net
+        const jid = formatted.includes('@') ? formatted : `${formatted}@s.whatsapp.net`;
+        
+        console.log(`[WASenderAPI] Sending ${imageUrl ? 'MEDIA' : 'TEXT'} to ${jid}...`);
         
         const endpoint = imageUrl ? `${WASENDER_BASE_URL}/send-media` : `${WASENDER_BASE_URL}/send-message`;
         const body = {
-            to: formatted,
+            to: jid,
             text: text
         };
         if (imageUrl) {
@@ -77,9 +80,11 @@ async function sendWhatsAppMessage(phone, text, imageUrl = null) {
         });
 
         const data = await response.json();
-        if (!response.ok) throw new Error(data.message || 'API Error');
+        if (!response.ok || data.success === false) {
+            throw new Error(data.message || 'API Error');
+        }
         
-        console.log(`[WASenderAPI] Success for ${formatted}`);
+        console.log(`[WASenderAPI] Success for ${jid}`);
         return data;
     } catch (err) {
         console.error('[WASenderAPI] Failed:', err.message);
@@ -523,8 +528,8 @@ app.post('/api/bulk-send', requireAuth, async (req, res) => {
     const tmpls = await getTemplates();
     const tmpl = tmpls.find(t => t.id === templateId);
 
-    const minD = (parseInt(minDelay) || 6) * 1000;
-    const maxD = (parseInt(maxDelay) || 12) * 1000;
+    const minD = (parseInt(minDelay) || 65) * 1000;
+    const maxD = (parseInt(maxDelay) || 75) * 1000;
 
     bulkSendState = { sending: true, total: targets.length, sent: 0, failed: 0, currentContact: '', errors: [], cancelRequested: false };
     res.json({ success: true, stats: bulkSendState });
