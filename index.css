@@ -472,26 +472,28 @@ html, body {
         margin: 0 !important;
     }
     #fixed-header {
-        top: calc(var(--frame-inset) + 4rem + env(safe-area-inset-top)) !important;
-        padding-top: 0.5rem !important;
+        top: calc(var(--frame-inset) + 6.5rem + env(safe-area-inset-top)) !important;
+        padding-top: 0 !important;
         height: auto !important;
         display: flex;
         flex-direction: column;
         justify-content: center;
         left: var(--frame-inset) !important;
         right: var(--frame-inset) !important;
+        z-index: 100 !important;
     }
     #fixed-title {
         font-family: 'Cinzel Decorative', serif !important;
-        font-size: clamp(0.9rem, 4vw, 1.2rem) !important; 
-        letter-spacing: 0.12em !important;
-        width: 85% !important;
+        font-size: clamp(0.75rem, 3.5vw, 0.95rem) !important; 
+        letter-spacing: 0.15em !important;
+        width: 80% !important;
         margin: 0 auto !important;
         text-align: center !important;
+        line-height: 1.2 !important;
     }
     .inner, .card {
-        padding-top: calc(7.5rem + env(safe-area-inset-top)) !important;
-        padding-bottom: 3.5rem !important;
+        padding-top: calc(9.5rem + env(safe-area-inset-top)) !important;
+        padding-bottom: 4rem !important;
         padding-left: var(--frame-safe) !important;
         padding-right: var(--frame-safe) !important;
         min-height: 100vh !important;
