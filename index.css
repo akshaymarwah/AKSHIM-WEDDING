@@ -419,22 +419,32 @@ html, body {
 
 /* Section spacing fixed */
 
-/* Responsive tweaks for very small phones */
-@media (max-height: 700px) {
+/* Responsive tweaks for mobile phones */
+@media (max-width: 768px) {
     .inner, .card {
-        padding-top: 100px !important;
-        justify-content: flex-start !important;
+        padding-top: max(80px, env(safe-area-inset-top)) !important;
+        justify-content: center !important;
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch;
+        padding-bottom: max(80px, env(safe-area-inset-bottom)) !important;
     }
     .matte-royal-card {
-        padding: 1.5rem !important;
+        padding: 1rem 0.5rem !important;
+        margin: auto 0 !important;
+    }
+    .matte-royal-card h3 {
+        margin-top: 0.8rem !important;
+        margin-bottom: 0.8rem !important;
+    }
+    .matte-royal-card .font-cormorant {
+        font-size: clamp(0.95rem, 3.5vw, 1.2rem) !important;
+        line-height: 1.5 !important;
     }
     #fixed-header {
-        padding-top: 2rem !important;
+        padding-top: max(20px, env(safe-area-inset-top)) !important;
     }
     #fixed-title {
-        font-size: 1.5rem !important;
+        font-size: 1.2rem !important;
     }
 }
 
@@ -554,9 +564,10 @@ html, body {
 
 @media (max-height: 700px) {
     .inner, .card {
-        padding-top: 8rem !important;
+        padding-top: max(70px, env(safe-area-inset-top)) !important;
+        justify-content: flex-start !important;
     }
     #fixed-header {
-        padding-top: 4rem !important;
+        padding-top: max(10px, env(safe-area-inset-top)) !important;
     }
 }
