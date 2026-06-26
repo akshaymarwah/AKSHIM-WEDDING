@@ -19,9 +19,8 @@
     --safe-bottom: env(safe-area-inset-bottom, 0px);
 
     /* ── CROSS-DEVICE HEIGHT SYSTEM ── */
-    --nav-height: 4.5rem;
-    /* fh-height: tall enough for 1-line title + its sub-label */
-    --fh-height: 4.5rem;
+    --nav-height: 5rem;
+    --fh-height: 2.8rem;
     --content-offset: calc(var(--frame-inset) + var(--nav-height) + var(--fh-height) + 0.5rem);
     --full-h: 100dvh;
 }
@@ -36,9 +35,8 @@
     :root {
         --frame-inset: max(12px, env(safe-area-inset-left));
         --frame-safe: calc(var(--frame-inset) + 0.75rem);
-        --nav-height: 3.5rem;
-        /* Allow 2 lines of title text on narrow screens */
-        --fh-height: 5rem;
+        --nav-height: 4.8rem;
+        --fh-height: 2.5rem;
         --content-offset: calc(var(--frame-inset) + var(--nav-height) + var(--fh-height) + 0.25rem);
     }
 }
@@ -261,6 +259,8 @@ html, body {
     font-size: 11px;
     letter-spacing: 0.25em;
     text-transform: uppercase;
+    /* ONE line — never wrap button text */
+    white-space: nowrap;
     color: #fdf2cf;
     background: rgba(212, 175, 55, 0.08);
     border: 1px solid rgba(212, 175, 55, 0.45);
@@ -437,20 +437,18 @@ html, body {
 
 #fixed-title {
     font-family: 'Cinzel Decorative', serif !important;
-    /* Fluid font: scales smoothly from ~11px on 320px screens to 2.2rem on desktop */
-    font-size: clamp(0.65rem, 3.5vw, 2.2rem) !important;
-    /* Reduce letter-spacing on small screens — wide tracking breaks narrow layouts */
-    letter-spacing: clamp(0.05em, 0.8vw, 0.3em) !important;
+    /* 5vw scales with screen: 18px at 360px, 32px at 640px */
+    font-size: clamp(0.75rem, 5vw, 2rem) !important;
+    letter-spacing: 0.08em !important;
     font-weight: 900 !important;
     text-transform: uppercase;
     text-align: center !important;
-    /* Allow wrapping — NEVER truncate with ellipsis */
-    white-space: normal !important;
-    word-break: normal !important;
-    overflow-wrap: break-word;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
     width: 100%;
-    padding: 0 0.5rem;
-    line-height: 1.35 !important;
+    padding: 0;
+    line-height: 1 !important;
     text-shadow: 0 2px 15px rgba(0,0,0,0.8);
     color: var(--deep-gold);
 }
@@ -470,9 +468,8 @@ html, body {
 /* ── MOBILE PHONES (≤768px) ── */
 @media (max-width: 768px) {
     :root {
-        --nav-height: 3.8rem;
-        /* Taller to accommodate 2-line title wrap */
-        --fh-height: 5rem;
+        --nav-height: 4.8rem;
+        --fh-height: 2.5rem;
         --content-offset: calc(var(--frame-inset) + var(--nav-height) + var(--fh-height) + 0.25rem);
     }
 
@@ -496,11 +493,9 @@ html, body {
     .matte-royal-card h3 {
         margin-top: 0.6rem !important;
         margin-bottom: 0.6rem !important;
-        /* Fluid heading — fits every phone width */
         font-size: clamp(1rem, 4.5vw, 1.6rem) !important;
         letter-spacing: clamp(0.03em, 0.5vw, 0.1em) !important;
         word-break: break-word !important;
-        overflow-wrap: break-word !important;
         white-space: normal !important;
     }
     .matte-royal-card .font-cormorant {
@@ -509,28 +504,23 @@ html, body {
     }
     .matte-royal-card .font-script {
         font-size: clamp(0.75rem, 3vw, 1rem) !important;
-        letter-spacing: clamp(0.05em, 0.5vw, 0.3em) !important;
         white-space: normal !important;
     }
     .matte-royal-card p.font-montserrat {
         font-size: clamp(8px, 2.2vw, 11px) !important;
         letter-spacing: clamp(0.1em, 0.8vw, 0.3em) !important;
-        white-space: normal !important;
     }
     #fixed-header {
         top: calc(var(--frame-inset) + var(--nav-height)) !important;
         height: var(--fh-height) !important;
         overflow: visible !important;
     }
-    /* Title: never nowrap, never ellipsis — always scale to fit */
     #fixed-title {
-        font-size: clamp(0.6rem, 2.8vw, 0.95rem) !important;
-        letter-spacing: clamp(0.04em, 0.4vw, 0.15em) !important;
-        white-space: normal !important;
-        word-break: normal !important;
-        overflow-wrap: break-word !important;
-        line-height: 1.4 !important;
-        padding: 0 1rem !important;
+        font-size: clamp(0.75rem, 5vw, 1.4rem) !important;
+        letter-spacing: 0.06em !important;
+        white-space: nowrap !important;
+        overflow: visible !important;
+        line-height: 1 !important;
     }
 }
 
@@ -606,20 +596,12 @@ html, body {
         z-index: 100 !important;
     }
 
-    /* Tablet title: fluid size, NO ellipsis ever */
     #fixed-title {
-        font-family: 'Cinzel Decorative', serif !important;
-        font-size: clamp(0.75rem, 2.5vw, 1.3rem) !important;
-        letter-spacing: clamp(0.08em, 0.6vw, 0.25em) !important;
-        width: 90% !important;
-        margin: 0 auto !important;
-        text-align: center !important;
-        line-height: 1.35 !important;
-        /* Allow wrapping — NEVER truncate */
-        white-space: normal !important;
-        word-break: normal !important;
-        overflow-wrap: break-word !important;
+        font-size: clamp(0.8rem, 2.8vw, 1.4rem) !important;
+        letter-spacing: 0.08em !important;
+        white-space: nowrap !important;
         overflow: visible !important;
+        line-height: 1 !important;
     }
 
     .inner, .card {
@@ -710,13 +692,11 @@ html, body {
         font-size: clamp(0.85rem, 3.8vw, 1rem) !important;
         line-height: 1.55 !important;
     }
-    /* Tighten fixed title more on foldable screens */
     #fixed-title {
-        font-size: clamp(0.55rem, 2.8vw, 0.8rem) !important;
-        letter-spacing: 0.03em !important;
-        white-space: normal !important;
-        word-break: break-word !important;
-        padding: 0 0.75rem !important;
+        font-size: clamp(0.7rem, 4.5vw, 1rem) !important;
+        letter-spacing: 0.04em !important;
+        white-space: nowrap !important;
+        overflow: visible !important;
     }
 }
 
@@ -738,34 +718,26 @@ html, body {
 /* ── ANDROID CHROME SPECIFIC FIXES ── */
 @media (max-width: 480px) and (max-height: 900px) {
     :root {
-        --nav-height: 3.8rem;
-        /* Android: always allow 2-line title */
-        --fh-height: 5.2rem;
+        --nav-height: 4.8rem;
+        --fh-height: 2.5rem;
         --content-offset: calc(var(--frame-inset) + var(--nav-height) + var(--fh-height) + 0.25rem);
-    }
-
-    .matte-royal-card {
-        scroll-margin-top: var(--content-offset);
     }
 
     #nav {
         background: linear-gradient(to bottom, #050010 95%, transparent 100%) !important;
     }
 
-    /* On Android, title must never be cut — scale down aggressively */
-    #fixed-title {
-        font-size: clamp(0.58rem, 2.6vw, 0.88rem) !important;
-        letter-spacing: clamp(0.03em, 0.3vw, 0.12em) !important;
-        white-space: normal !important;
-        word-break: normal !important;
-        overflow-wrap: break-word !important;
-        overflow: visible !important;
-        padding: 0 1rem !important;
-        line-height: 1.4 !important;
-    }
-
     #fixed-header {
         overflow: visible !important;
         height: var(--fh-height) !important;
+    }
+
+    /* Android: nowrap + 5vw scales perfectly */
+    #fixed-title {
+        font-size: clamp(0.75rem, 5vw, 1.3rem) !important;
+        letter-spacing: 0.06em !important;
+        white-space: nowrap !important;
+        overflow: visible !important;
+        line-height: 1 !important;
     }
 }
