@@ -13,13 +13,15 @@
     --soft-glow: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
 
     /* ── DYNAMIC FRAME CONSTRAINTS ── */
-    --frame-inset: 18px;
+    --frame-inset: max(18px, env(safe-area-inset-left));
     --frame-safe: calc(var(--frame-inset) + 1rem);
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 @media (max-width: 640px) {
     :root {
-        --frame-inset: 12px;
+        --frame-inset: max(12px, env(safe-area-inset-left));
         --frame-safe: calc(var(--frame-inset) + 0.75rem);
     }
 }
@@ -28,6 +30,18 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    img {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
 }
 
 html, body {
@@ -92,13 +106,14 @@ html, body {
 
 .matte-royal-card h3 {
     font-size: clamp(1.2rem, 3.5vw, 1.8rem) !important;
-    letter-spacing: 0.15em !important; /* Slightly tighter for Decorative font */
+    letter-spacing: clamp(0.05em, 1vw, 0.15em) !important; /* Scaled for smaller devices */
     margin-top: 1.5rem !important;
     margin-bottom: 1.5rem !important;
     font-weight: 700 !important;
     line-height: 1.4 !important;
     font-family: 'Cinzel Decorative', serif !important; /* Forced Cinzel Decorative */
     color: var(--deep-gold) !important;
+    word-break: break-word; /* Prevent overflow */
 }
 
 .matte-royal-card .font-cormorant {
@@ -109,9 +124,10 @@ html, body {
 }
 
 .matte-royal-card p.font-montserrat {
-    font-size: clamp(10px, 1.2vw, 14px) !important;
-    letter-spacing: 0.3em !important;
+    font-size: clamp(9px, 1.2vw, 14px) !important;
+    letter-spacing: clamp(0.15em, 1vw, 0.3em) !important;
     font-weight: 600 !important;
+    word-break: break-word;
 }
 
 .matte-royal-card .chapter-number {
@@ -518,8 +534,21 @@ html, body {
 
     /* RSVP Title Fix */
     #rsvpContent h2 {
-        letter-spacing: 0.25em !important;
-        font-size: clamp(1.5rem, 5vw, 2.5rem) !important;
+        letter-spacing: clamp(0.1em, 2vw, 0.25em) !important;
+        font-size: clamp(1.3rem, 5vw, 2.5rem) !important;
+        word-break: break-word;
+    }
+}
+
+@media (max-width: 380px) {
+    /* Foldable & Very Small Devices */
+    .royal-nav-btn {
+        padding: 0.5rem 0.8rem !important;
+        font-size: 8px !important;
+        letter-spacing: 0.1em !important;
+    }
+    .matte-royal-card {
+        padding: 1rem 0.5rem !important;
     }
 }
 

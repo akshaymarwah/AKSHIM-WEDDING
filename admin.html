@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>AKSHIM Admin — Guest & Invitation Dashboard</title>
     <link rel="stylesheet" href="index.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -82,6 +82,12 @@
         @media (max-width: 640px) {
             .mobile-hide { display: none !important; }
             .mobile-full { width: 100% !important; }
+            body {
+                padding-top: max(1rem, env(safe-area-inset-top)) !important;
+                padding-bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+                padding-left: max(1rem, env(safe-area-inset-left)) !important;
+                padding-right: max(1rem, env(safe-area-inset-right)) !important;
+            }
         }
     </style>
 </head>
