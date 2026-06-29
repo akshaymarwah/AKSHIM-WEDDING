@@ -1,6 +1,6 @@
-gsap.registerPlugin(ScrollTrigger);
+﻿gsap.registerPlugin(ScrollTrigger);
 
-// ════════════════ STATE ════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• STATE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 const G = {
     guest: null,
     busy: false,
@@ -10,7 +10,7 @@ const G = {
     lang: localStorage.getItem('akshim_lang') || null
 };
 
-// ════════════════ TRANSLATIONS ════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• TRANSLATIONS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 const I18N = {
     en: {
         nav_home: "HOME",
@@ -29,40 +29,40 @@ const I18N = {
         events_title: "Grand Celebrations",
         chapter_1: "Chapter I",
         chapter_1_title: "The Solitary Stars",
-        chapter_1_text: `"Born near the sacred confluences of Prayagraj, a mind of relentless innovation was shaped—a creator of solutions and an architect of possibilities. Miles away, under the regal skies of Gwalior, a brilliant spirit decoded the secrets of elements and the music of language, guiding young minds with grace and wisdom. Two solitary stars, revolving in their own orbits, destined to align."`,
+        chapter_1_text: `"Born near the sacred confluences of Prayagraj, a mind of relentless innovation was shapedâ€”a creator of solutions and an architect of possibilities. Miles away, under the regal skies of Gwalior, a brilliant spirit decoded the secrets of elements and the music of language, guiding young minds with grace and wisdom. Two solitary stars, revolving in their own orbits, destined to align."`,
         chapter_2: "Chapter II",
         chapter_2_title: "The Celestial Convergence",
-        chapter_2_text: `"When the precision of science met the vision of innovation, a beautiful alchemy unfolded. Her deep understanding of elements and his passion for creating seamless systems sparked an unexpected connection. It was a perfect integration of heart and mind—where logic transformed into poetry, and two distinct paths merged into a single journey of endless possibilities."`,
+        chapter_2_text: `"When the precision of science met the vision of innovation, a beautiful alchemy unfolded. Her deep understanding of elements and his passion for creating seamless systems sparked an unexpected connection. It was a perfect integration of heart and mindâ€”where logic transformed into poetry, and two distinct paths merged into a single journey of endless possibilities."`,
         chapter_3: "Chapter III",
         chapter_3_title: "The Mirror Soul",
-        chapter_3_text: `"In each other's eyes, they found their most beautiful design. He found the focal element that gave meaning to all his ideas, while she discovered a story deeper than any textbook. Now, walking hand in hand, they are building a modern-day kingdom—a shared space of love, laughter, and lifelong discovery."`,
+        chapter_3_text: `"In each other's eyes, they found their most beautiful design. He found the focal element that gave meaning to all his ideas, while she discovered a story deeper than any textbook. Now, walking hand in hand, they are building a modern-day kingdomâ€”a shared space of love, laughter, and lifelong discovery."`,
         presence_msg: `"Your presence is a gift that we treasure. We look forward to creating beautiful, everlasting memories together in the heart of Prayagraj."`
     },
     hi: {
-        nav_home: "मुखपृष्ठ",
-        nav_story: "कहानी",
-        nav_events: "कार्यक्रम",
-        nav_venue: "स्थान",
-        nav_rsvp: "आरएसवीपी",
-        nav_login: "अतिथि लॉगिन",
-        btn_enter: "शाही पोर्टल में प्रवेश करें",
-        welcome_msg: "शाही मिलन में आपका स्वागत है",
-        countdown_days: "दिन",
-        countdown_hrs: "घंटे",
-        countdown_min: "मिनट",
-        countdown_sec: "सेकंड",
-        story_title: "हमारी शाश्वत कहानी",
-        events_title: "भव्य समारोह",
-        chapter_1: "अध्याय १",
-        chapter_1_title: "अकेले सितारे",
-        chapter_1_text: `"प्रयागराज के पावन संगम तट पर एक विलक्षण प्रतिभा का जन्म हुआ—जो नए विचारों के सृजक और सुव्यवस्थित समाधानों के शिल्पी बने। वहीं दूसरी ओर, ग्वालियर के राजसी इतिहास के आँचल में, एक प्रबुद्ध आत्मा तत्वों के रहस्यों को सुलझाती और भाषा के सौंदर्य को संवारती थी, जो अपनी शिक्षा से युवा मनों को प्रेरित कर रही थीं। अपने-अपने पथ पर चलते दो जाज्वल्यमान नक्षत्र, जिनका दिव्य मिलन निश्चित था।"`,
-        chapter_2: "अध्याय २",
-        chapter_2_title: "दिव्य मिलन",
-        chapter_2_text: `"जब विज्ञान की सूक्ष्मता का मिलन नवोन्मेष की दूरदर्शिता से हुआ, तो एक अद्भुत कीमिया का उदय हुआ। तत्वों पर उनकी गहरी समझ और सुव्यवस्थित प्रणालियों के निर्माण के प्रति उनके समर्पण ने एक अनोखा सूत्र बाँध दिया। यह दिल और दिमाग का एक संपूर्ण सामंजस्य था—जहाँ तर्क ने प्रेम का रूप ले लिया, और दो अलग-अलग राहें मिलकर एक साझा यात्रा बन गईं।"`,
-        chapter_3: "अध्याय ३",
-        chapter_3_title: "दर्पण आत्मा",
-        chapter_3_text: `"एक-दूसरे के साहचर्य में, उन्होंने जीवन की सबसे सुंदर रचना को पाया। उन्हें वह मुख्य तत्व मिल गया जिसने उनके सभी विचारों को पूर्णता दी, और उन्हें एक ऐसी दास्ताँ मिली जो हर परिभाषा से परे थी। अब, एक-दूसरे का हाथ थामे, वे अपने सपनों के एक नए संसार का निर्माण कर रहे हैं—जहाँ हर दिन खुशियों, साझा उत्सवों और असीम प्रेम से भरा है।"`,
-        presence_msg: `"आपका आगमन हमारे लिए एक अमूल्य उपहार है। हम प्रयागराज के पावन हृदय स्थल पर एक साथ सुंदर और अमिट यादें बनाने के लिए उत्सुक हैं।"`
+        nav_home: "à¤®à¥à¤–à¤ªà¥ƒà¤·à¥à¤ ",
+        nav_story: "à¤•à¤¹à¤¾à¤¨à¥€",
+        nav_events: "à¤•à¤¾à¤°à¥à¤¯à¤•à¥à¤°à¤®",
+        nav_venue: "à¤¸à¥à¤¥à¤¾à¤¨",
+        nav_rsvp: "à¤†à¤°à¤à¤¸à¤µà¥€à¤ªà¥€",
+        nav_login: "à¤…à¤¤à¤¿à¤¥à¤¿ à¤²à¥‰à¤—à¤¿à¤¨",
+        btn_enter: "à¤¶à¤¾à¤¹à¥€ à¤ªà¥‹à¤°à¥à¤Ÿà¤² à¤®à¥‡à¤‚ à¤ªà¥à¤°à¤µà¥‡à¤¶ à¤•à¤°à¥‡à¤‚",
+        welcome_msg: "à¤¶à¤¾à¤¹à¥€ à¤®à¤¿à¤²à¤¨ à¤®à¥‡à¤‚ à¤†à¤ªà¤•à¤¾ à¤¸à¥à¤µà¤¾à¤—à¤¤ à¤¹à¥ˆ",
+        countdown_days: "à¤¦à¤¿à¤¨",
+        countdown_hrs: "à¤˜à¤‚à¤Ÿà¥‡",
+        countdown_min: "à¤®à¤¿à¤¨à¤Ÿ",
+        countdown_sec: "à¤¸à¥‡à¤•à¤‚à¤¡",
+        story_title: "à¤¹à¤®à¤¾à¤°à¥€ à¤¶à¤¾à¤¶à¥à¤µà¤¤ à¤•à¤¹à¤¾à¤¨à¥€",
+        events_title: "à¤­à¤µà¥à¤¯ à¤¸à¤®à¤¾à¤°à¥‹à¤¹",
+        chapter_1: "à¤…à¤§à¥à¤¯à¤¾à¤¯ à¥§",
+        chapter_1_title: "à¤…à¤•à¥‡à¤²à¥‡ à¤¸à¤¿à¤¤à¤¾à¤°à¥‡",
+        chapter_1_text: `"à¤ªà¥à¤°à¤¯à¤¾à¤—à¤°à¤¾à¤œ à¤•à¥‡ à¤ªà¤¾à¤µà¤¨ à¤¸à¤‚à¤—à¤® à¤¤à¤Ÿ à¤ªà¤° à¤à¤• à¤µà¤¿à¤²à¤•à¥à¤·à¤£ à¤ªà¥à¤°à¤¤à¤¿à¤­à¤¾ à¤•à¤¾ à¤œà¤¨à¥à¤® à¤¹à¥à¤†â€”à¤œà¥‹ à¤¨à¤ à¤µà¤¿à¤šà¤¾à¤°à¥‹à¤‚ à¤•à¥‡ à¤¸à¥ƒà¤œà¤• à¤”à¤° à¤¸à¥à¤µà¥à¤¯à¤µà¤¸à¥à¤¥à¤¿à¤¤ à¤¸à¤®à¤¾à¤§à¤¾à¤¨à¥‹à¤‚ à¤•à¥‡ à¤¶à¤¿à¤²à¥à¤ªà¥€ à¤¬à¤¨à¥‡à¥¤ à¤µà¤¹à¥€à¤‚ à¤¦à¥‚à¤¸à¤°à¥€ à¤“à¤°, à¤—à¥à¤µà¤¾à¤²à¤¿à¤¯à¤° à¤•à¥‡ à¤°à¤¾à¤œà¤¸à¥€ à¤‡à¤¤à¤¿à¤¹à¤¾à¤¸ à¤•à¥‡ à¤†à¤à¤šà¤² à¤®à¥‡à¤‚, à¤à¤• à¤ªà¥à¤°à¤¬à¥à¤¦à¥à¤§ à¤†à¤¤à¥à¤®à¤¾ à¤¤à¤¤à¥à¤µà¥‹à¤‚ à¤•à¥‡ à¤°à¤¹à¤¸à¥à¤¯à¥‹à¤‚ à¤•à¥‹ à¤¸à¥à¤²à¤à¤¾à¤¤à¥€ à¤”à¤° à¤­à¤¾à¤·à¤¾ à¤•à¥‡ à¤¸à¥Œà¤‚à¤¦à¤°à¥à¤¯ à¤•à¥‹ à¤¸à¤‚à¤µà¤¾à¤°à¤¤à¥€ à¤¥à¥€, à¤œà¥‹ à¤…à¤ªà¤¨à¥€ à¤¶à¤¿à¤•à¥à¤·à¤¾ à¤¸à¥‡ à¤¯à¥à¤µà¤¾ à¤®à¤¨à¥‹à¤‚ à¤•à¥‹ à¤ªà¥à¤°à¥‡à¤°à¤¿à¤¤ à¤•à¤° à¤°à¤¹à¥€ à¤¥à¥€à¤‚à¥¤ à¤…à¤ªà¤¨à¥‡-à¤…à¤ªà¤¨à¥‡ à¤ªà¤¥ à¤ªà¤° à¤šà¤²à¤¤à¥‡ à¤¦à¥‹ à¤œà¤¾à¤œà¥à¤µà¤²à¥à¤¯à¤®à¤¾à¤¨ à¤¨à¤•à¥à¤·à¤¤à¥à¤°, à¤œà¤¿à¤¨à¤•à¤¾ à¤¦à¤¿à¤µà¥à¤¯ à¤®à¤¿à¤²à¤¨ à¤¨à¤¿à¤¶à¥à¤šà¤¿à¤¤ à¤¥à¤¾à¥¤"`,
+        chapter_2: "à¤…à¤§à¥à¤¯à¤¾à¤¯ à¥¨",
+        chapter_2_title: "à¤¦à¤¿à¤µà¥à¤¯ à¤®à¤¿à¤²à¤¨",
+        chapter_2_text: `"à¤œà¤¬ à¤µà¤¿à¤œà¥à¤žà¤¾à¤¨ à¤•à¥€ à¤¸à¥‚à¤•à¥à¤·à¥à¤®à¤¤à¤¾ à¤•à¤¾ à¤®à¤¿à¤²à¤¨ à¤¨à¤µà¥‹à¤¨à¥à¤®à¥‡à¤· à¤•à¥€ à¤¦à¥‚à¤°à¤¦à¤°à¥à¤¶à¤¿à¤¤à¤¾ à¤¸à¥‡ à¤¹à¥à¤†, à¤¤à¥‹ à¤à¤• à¤…à¤¦à¥à¤­à¥à¤¤ à¤•à¥€à¤®à¤¿à¤¯à¤¾ à¤•à¤¾ à¤‰à¤¦à¤¯ à¤¹à¥à¤†à¥¤ à¤¤à¤¤à¥à¤µà¥‹à¤‚ à¤ªà¤° à¤‰à¤¨à¤•à¥€ à¤—à¤¹à¤°à¥€ à¤¸à¤®à¤ à¤”à¤° à¤¸à¥à¤µà¥à¤¯à¤µà¤¸à¥à¤¥à¤¿à¤¤ à¤ªà¥à¤°à¤£à¤¾à¤²à¤¿à¤¯à¥‹à¤‚ à¤•à¥‡ à¤¨à¤¿à¤°à¥à¤®à¤¾à¤£ à¤•à¥‡ à¤ªà¥à¤°à¤¤à¤¿ à¤‰à¤¨à¤•à¥‡ à¤¸à¤®à¤°à¥à¤ªà¤£ à¤¨à¥‡ à¤à¤• à¤…à¤¨à¥‹à¤–à¤¾ à¤¸à¥‚à¤¤à¥à¤° à¤¬à¤¾à¤à¤§ à¤¦à¤¿à¤¯à¤¾à¥¤ à¤¯à¤¹ à¤¦à¤¿à¤² à¤”à¤° à¤¦à¤¿à¤®à¤¾à¤— à¤•à¤¾ à¤à¤• à¤¸à¤‚à¤ªà¥‚à¤°à¥à¤£ à¤¸à¤¾à¤®à¤‚à¤œà¤¸à¥à¤¯ à¤¥à¤¾â€”à¤œà¤¹à¤¾à¤ à¤¤à¤°à¥à¤• à¤¨à¥‡ à¤ªà¥à¤°à¥‡à¤® à¤•à¤¾ à¤°à¥‚à¤ª à¤²à¥‡ à¤²à¤¿à¤¯à¤¾, à¤”à¤° à¤¦à¥‹ à¤…à¤²à¤—-à¤…à¤²à¤— à¤°à¤¾à¤¹à¥‡à¤‚ à¤®à¤¿à¤²à¤•à¤° à¤à¤• à¤¸à¤¾à¤à¤¾ à¤¯à¤¾à¤¤à¥à¤°à¤¾ à¤¬à¤¨ à¤—à¤ˆà¤‚à¥¤"`,
+        chapter_3: "à¤…à¤§à¥à¤¯à¤¾à¤¯ à¥©",
+        chapter_3_title: "à¤¦à¤°à¥à¤ªà¤£ à¤†à¤¤à¥à¤®à¤¾",
+        chapter_3_text: `"à¤à¤•-à¤¦à¥‚à¤¸à¤°à¥‡ à¤•à¥‡ à¤¸à¤¾à¤¹à¤šà¤°à¥à¤¯ à¤®à¥‡à¤‚, à¤‰à¤¨à¥à¤¹à¥‹à¤‚à¤¨à¥‡ à¤œà¥€à¤µà¤¨ à¤•à¥€ à¤¸à¤¬à¤¸à¥‡ à¤¸à¥à¤‚à¤¦à¤° à¤°à¤šà¤¨à¤¾ à¤•à¥‹ à¤ªà¤¾à¤¯à¤¾à¥¤ à¤‰à¤¨à¥à¤¹à¥‡à¤‚ à¤µà¤¹ à¤®à¥à¤–à¥à¤¯ à¤¤à¤¤à¥à¤µ à¤®à¤¿à¤² à¤—à¤¯à¤¾ à¤œà¤¿à¤¸à¤¨à¥‡ à¤‰à¤¨à¤•à¥‡ à¤¸à¤­à¥€ à¤µà¤¿à¤šà¤¾à¤°à¥‹à¤‚ à¤•à¥‹ à¤ªà¥‚à¤°à¥à¤£à¤¤à¤¾ à¤¦à¥€, à¤”à¤° à¤‰à¤¨à¥à¤¹à¥‡à¤‚ à¤à¤• à¤à¤¸à¥€ à¤¦à¤¾à¤¸à¥à¤¤à¤¾à¤ à¤®à¤¿à¤²à¥€ à¤œà¥‹ à¤¹à¤° à¤ªà¤°à¤¿à¤­à¤¾à¤·à¤¾ à¤¸à¥‡ à¤ªà¤°à¥‡ à¤¥à¥€à¥¤ à¤…à¤¬, à¤à¤•-à¤¦à¥‚à¤¸à¤°à¥‡ à¤•à¤¾ à¤¹à¤¾à¤¥ à¤¥à¤¾à¤®à¥‡, à¤µà¥‡ à¤…à¤ªà¤¨à¥‡ à¤¸à¤ªà¤¨à¥‹à¤‚ à¤•à¥‡ à¤à¤• à¤¨à¤ à¤¸à¤‚à¤¸à¤¾à¤° à¤•à¤¾ à¤¨à¤¿à¤°à¥à¤®à¤¾à¤£ à¤•à¤° à¤°à¤¹à¥‡ à¤¹à¥ˆà¤‚â€”à¤œà¤¹à¤¾à¤ à¤¹à¤° à¤¦à¤¿à¤¨ à¤–à¥à¤¶à¤¿à¤¯à¥‹à¤‚, à¤¸à¤¾à¤à¤¾ à¤‰à¤¤à¥à¤¸à¤µà¥‹à¤‚ à¤”à¤° à¤…à¤¸à¥€à¤® à¤ªà¥à¤°à¥‡à¤® à¤¸à¥‡ à¤­à¤°à¤¾ à¤¹à¥ˆà¥¤"`,
+        presence_msg: `"à¤†à¤ªà¤•à¤¾ à¤†à¤—à¤®à¤¨ à¤¹à¤®à¤¾à¤°à¥‡ à¤²à¤¿à¤ à¤à¤• à¤…à¤®à¥‚à¤²à¥à¤¯ à¤‰à¤ªà¤¹à¤¾à¤° à¤¹à¥ˆà¥¤ à¤¹à¤® à¤ªà¥à¤°à¤¯à¤¾à¤—à¤°à¤¾à¤œ à¤•à¥‡ à¤ªà¤¾à¤µà¤¨ à¤¹à¥ƒà¤¦à¤¯ à¤¸à¥à¤¥à¤² à¤ªà¤° à¤à¤• à¤¸à¤¾à¤¥ à¤¸à¥à¤‚à¤¦à¤° à¤”à¤° à¤…à¤®à¤¿à¤Ÿ à¤¯à¤¾à¤¦à¥‡à¤‚ à¤¬à¤¨à¤¾à¤¨à¥‡ à¤•à¥‡ à¤²à¤¿à¤ à¤‰à¤¤à¥à¤¸à¥à¤• à¤¹à¥ˆà¤‚à¥¤"`
     }
 };
 
@@ -106,7 +106,7 @@ function setLanguage(lang) {
     }
 }
 
-// ════════════════ COUNTDOWN ════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• COUNTDOWN â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function updateCountdown() {
     const now = Date.now();
     const diff = G.targetDate - now;
@@ -129,7 +129,7 @@ function updateCountdown() {
 setInterval(updateCountdown, 1000);
 updateCountdown();
 
-// ════════════════ CANVAS SYSTEMS ════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• CANVAS SYSTEMS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 // 1. Star Field (BG)
 const initStarField = () => {
@@ -258,7 +258,7 @@ const initGoldDust = () => {
     animate();
 };
 
-// ════════════════ INTERGALACTIC WARP ENGINE ════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• INTERGALACTIC WARP ENGINE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 let startWarp;
 const initWarpEngine = () => {
     const cv = document.getElementById('warp-canvas');
@@ -326,7 +326,7 @@ const initWarpEngine = () => {
     animate();
 };
 
-// ════════════════ CINEMATIC SCROLL INTERCEPTOR ════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• CINEMATIC SCROLL INTERCEPTOR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 const initBRollEngine = () => {
     const sections = document.querySelectorAll('.S');
     let curS = 0;
@@ -526,7 +526,7 @@ const initBRollEngine = () => {
     };
 };
 
-// ════════════════ PRELOADER SEQUENCE ════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PRELOADER SEQUENCE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 const runPreloader = () => {
     const wrap = document.getElementById('pre-chars');
     if (!wrap) return;
@@ -559,7 +559,7 @@ const runPreloader = () => {
     .fromTo('#heroContent', { opacity: 0, y: 30, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 1.5, ease: 'power3.out' }, 'exit+=0.9');
 };
 
-// ════════════════ UTILITIES ════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• UTILITIES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function openLogin() {
     const modal = document.getElementById('loginModal');
     if (modal) {
@@ -866,7 +866,7 @@ async function uploadToVault(input) {
         });
         const data = await res.json();
         if (data.success) {
-            showToast('Memory shared! 👑');
+            showToast('Memory shared! ðŸ‘‘');
             loadVault();
         } else {
             showToast('Upload failed: ' + (data.error || 'Unknown error'), 'error');
@@ -908,7 +908,7 @@ async function savePortalDetails() {
         const data = await res.json();
         if (data.success) {
             G.guest = payload; // Update local state
-            showToast('Details updated! 👑');
+            showToast('Details updated! ðŸ‘‘');
             updateGuestUI();
         } else {
             showToast('Update failed', 'error');
@@ -941,7 +941,7 @@ async function portalFileUpload(input, bucket, hiddenId) {
         const data = await res.json();
         if (data.success) {
             document.getElementById(hiddenId).value = data.url;
-            label.textContent = 'Uploaded ✅';
+            label.textContent = 'Uploaded âœ…';
             showToast('File uploaded!');
             
             // If it was a profile image, update the preview immediately
@@ -1016,7 +1016,7 @@ async function submitRSVP() {
                     "Your presence will add a brilliant light to our eternal story."
                 </p>
                 <div class="h-[1px] w-20 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
-                <p class="font-cinzel text-[9px] tracking-[0.25em] text-[#D4AF37]/60 uppercase animate-pulse">Scroll down to leave your blessings ↓</p>
+                <p class="font-cinzel text-[9px] tracking-[0.25em] text-[#D4AF37]/60 uppercase animate-pulse">Scroll down to leave your blessings â†“</p>
             </div>
         `;
     }
@@ -1058,13 +1058,13 @@ async function submitWish() {
         });
     } catch (e) { console.warn('Wish post error:', e); }
 
-    btn.innerHTML = '✦ Blessing Sent ✦';
+    btn.innerHTML = 'âœ¦ Blessing Sent âœ¦';
     btn.disabled = false;
     setTimeout(() => { btn.innerHTML = originalHTML; btn.disabled = false; }, 2000);
 }
 
 
-// ════════════════ LIVE WISHES WALL ════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• LIVE WISHES WALL â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 let wishWS = null;
 const _renderedWishIds = new Set();
 
@@ -1167,7 +1167,7 @@ function toggleMenu() {
     if (menu) menu.classList.toggle('translate-x-full');
 }
 
-// ════════════════ PUSH NOTIFICATIONS ════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PUSH NOTIFICATIONS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 async function setupPushNotifications() {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
     
@@ -1205,7 +1205,7 @@ function urlBase64ToUint8Array(base64String) {
     return outputArray;
 }
 
-// ════════════════ INIT ════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• INIT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 document.addEventListener('DOMContentLoaded', () => {
     initStarField(); 
     
@@ -1289,4 +1289,5 @@ async function submitDirectGuestLogin() {
         btn.disabled = false;
     }
 }
+
 
