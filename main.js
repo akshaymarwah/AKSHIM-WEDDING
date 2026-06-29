@@ -1276,7 +1276,7 @@ async function submitDirectGuestLogin() {
             G.guest = data.guest;
             updateGuestUI();
             closeDirectGuestModal();
-            goToSlide(4);
+            goToSlide(5);
         } else {
             err.textContent = data.error || "Failed to enter celebrations";
             err.classList.remove('hidden');
@@ -1290,30 +1290,3 @@ async function submitDirectGuestLogin() {
     }
 }
 
- f u n c t i o n   c l o s e D i r e c t G u e s t M o d a l ( )   { 
-         c o n s t   m o d a l   =   d o c u m e n t . g e t E l e m e n t B y I d ( ' d i r e c t G u e s t M o d a l ' ) ; 
-         i f   ( m o d a l )   { 
-                 m o d a l . c l a s s L i s t . a d d ( ' h i d d e n ' ) ; 
-                 m o d a l . c l a s s L i s t . r e m o v e ( ' f l e x ' ) ; 
-                 d o c u m e n t . b o d y . c l a s s L i s t . r e m o v e ( ' o v e r f l o w - h i d d e n ' ) ; 
-         } 
- } 
- 
- f u n c t i o n   s u b m i t D i r e c t G u e s t L o g i n ( )   { 
-         c o n s t   p h o n e   =   d o c u m e n t . g e t E l e m e n t B y I d ( ' d g - p h o n e ' ) . v a l u e . t r i m ( ) ; 
-         i f   ( ! p h o n e )   { 
-                 c o n s t   e r r   =   d o c u m e n t . g e t E l e m e n t B y I d ( ' d g - e r r o r ' ) ; 
-                 i f   ( e r r )   { 
-                         e r r . t e x t C o n t e n t   =   ' P l e a s e   e n t e r   y o u r   r o y a l   m o b i l e   n u m b e r ' ; 
-                         e r r . c l a s s L i s t . r e m o v e ( ' h i d d e n ' ) ; 
-                 } 
-                 r e t u r n ; 
-         } 
-         c o n s t   l p   =   d o c u m e n t . g e t E l e m e n t B y I d ( ' l P ' ) ; 
-         i f   ( l p )   l p . v a l u e   =   p h o n e ; 
-         
-         c l o s e D i r e c t G u e s t M o d a l ( ) ; 
-         o p e n L o g i n ( ) ; 
- } 
-  
- 
