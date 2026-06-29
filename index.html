@@ -682,11 +682,11 @@
 
                 <div id="login-error" class="hidden text-red-400 text-[10px] mt-2 mb-4 uppercase tracking-widest font-bold text-center">Error encountered</div>
                 
-                <button id="otp-request-btn" class="w-full bg-gold text-[#050010] font-bold py-5 mt-4 text-[10px] tracking-[0.4em] uppercase hover:brightness-110 transition-all rounded shadow-[0_0_20px_rgba(212,175,55,0.2)]" onclick="requestOTP()">
+                <button id="otp-request-btn" class="w-full font-black py-5 mt-4 text-[10px] tracking-[0.4em] uppercase hover:brightness-110 transition-all rounded" style="background: linear-gradient(135deg, #D4AF37, #f0d060, #D4AF37); color: #050010; box-shadow: 0 0 20px rgba(212,175,55,0.3);" onclick="requestOTP()">
                     Request Access Code
                 </button>
 
-                <button id="login-submit-btn" class="hidden w-full bg-gold text-[#050010] font-bold py-5 mt-4 text-[10px] tracking-[0.4em] uppercase hover:brightness-110 transition-all rounded shadow-[0_0_20px_rgba(212,175,55,0.2)]" onclick="doLogin()">
+                <button id="login-submit-btn" class="hidden w-full font-black py-5 mt-4 text-[10px] tracking-[0.4em] uppercase hover:brightness-110 transition-all rounded" style="background: linear-gradient(135deg, #D4AF37, #f0d060, #D4AF37); color: #050010; box-shadow: 0 0 20px rgba(212,175,55,0.3);" onclick="doLogin()">
                     Verify & Enter
                 </button>
 
@@ -702,8 +702,9 @@
                 </button>
 
                 <div class="text-center mt-6">
-                    <button onclick="closeLogin()" class="text-[9px] text-[#D4AF37]/40 hover:text-gold uppercase tracking-[0.2em] font-bold transition-all underline underline-offset-4">
-                        Skip for now & browse website
+                    <button onclick="closeLogin()" class="group text-[9px] text-[#D4AF37]/50 hover:text-[#D4AF37] uppercase tracking-[0.3em] font-bold transition-all flex items-center justify-center mx-auto gap-2">
+                        <span>Skip for now & browse</span>
+                        <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
                     </button>
                 </div>
             </div>
