@@ -513,7 +513,7 @@
                 </div>
 
                 <div class="matte-royal-card w-full py-6 px-6 sm:px-10 flex flex-col gap-6">
-                    <form id="rsvpForm" class="flex flex-col gap-5 w-full">
+                    <form id="rsvpForm" class="flex flex-col gap-5 w-full" onsubmit="event.preventDefault(); submitRSVP();">
                         <div class="field group relative">
                             <label class="font-decorative text-[9px] tracking-[0.3em] text-[#D4AF37] uppercase mb-2 block opacity-70">Full Name</label>
                             <input id="rN" type="text" name="name" required placeholder="As it appears on your heart" 
@@ -532,7 +532,7 @@
                         </div>
 
                         
-                        <button type="button" id="rsvp-submit-btn" onclick="submitRSVP()"
+                        <button type="submit" id="rsvp-submit-btn"
                             style="background: linear-gradient(135deg, #D4AF37, #f0d060, #D4AF37); color: #050010; box-shadow: 0 0 24px rgba(212,175,55,0.4);"
                             class="w-full font-black py-4 text-[10px] tracking-[0.4em] uppercase transition-all rounded mt-1 hover:brightness-110 active:scale-[0.98]">
                             ✦ &nbsp;CONFIRM ATTENDANCE&nbsp; ✦

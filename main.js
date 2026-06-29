@@ -1180,9 +1180,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function handleGrandCelebrationsAccess() {
-    // Temporarily disabled the login requirement.
-    // Uncomment the code below to re-enable the Direct Guest Modal.
-    /*
     if (G.guest && G.guest.id) {
         goToSlide(4);
     } else {
@@ -1193,8 +1190,6 @@ function handleGrandCelebrationsAccess() {
             modal.classList.add('flex');
         }
     }
-    */
-    goToSlide(4);
 }
 
 function closeDirectGuestModal() {
