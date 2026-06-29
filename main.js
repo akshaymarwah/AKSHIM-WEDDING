@@ -1078,6 +1078,14 @@ function initWishesWall() {
     const wall = document.getElementById('wishes-wall');
     if (!wall) return;
 
+    // Load initial sample wishes for the UI showcase
+    const sampleWishes = [
+        { id: 's1', name: 'Aarav & Priya', message: 'Wishing you a lifetime of joy and happiness! Can\'t wait for the big day.', at: new Date(Date.now() - 86400000).toISOString() },
+        { id: 's2', name: 'The Sharma Family', message: 'May your journey together be as beautiful and magical as this union. God bless!', at: new Date(Date.now() - 3600000).toISOString() },
+        { id: 's3', name: 'Vikram Singh', message: 'Congratulations! A perfect match. Looking forward to the grand celebrations.', at: new Date(Date.now() - 1800000).toISOString() }
+    ];
+    sampleWishes.forEach(w => renderWish(w, false));
+
     const wsUrl = `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws/wishes`;
 
     function connect() {
