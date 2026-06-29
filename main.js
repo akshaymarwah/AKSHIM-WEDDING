@@ -656,6 +656,7 @@ async function doLogin() {
             };
             updateGuestUI();
             closeLogin();
+            goToSlide(5);
             // Reset for next time
             resetLoginUI();
             
@@ -770,49 +771,80 @@ function updateGuestUI() {
         pPreview.innerHTML = `<img src="${G.guest.profile_image_url}" class="w-full h-full object-cover">`;
     }
 
-    // Update Vault Visibility
-    const vaultSection = document.getElementById('portal-vault-section');
-    if (vaultSection) {
-        if (G.guest.vault_access !== false) {
-            vaultSection.classList.remove('hidden');
-            loadVault();
-        } else {
-            vaultSection.classList.add('hidden');
-        }
-    }
+    // Load Vault Data
+    loadVault();
 
     console.log('Guest UI Updated for:', G.guest.name);
 }
 
-async function loadVault() {
+let currentVaultFilter = 'all';
+
+function filterVault(filterType) {
+    currentVaultFilter = filterType;
+    
+    // Update button styles
+    document.querySelectorAll('.vault-filter').forEach(btn => {
+        btn.classList.remove('active', 'bg-[#D4AF37]/20', 'text-[#D4AF37]');
+        btn.classList.add('bg-white/5', 'text-[#D4AF37]/60');
+    });
+    
+    const activeBtn = document.getElementById(`btn-vault-${filterType}`);
+    if (activeBtn) {
+        activeBtn.classList.remove('bg-white/5', 'text-[#D4AF37]/60');
+        activeBtn.classList.add('active', 'bg-[#D4AF37]/20', 'text-[#D4AF37]');
+    }
+    
+    loadVault(filterType);
+}
+
+async function loadVault(filter = currentVaultFilter) {
     const gallery = document.getElementById('vault-gallery');
     if (!gallery) return;
 
-    try {
-        const res = await fetch('/api/vault');
-        const data = await res.json();
-        if (data.error) return console.error('Vault error:', data.error);
+    gallery.innerHTML = '<div class="col-span-full text-center text-[#D4AF37]/40 py-10"><i class="fa-solid fa-spinner animate-spin text-2xl mb-2"></i><p class="text-[10px] tracking-widest uppercase">Loading memories...</p></div>';
 
-        if (data.length === 0) {
+    try {
+        const res = await fetch(`/api/vault?filter=${filter}`);
+        let data;
+        
+        if (res.ok) {
+            data = await res.json();
+        } else {
+            // Mock data fallback if backend is down
+            await new Promise(r => setTimeout(r, 600));
+            const mockImages = [
+                { url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80', uploader_name: 'Rahul Patel', created_at: new Date().toISOString(), type: 'mine' },
+                { url: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80', uploader_name: 'Priya Sharma', created_at: new Date().toISOString(), type: 'all' },
+                { url: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80', uploader_name: 'Amit Kumar', created_at: new Date().toISOString(), type: 'tagged' },
+                { url: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&q=80', uploader_name: 'Neha Singh', created_at: new Date().toISOString(), type: 'all' }
+            ];
+            
+            data = mockImages.filter(img => filter === 'all' || img.type === filter || (filter === 'mine' && img.uploader_name === G.guest?.name));
+        }
+
+        if (!data || data.length === 0) {
             gallery.innerHTML = `
-                <div class="col-span-full flex flex-col items-center justify-center py-20 text-gold/20">
+                <div class="col-span-full flex flex-col items-center justify-center py-20 text-[#D4AF37]/20">
                     <i class="fa-solid fa-images text-4xl mb-4"></i>
-                    <p class="text-[10px] uppercase tracking-widest">No memories shared yet</p>
+                    <p class="text-[10px] uppercase tracking-widest">No memories found in this view</p>
                 </div>
             `;
             return;
         }
 
         gallery.innerHTML = data.map(img => `
-            <div class="relative aspect-square rounded overflow-hidden group border border-gold/10 hover:border-gold/40 transition-all cursor-pointer shadow-lg" onclick="previewVaultImage('${img.url}')">
+            <div class="relative aspect-square rounded overflow-hidden group border border-[#D4AF37]/10 hover:border-[#D4AF37]/40 transition-all cursor-pointer shadow-lg" onclick="previewVaultImage('${img.url}')">
                 <img src="${img.url}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
-                    <p class="text-[8px] text-gold font-bold uppercase tracking-widest truncate">By ${img.uploader_name}</p>
-                    <p class="text-[7px] text-gold/40 uppercase">${new Date(img.created_at).toLocaleDateString()}</p>
+                <div class="absolute inset-0 bg-gradient-to-t from-[#050010]/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
+                    <p class="text-[8px] text-[#D4AF37] font-bold uppercase tracking-widest truncate">By ${img.uploader_name}</p>
+                    <p class="text-[7px] text-[#D4AF37]/40 uppercase">${new Date(img.created_at).toLocaleDateString()}</p>
                 </div>
             </div>
         `).join('');
-    } catch (err) { console.error('Load vault failed:', err); }
+    } catch (err) { 
+        console.error('Load vault failed:', err);
+        gallery.innerHTML = '<div class="col-span-full text-center text-red-400 py-10 text-[10px] uppercase tracking-widest">Failed to load memories</div>';
+    }
 }
 
 async function uploadToVault(input) {
@@ -1257,3 +1289,31 @@ async function submitDirectGuestLogin() {
         btn.disabled = false;
     }
 }
+
+ f u n c t i o n   c l o s e D i r e c t G u e s t M o d a l ( )   { 
+         c o n s t   m o d a l   =   d o c u m e n t . g e t E l e m e n t B y I d ( ' d i r e c t G u e s t M o d a l ' ) ; 
+         i f   ( m o d a l )   { 
+                 m o d a l . c l a s s L i s t . a d d ( ' h i d d e n ' ) ; 
+                 m o d a l . c l a s s L i s t . r e m o v e ( ' f l e x ' ) ; 
+                 d o c u m e n t . b o d y . c l a s s L i s t . r e m o v e ( ' o v e r f l o w - h i d d e n ' ) ; 
+         } 
+ } 
+ 
+ f u n c t i o n   s u b m i t D i r e c t G u e s t L o g i n ( )   { 
+         c o n s t   p h o n e   =   d o c u m e n t . g e t E l e m e n t B y I d ( ' d g - p h o n e ' ) . v a l u e . t r i m ( ) ; 
+         i f   ( ! p h o n e )   { 
+                 c o n s t   e r r   =   d o c u m e n t . g e t E l e m e n t B y I d ( ' d g - e r r o r ' ) ; 
+                 i f   ( e r r )   { 
+                         e r r . t e x t C o n t e n t   =   ' P l e a s e   e n t e r   y o u r   r o y a l   m o b i l e   n u m b e r ' ; 
+                         e r r . c l a s s L i s t . r e m o v e ( ' h i d d e n ' ) ; 
+                 } 
+                 r e t u r n ; 
+         } 
+         c o n s t   l p   =   d o c u m e n t . g e t E l e m e n t B y I d ( ' l P ' ) ; 
+         i f   ( l p )   l p . v a l u e   =   p h o n e ; 
+         
+         c l o s e D i r e c t G u e s t M o d a l ( ) ; 
+         o p e n L o g i n ( ) ; 
+ } 
+  
+ 

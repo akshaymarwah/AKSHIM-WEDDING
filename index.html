@@ -599,6 +599,46 @@
                     </div>
                 </div>
                 </div>
+        </section>
+
+        <!-- S5: ROYAL VAULT (GALLERY) -->
+        <section class="S" id="s5">
+            <div class="inner relative z-10 max-w-5xl mx-auto px-6 py-12 flex flex-col items-center justify-start min-h-screen" id="vaultContent">
+                
+                <!-- Home Button -->
+                <button onclick="goToSlide(0)" class="absolute top-[calc(1rem+env(safe-area-inset-top))] right-6 text-[#D4AF37]/60 hover:text-[#D4AF37] transition-all p-2 z-[110]" title="Home">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                </button>
+
+                <div class="text-center mb-8 w-full mt-4">
+                    <h3 class="font-cinzel gold-metallic text-2xl sm:text-4xl tracking-[0.3em] uppercase">The Royal Vault</h3>
+                    <p class="text-xs text-[#D4AF37]/60 uppercase tracking-[0.4em] mt-3">Shared memories from our sacred union</p>
+                    <div class="h-[1px] w-32 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mx-auto mt-6"></div>
+                </div>
+
+                <!-- Vault Filters -->
+                <div class="flex flex-wrap justify-center gap-3 mb-8 w-full">
+                    <button onclick="filterVault('all')" id="btn-vault-all" class="vault-filter active bg-[#D4AF37]/20 text-[#D4AF37] border border-[#D4AF37]/40 px-5 py-2.5 rounded text-[10px] uppercase tracking-widest font-bold transition-all hover:bg-[#D4AF37]/30">All Images</button>
+                    <button onclick="filterVault('mine')" id="btn-vault-mine" class="vault-filter bg-white/5 text-[#D4AF37]/60 border border-[#D4AF37]/20 px-5 py-2.5 rounded text-[10px] uppercase tracking-widest font-bold transition-all hover:bg-[#D4AF37]/30 hover:text-[#D4AF37]">My Uploads</button>
+                    <button onclick="filterVault('tagged')" id="btn-vault-tagged" class="vault-filter bg-white/5 text-[#D4AF37]/60 border border-[#D4AF37]/20 px-5 py-2.5 rounded text-[10px] uppercase tracking-widest font-bold transition-all hover:bg-[#D4AF37]/30 hover:text-[#D4AF37]">Photos of Me</button>
+                </div>
+
+                <!-- Upload Button -->
+                <div class="flex justify-center mb-10 w-full">
+                    <div class="relative group inline-block">
+                        <input type="file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="uploadToVault(this)">
+                        <div class="bg-gradient-to-r from-yellow-600 to-[#D4AF37] text-[#050010] px-8 py-3.5 rounded font-bold text-xs uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(212,175,55,0.3)] group-hover:scale-105 transition-all">
+                            <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Contribute Memory
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gallery Grid -->
+                <div id="vault-gallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 w-full min-h-[300px] pb-10">
+                    <!-- Images loaded dynamically -->
+                </div>
             </div>
         </section>
     </div>
@@ -820,32 +860,6 @@
                     </div>
                 </div>
 
-                <!-- Shared Memories Vault Section -->
-                <div id="portal-vault-section" class="mt-12 pt-12 border-t border-gold/10 hidden">
-                    <div class="text-center mb-8">
-                        <h3 class="font-cinzel gold-metallic text-lg tracking-[0.3em] uppercase">The Royal Vault</h3>
-                        <p class="text-[10px] text-gold/40 uppercase tracking-widest mt-2">Shared memories from our sacred union</p>
-                    </div>
-
-                    <!-- Upload Button -->
-                    <div class="flex justify-center mb-10">
-                        <div class="relative group">
-                            <input type="file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="uploadToVault(this)">
-                            <div class="bg-gradient-to-r from-yellow-600 to-gold text-royal-bg px-8 py-3 rounded font-bold text-[10px] uppercase tracking-[0.2em] shadow-lg group-hover:scale-105 transition-all">
-                                <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Contribute Memory
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Gallery Grid -->
-                    <div id="vault-gallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 min-h-[200px]">
-                        <!-- Images loaded dynamically -->
-                        <div class="col-span-full flex flex-col items-center justify-center py-20 text-gold/20">
-                            <i class="fa-solid fa-images text-4xl mb-4"></i>
-                            <p class="text-[10px] uppercase tracking-widest">No memories shared yet</p>
-                        </div>
-                    </div>
-                </div>
 
                 <div class="text-center mt-12 pb-4">
                     <button onclick="closeGuestPortal(); goTo(4)" class="text-[9px] text-gold font-bold uppercase tracking-[0.3em] border-b border-gold/40 pb-1 hover:border-gold transition-all">
@@ -882,8 +896,11 @@
                 const verifyRes = await fetch('/api/face-login/verify', { method: 'POST' });
                 if (verifyRes.ok) {
                     closeLogin();
-                    // Reload to update guest UI
-                    location.reload();
+                    // Fetch guest status and then navigate to vault
+                    if(typeof checkGuestStatus === 'function') {
+                        await checkGuestStatus();
+                    }
+                    if(typeof goToSlide === 'function') goToSlide(5);
                 }
             } catch (err) {
                 console.error('Face login failed:', err);
