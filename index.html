@@ -702,7 +702,7 @@
                 </button>
 
                 <div class="text-center mt-6">
-                    <button onclick="closeLogin(); goToSlide(5)" class="group text-[9px] text-[#D4AF37]/50 hover:text-[#D4AF37] uppercase tracking-[0.3em] font-bold transition-all flex items-center justify-center mx-auto gap-2">
+                    <button onclick="closeLogin(); goToSlide(10)" class="group text-[9px] text-[#D4AF37]/50 hover:text-[#D4AF37] uppercase tracking-[0.3em] font-bold transition-all flex items-center justify-center mx-auto gap-2">
                         <span>Skip & view gallery</span>
                         <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
                     </button>
@@ -901,7 +901,7 @@
                     if(typeof checkGuestStatus === 'function') {
                         await checkGuestStatus();
                     }
-                    if(typeof goToSlide === 'function') goToSlide(5);
+                    if(typeof goToSlide === 'function') goToSlide(10);
                 }
             } catch (err) {
                 console.error('Face login failed:', err);

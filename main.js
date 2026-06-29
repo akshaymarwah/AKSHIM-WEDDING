@@ -1,4 +1,4 @@
-﻿gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger);
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• STATE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 const G = {
@@ -656,7 +656,7 @@ async function doLogin() {
             };
             updateGuestUI();
             closeLogin();
-            goToSlide(5);
+            goToSlide(10);
             // Reset for next time
             resetLoginUI();
             
@@ -1276,7 +1276,7 @@ async function submitDirectGuestLogin() {
             G.guest = data.guest;
             updateGuestUI();
             closeDirectGuestModal();
-            goToSlide(5);
+            goToSlide(10);
         } else {
             err.textContent = data.error || "Failed to enter celebrations";
             err.classList.remove('hidden');
