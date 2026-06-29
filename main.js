@@ -958,11 +958,16 @@ async function submitRSVP() {
     if (btn) { btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i>'; btn.disabled = true; }
 
     try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        
         await fetch('/api/rsvp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, souls })
+            body: JSON.stringify({ name, souls }),
+            signal: controller.signal
         });
+        clearTimeout(timeoutId);
     } catch (e) { console.warn('RSVP sync error:', e); }
 
     // Store name globally so the wishes wall can use it
