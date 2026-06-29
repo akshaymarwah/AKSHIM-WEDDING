@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS public.users (
     username TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     role TEXT DEFAULT 'admin',
+    permissions JSONB DEFAULT '[]'::jsonb,
     phone TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>AKSHIM — The Royal Union</title>
     <link rel="stylesheet" href="index.css?v=3.4">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -286,7 +286,7 @@
                                 </svg>
                                 Previous
                             </button>
-                            <button onclick="goToSlide(4)" class="royal-nav-btn royal-nav-btn-next">
+                            <button onclick="handleGrandCelebrationsAccess()" class="royal-nav-btn royal-nav-btn-next">
                                 Grand Celebrations
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"></path>
@@ -318,7 +318,7 @@
                             </a>
                         </div>
 
-                        <div class="flex justify-center gap-4 w-full mt-6">
+                        <div class="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 w-full mt-6">
                             <button onclick="goToSlide(3)" class="royal-nav-btn royal-nav-btn-prev">
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path>
@@ -355,7 +355,7 @@
                             Locate on Map
                         </a>
 
-                        <div class="flex justify-center gap-4 w-full mt-6">
+                        <div class="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 w-full mt-6">
                             <button onclick="goToSlide(4)" class="royal-nav-btn royal-nav-btn-prev">
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path>
@@ -392,7 +392,7 @@
                             Locate on Map
                         </a>
 
-                        <div class="flex justify-center gap-4 w-full mt-6">
+                        <div class="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 w-full mt-6">
                             <button onclick="goToSlide(5)" class="royal-nav-btn royal-nav-btn-prev">
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path>
@@ -429,7 +429,7 @@
                             Locate on Map
                         </a>
 
-                        <div class="flex justify-center gap-4 w-full mt-6">
+                        <div class="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 w-full mt-6">
                             <button onclick="goToSlide(6)" class="royal-nav-btn royal-nav-btn-prev">
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path>
@@ -512,17 +512,17 @@
                     <p class="font-decorative gold-metallic text-lg tracking-widest opacity-80 mt-2">We await your presence</p>
                 </div>
 
-                <div class="matte-royal-card w-full py-10 px-6 sm:px-12 flex flex-col gap-10">
-                    <form id="rsvpForm" class="flex flex-col gap-10 w-full">
+                <div class="matte-royal-card w-full py-6 px-6 sm:px-10 flex flex-col gap-6">
+                    <form id="rsvpForm" class="flex flex-col gap-5 w-full">
                         <div class="field group relative">
-                            <label class="font-decorative text-[10px] tracking-[0.3em] text-[#D4AF37] uppercase mb-4 block opacity-70">Full Name</label>
-                            <input type="text" name="name" required placeholder="As it appears on your heart" 
-                                class="w-full bg-transparent border-b border-[#D4AF37]/30 py-4 font-cormorant text-xl text-[#fdf2cf] placeholder:text-[#fdf2cf]/30 focus:border-[#D4AF37] outline-none transition-all">
+                            <label class="font-decorative text-[9px] tracking-[0.3em] text-[#D4AF37] uppercase mb-2 block opacity-70">Full Name</label>
+                            <input id="rN" type="text" name="name" required placeholder="As it appears on your heart" 
+                                class="w-full bg-transparent border-b border-[#D4AF37]/30 py-3 font-cormorant text-lg text-[#fdf2cf] placeholder:text-[#fdf2cf]/30 focus:border-[#D4AF37] outline-none transition-all">
                         </div>
 
                         <div class="field group relative">
-                            <label class="font-decorative text-[10px] tracking-[0.3em] text-[#D4AF37] uppercase mb-4 block opacity-70">Number of Souls</label>
-                            <select name="guests" class="w-full bg-transparent border-b border-[#D4AF37]/30 py-4 font-cormorant text-xl text-[#fdf2cf] focus:border-[#D4AF37] outline-none transition-all appearance-none cursor-pointer">
+                            <label class="font-decorative text-[9px] tracking-[0.3em] text-[#D4AF37] uppercase mb-2 block opacity-70">Number of Souls</label>
+                            <select id="rG" name="guests" class="w-full bg-transparent border-b border-[#D4AF37]/30 py-3 font-cormorant text-lg text-[#fdf2cf] focus:border-[#D4AF37] outline-none transition-all appearance-none cursor-pointer">
                                 <option value="1" class="bg-[#050010]">One Soul</option>
                                 <option value="2" class="bg-[#050010]">Two Souls</option>
                                 <option value="3" class="bg-[#050010]">Three Souls</option>
@@ -530,9 +530,12 @@
                                 <option value="5" class="bg-[#050010]">Five Souls</option>
                             </select>
                         </div>
+
                         
-                        <button type="submit" class="w-full bg-gold hover:bg-gold-light text-[#050010] font-black py-5 text-xs tracking-[0.3em] uppercase transition rounded shadow-lg">
-                            Confirm Attendance
+                        <button type="button" id="rsvp-submit-btn" onclick="submitRSVP()"
+                            style="background: linear-gradient(135deg, #D4AF37, #f0d060, #D4AF37); color: #050010; box-shadow: 0 0 24px rgba(212,175,55,0.4);"
+                            class="w-full font-black py-4 text-[10px] tracking-[0.4em] uppercase transition-all rounded mt-1 hover:brightness-110 active:scale-[0.98]">
+                            ✦ &nbsp;CONFIRM ATTENDANCE&nbsp; ✦
                         </button>
                     </form>
                     <!-- Fixed header states controlled by JS -->
@@ -547,20 +550,54 @@
                         Kindly respond by the first moon of July
                     </p>
 
-                    <div class="flex justify-center gap-4 w-full mt-8 pb-4">
-                        <button onclick="goToSlide(8)" class="royal-nav-btn royal-nav-btn-prev">
+                    <div class="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 w-full mt-8 pb-4">
+                        <button onclick="goToSlide(8)" class="royal-nav-btn royal-nav-btn-prev w-full sm:w-auto">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path>
                             </svg>
                             Back
                         </button>
-                        <button onclick="goToSlide(0)" class="royal-nav-btn royal-nav-btn-next">
+                        <button onclick="goToSlide(0)" class="royal-nav-btn royal-nav-btn-next w-full sm:w-auto">
                             Back to Top
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 10l7-7 7 7M12 3v18"></path>
                             </svg>
                         </button>
                     </div>
+                </div>
+
+                <!-- ── LIVE BLESSINGS WALL ── -->
+                <div id="wishes-wall-section" class="w-full mt-12 mb-8">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="h-[1px] flex-1 bg-gradient-to-r from-transparent to-[#D4AF37]/40"></div>
+                        <div class="flex items-center gap-3">
+                            <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse inline-block"></span>
+                            <h3 class="font-decorative gold-metallic text-lg uppercase tracking-[0.3em]">Live Blessings</h3>
+                        </div>
+                        <div class="h-[1px] flex-1 bg-gradient-to-l from-transparent to-[#D4AF37]/40"></div>
+                    </div>
+
+                    <!-- Wish Input Box -->
+                    <div class="w-full flex flex-col gap-3 mb-8 p-5 bg-white/[0.02] border border-[#D4AF37]/20 rounded-lg">
+                        <label class="font-decorative text-[9px] tracking-[0.3em] text-[#D4AF37] uppercase opacity-70 text-center">Share Your Blessings</label>
+                        <input id="wish-name-input" type="text" placeholder="Your name..."
+                            class="w-full bg-transparent border-b border-[#D4AF37]/25 py-2 font-cormorant text-lg text-[#fdf2cf] placeholder:text-[#fdf2cf]/25 focus:border-[#D4AF37] outline-none transition-all">
+                        <textarea id="wish-input" rows="2" placeholder="Write your heartfelt wish for the couple..."
+                            class="w-full bg-transparent border-b border-[#D4AF37]/25 py-2 font-cormorant text-lg text-[#fdf2cf] placeholder:text-[#fdf2cf]/25 focus:border-[#D4AF37] outline-none transition-all resize-none"></textarea>
+                        <button onclick="submitWish()"
+                            style="background: linear-gradient(135deg, #D4AF37, #f0d060, #D4AF37); color: #050010; box-shadow: 0 0 16px rgba(212,175,55,0.3);"
+                            id="wish-submit-btn" class="w-full font-black py-3 text-[9px] tracking-[0.4em] uppercase transition-all rounded hover:brightness-110 active:scale-[0.98]">
+                            ✦ &nbsp;SEND BLESSING&nbsp; ✦
+                        </button>
+                    </div>
+
+                    <!-- Live Wish Cards -->
+                    <div id="wishes-wall" class="flex flex-col gap-4 w-full pb-8">
+                        <div id="wishes-empty" class="text-center py-10 text-[#D4AF37]/30">
+                            <p class="font-cormorant italic text-xl">&ldquo;Be the first to share your blessings...&rdquo;</p>
+                        </div>
+                    </div>
+                </div>
                 </div>
             </div>
         </section>
@@ -632,6 +669,40 @@
             </div>
             
             <p class="font-cinzel text-[8px] tracking-[0.3em] text-[#D4AF37]/20 mt-10 uppercase">Marwah & Patel Families</p>
+        </div>
+    </div>
+    
+    <!-- ── DIRECT GUEST ACCESS MODAL ── -->
+    <div id="directGuestModal" class="fixed z-[2000] bg-[#050010]/95 backdrop-blur-xl hidden items-center justify-center p-4" style="inset: var(--frame-inset);">
+        <div class="max-w-[480px] w-full p-10 sm:p-14 text-center bg-[#0a0020] border border-[#D4AF37]/50 shadow-[0_0_40px_rgba(212,175,55,0.15)] relative overflow-hidden flex flex-col gap-6 rounded-lg">
+            <button onclick="closeDirectGuestModal()" class="absolute top-6 right-6 text-[#D4AF37]/60 hover:text-[#D4AF37] transition-all z-[50]" title="Close">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+
+            <span class="font-script gold-metallic text-4xl mb-[-10px] opacity-90">An Invitation</span>
+            <h3 class="font-decorative text-2xl sm:text-3xl gold-metallic uppercase tracking-[0.3em]">To Celebrate</h3>
+            <p class="font-cormorant italic text-[#fdf2cf]/80 text-lg sm:text-xl leading-relaxed max-w-sm mx-auto mb-4">
+                "Please grace us with your details to step into the grandeur of our eternal story."
+            </p>
+
+            <div class="flex flex-col gap-8 w-full text-left">
+                <!-- Phone Field -->
+                <div class="relative">
+                    <label class="font-decorative text-[9px] sm:text-[10px] tracking-[0.3em] text-[#D4AF37] uppercase mb-2 block opacity-80 text-center">Royal Mobile Number</label>
+                    <input type="tel" id="dg-phone" placeholder="e.g. 9876543210" class="w-full bg-transparent border-b border-[#D4AF37]/40 py-3 font-cormorant text-2xl text-[#fdf2cf] placeholder:text-[#fdf2cf]/20 focus:border-[#D4AF37] outline-none transition-all text-center tracking-widest">
+                </div>
+
+                <!-- Photo Upload Field Removed -->
+
+                <div id="dg-error" class="hidden text-red-400 text-[10px] uppercase tracking-widest font-bold text-center -mt-2"></div>
+
+                <!-- Submit Button -->
+                <button id="dg-submit-btn" onclick="submitDirectGuestLogin()" class="w-full bg-gradient-to-r from-[#D4AF37]/20 via-[#D4AF37]/10 to-[#D4AF37]/20 border border-[#D4AF37]/50 hover:bg-[#D4AF37]/30 text-[#D4AF37] font-bold py-5 mt-2 text-[10px] sm:text-xs tracking-[0.4em] uppercase transition-all shadow-[0_0_30px_rgba(212,175,55,0.1)] rounded group">
+                    <span class="group-hover:tracking-[0.5em] transition-all duration-300">CELEBRATIONS</span>
+                </button>
+            </div>
+            
+            <div class="w-24 h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mx-auto mt-4"></div>
         </div>
     </div>
     

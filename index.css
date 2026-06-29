@@ -493,21 +493,21 @@ html, body {
     .matte-royal-card h3 {
         margin-top: 0.6rem !important;
         margin-bottom: 0.6rem !important;
-        font-size: clamp(1rem, 4.5vw, 1.6rem) !important;
+        font-size: clamp(1.2rem, 5vw, 1.8rem) !important;
         letter-spacing: clamp(0.03em, 0.5vw, 0.1em) !important;
         word-break: break-word !important;
         white-space: normal !important;
     }
     .matte-royal-card .font-cormorant {
-        font-size: clamp(0.9rem, 3.2vw, 1.1rem) !important;
+        font-size: clamp(1.1rem, 4vw, 1.3rem) !important;
         line-height: 1.55 !important;
     }
     .matte-royal-card .font-script {
-        font-size: clamp(0.75rem, 3vw, 1rem) !important;
+        font-size: clamp(0.9rem, 4vw, 1.2rem) !important;
         white-space: normal !important;
     }
     .matte-royal-card p.font-montserrat {
-        font-size: clamp(8px, 2.2vw, 11px) !important;
+        font-size: clamp(10px, 2.5vw, 13px) !important;
         letter-spacing: clamp(0.1em, 0.8vw, 0.3em) !important;
     }
     #fixed-header {
@@ -516,7 +516,7 @@ html, body {
         overflow: visible !important;
     }
     #fixed-title {
-        font-size: clamp(0.75rem, 5vw, 1.4rem) !important;
+        font-size: clamp(0.9rem, 5vw, 1.5rem) !important;
         letter-spacing: 0.06em !important;
         white-space: nowrap !important;
         overflow: visible !important;
@@ -683,17 +683,17 @@ html, body {
         padding: 0.75rem 0.4rem !important;
     }
     .matte-royal-card h3 {
-        font-size: clamp(0.9rem, 4.5vw, 1.2rem) !important;
+        font-size: clamp(1rem, 5vw, 1.3rem) !important;
         letter-spacing: 0.03em !important;
         word-break: break-word !important;
         white-space: normal !important;
     }
     .matte-royal-card .font-cormorant {
-        font-size: clamp(0.85rem, 3.8vw, 1rem) !important;
+        font-size: clamp(0.95rem, 4vw, 1.1rem) !important;
         line-height: 1.55 !important;
     }
     #fixed-title {
-        font-size: clamp(0.7rem, 4.5vw, 1rem) !important;
+        font-size: clamp(0.8rem, 5vw, 1.1rem) !important;
         letter-spacing: 0.04em !important;
         white-space: nowrap !important;
         overflow: visible !important;

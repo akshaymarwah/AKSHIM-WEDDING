@@ -115,6 +115,9 @@
             <button onclick="openChangePasswordModal()" class="royal-font text-[9px] sm:text-[10px] tracking-widest bg-gold/10 border border-gold/30 text-gold px-3 sm:px-4 py-2 hover:bg-gold/20 transition w-[48%] sm:w-auto uppercase font-bold rounded">
                 <i class="fa-solid fa-key mr-1.5 text-yellow-500"></i>Pass
             </button>
+            <button id="btn-user-management" onclick="openUserManagement()" class="hidden royal-font text-[9px] sm:text-[10px] tracking-widest bg-gold/10 border border-gold/30 text-gold px-3 sm:px-4 py-2 hover:bg-gold/20 transition w-[48%] sm:w-auto uppercase font-bold rounded">
+                <i class="fa-solid fa-users mr-1.5 text-green-400"></i>Users
+            </button>
             <button onclick="logoutAdmin()" class="royal-font text-[9px] sm:text-[10px] tracking-widest bg-red-950/40 border border-red-500/30 text-red-300 px-3 sm:px-4 py-2 hover:bg-red-500/20 transition w-[48%] sm:w-auto uppercase font-bold rounded">
                 <i class="fa-solid fa-power-off"></i>
             </button>
@@ -792,12 +795,40 @@
         </div>
     </div>
     
-    <script>
-        let contacts = [];
-        let templates = [];
-        let groups = [];
-        let activeBulkJob = false;
         let selectedRecipientId = null;
+
+        // --- RBAC & Permissions ---
+        const currentUser = JSON.parse(localStorage.getItem('admin_user') || '{}');
+        const role = currentUser.role || 'staff';
+        const perms = currentUser.permissions || [];
+
+        function hasPermission(module) {
+            if (role === 'super_admin') return true;
+            if (role === 'admin' && module !== 'User Management') return true;
+            if (role === 'staff' && module === 'Invitations') return true;
+            return perms.includes(module);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!currentUser.name) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            // Enforce RBAC on UI
+            if (hasPermission('User Management')) {
+                document.getElementById('btn-user-management').classList.remove('hidden');
+            }
+            // The rest of the modules can be restricted by hiding their containers or tabs
+            // based on the requested rules.
+        });
+
+        // User Management Logic
+        function openUserManagement() {
+            // Placeholder: implement user management modal or navigate to user management view
+            alert("User Management Panel will go here.");
+        }
+
         let activeTab = 'directory';
         let whatsappContacts = [];
         let currentSessionId = 'default';

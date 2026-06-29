@@ -945,38 +945,172 @@ function closeGuestPortal() {
     }
 }
 
-function sendR() {
-    const name = document.getElementById('rN').value;
+async function submitRSVP() {
+    const name = (document.getElementById('rN')?.value || '').trim();
     const souls = document.getElementById('rG')?.value || 1;
-    const message = document.getElementById('rM')?.value || '';
-    const box = document.getElementById('rsvpBox');
+    const btn = document.getElementById('rsvp-submit-btn');
 
     if (!name) {
         alert("Please enter your name.");
         return;
     }
 
-    if (box) {
-        // Immediate Success UI
-        box.innerHTML = `
-            <div class="text-center py-20 flex flex-col items-center gap-6 animate-fadeIn">
-                <span class="font-pinyon gold-metallic text-6xl">Thank You</span>
-                <h2 class="font-decorative text-2xl gold-metallic uppercase tracking-[0.3em]">Sacred Vow Received</h2>
-                <p class="font-cormorant italic text-xl text-[#fdf2cf]/80 max-w-sm">
-                    "We have received your acceptance, ${name}. Your presence will add a brilliant light to our eternal story."
-                </p>
-                <div class="h-[1px] w-24 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mt-4"></div>
-            </div>
-        `;
+    if (btn) { btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i>'; btn.disabled = true; }
 
-        // Background sync to server
-        fetch('/api/rsvp', {
+    try {
+        await fetch('/api/rsvp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, souls, message })
-        }).catch(err => console.error("RSVP Sync Error:", err));
+            body: JSON.stringify({ name, souls })
+        });
+    } catch (e) { console.warn('RSVP sync error:', e); }
+
+    // Store name globally so the wishes wall can use it
+    G._rsvpName = name;
+
+    // Show clean Thank You state
+    const form = document.getElementById('rsvpForm');
+    if (form) {
+        form.innerHTML = `
+            <div class="flex flex-col items-center gap-4 w-full py-4 text-center">
+                <span class="font-script gold-metallic text-5xl">Thank You</span>
+                <h3 class="font-decorative text-xl gold-metallic uppercase tracking-[0.3em]">Sacred Vow Received</h3>
+                <p class="font-cormorant italic text-base text-[#fdf2cf]/70 max-w-xs">
+                    "Your presence will add a brilliant light to our eternal story."
+                </p>
+                <div class="h-[1px] w-20 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
+                <p class="font-cinzel text-[9px] tracking-[0.25em] text-[#D4AF37]/60 uppercase animate-pulse">Scroll down to leave your blessings ↓</p>
+            </div>
+        `;
+    }
+
+    // Auto-scroll to the Live Blessings wall
+    setTimeout(() => {
+        const wall = document.getElementById('wishes-wall-section');
+        if (wall) wall.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 1200);
+}
+
+async function submitWish() {
+    const nameFromInput = (document.getElementById('wish-name-input')?.value || '').trim();
+    const name = nameFromInput || G._rsvpName || 'Guest';
+    const input = document.getElementById('wish-input');
+    const btn = document.getElementById('wish-submit-btn');
+    const message = (input?.value || '').trim();
+
+    if (!message) { input?.focus(); return; }
+    if (!nameFromInput && !G._rsvpName) {
+        document.getElementById('wish-name-input')?.focus();
+        return;
+    }
+
+    const originalHTML = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i>';
+    btn.disabled = true;
+
+    // Optimistically render immediately on this client
+    const optimistic = { id: Date.now(), name, message, at: new Date().toISOString() };
+    renderWish(optimistic, true);
+    input.value = '';
+
+    try {
+        await fetch('/api/wishes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, message })
+        });
+    } catch (e) { console.warn('Wish post error:', e); }
+
+    btn.innerHTML = '✦ Blessing Sent ✦';
+    btn.disabled = false;
+    setTimeout(() => { btn.innerHTML = originalHTML; btn.disabled = false; }, 2000);
+}
+
+
+// ════════════════ LIVE WISHES WALL ════════════════
+let wishWS = null;
+const _renderedWishIds = new Set();
+
+function renderWish(wish, prepend = false) {
+    const wall = document.getElementById('wishes-wall');
+    if (!wall) return;
+
+    // Skip if already rendered (avoids duplicate from optimistic + WS broadcast)
+    if (_renderedWishIds.has(String(wish.id))) return;
+    _renderedWishIds.add(String(wish.id));
+
+    const empty = document.getElementById('wishes-empty');
+    if (empty) empty.remove();
+
+    const initials = wish.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    const timeStr = new Date(wish.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    const card = document.createElement('div');
+    card.dataset.wishId = wish.id;
+    card.className = 'wish-card flex gap-4 items-start p-5 bg-white/[0.03] border border-[#D4AF37]/15 rounded-lg hover:border-[#D4AF37]/30 transition-all';
+    card.style.animation = prepend ? 'wishFadeIn 0.6s ease forwards' : '';
+    card.innerHTML = `
+        <div class="w-10 h-10 rounded-full bg-[#D4AF37]/20 border border-[#D4AF37]/40 flex items-center justify-center flex-shrink-0">
+            <span class="font-decorative text-[#D4AF37] text-xs tracking-wider">${initials}</span>
+        </div>
+        <div class="flex flex-col gap-1 flex-1 min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+                <span class="font-cinzel text-[10px] text-[#D4AF37] tracking-[0.2em] uppercase">${wish.name}</span>
+                <span class="text-[8px] text-[#fdf2cf]/30 font-cinzel tracking-widest">${timeStr}</span>
+            </div>
+            <p class="font-cormorant italic text-[#fdf2cf]/80 text-lg leading-snug">"${wish.message}"</p>
+        </div>
+    `;
+
+    if (prepend) {
+        wall.insertBefore(card, wall.firstChild);
+    } else {
+        wall.appendChild(card);
     }
 }
+
+function initWishesWall() {
+    const wall = document.getElementById('wishes-wall');
+    if (!wall) return;
+
+    const wsUrl = `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws/wishes`;
+
+    function connect() {
+        wishWS = new window.WebSocket(wsUrl);
+
+        wishWS.onmessage = (e) => {
+            try {
+                const data = JSON.parse(e.data);
+                if (data.type === 'init') {
+                    // Clear and render all existing wishes
+                    const empty = document.getElementById('wishes-empty');
+                    if (empty) empty.remove();
+                    data.wishes.forEach(w => renderWish(w, false));
+                } else if (data.type === 'wish') {
+                    renderWish(data.wish, true);
+                }
+            } catch (err) { console.warn('Wish parse error:', err); }
+        };
+
+        wishWS.onclose = () => {
+            // Auto-reconnect after 3s
+            setTimeout(connect, 3000);
+        };
+        wishWS.onerror = () => wishWS.close();
+    }
+
+    connect();
+}
+
+// Inject wish animation keyframe once
+const wishStyle = document.createElement('style');
+wishStyle.textContent = `
+@keyframes wishFadeIn {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+}`;
+document.head.appendChild(wishStyle);
+
 
 function copyVenue() {
     navigator.clipboard.writeText("Radisson Blu, Prayagraj, 6, Canning Rd, Civil Lines, Prayagraj, Uttar Pradesh 211001");
@@ -1042,4 +1176,76 @@ document.addEventListener('DOMContentLoaded', () => {
     initWarpEngine();
     runPreloader();
     checkGuestStatus();
+    initWishesWall();
 });
+
+function handleGrandCelebrationsAccess() {
+    // Temporarily disabled the login requirement.
+    // Uncomment the code below to re-enable the Direct Guest Modal.
+    /*
+    if (G.guest && G.guest.id) {
+        goToSlide(4);
+    } else {
+        const modal = document.getElementById('directGuestModal');
+        if (modal) {
+            document.body.classList.add('overflow-hidden');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+    }
+    */
+    goToSlide(4);
+}
+
+function closeDirectGuestModal() {
+    const modal = document.getElementById('directGuestModal');
+    if (modal) {
+        document.body.classList.remove('overflow-hidden');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+async function submitDirectGuestLogin() {
+    const phoneInput = document.getElementById('dg-phone');
+    const btn = document.getElementById('dg-submit-btn');
+    const err = document.getElementById('dg-error');
+    
+    const phone = phoneInput.value.trim();
+    if (!phone) {
+        err.textContent = "Please enter your mobile number";
+        err.classList.remove('hidden');
+        return;
+    }
+    
+    btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Authenticating...';
+    btn.disabled = true;
+    err.classList.add('hidden');
+    
+    try {
+        const res = await fetch('/api/guest/direct-login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ phone })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            G.guest = data.guest;
+            updateGuestUI();
+            closeDirectGuestModal();
+            goToSlide(4);
+        } else {
+            err.textContent = data.error || "Failed to enter celebrations";
+            err.classList.remove('hidden');
+        }
+    } catch (e) {
+        err.textContent = "Connection Error";
+        err.classList.remove('hidden');
+    } finally {
+        btn.innerHTML = '<span class="group-hover:tracking-[0.5em] transition-all duration-300">CELEBRATIONS</span>';
+        btn.disabled = false;
+    }
+}

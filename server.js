@@ -290,6 +290,23 @@ function requireAuth(req, res, next) {
     res.redirect('/login.html');
 }
 
+function requireSuperAdmin(req, res, next) {
+    if (req.user && req.user.role === 'super_admin') return next();
+    res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+}
+
+function requirePermission(module) {
+    return (req, res, next) => {
+        if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
+        if (req.user.role === 'super_admin') return next();
+        if (req.user.role === 'admin' && module !== 'user_management') return next();
+        if (req.user.role === 'staff' && module === 'invitations') return next();
+        const perms = req.user.permissions || [];
+        if (perms.includes(module)) return next();
+        res.status(403).json({ error: 'Forbidden: Permission denied' });
+    };
+}
+
 // ════════════════ ROUTES ════════════════
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
@@ -297,10 +314,47 @@ app.post('/api/login', async (req, res) => {
     const user = users.find(u => u.username === username && u.password === password);
     if (user) {
         const token = Math.random().toString(36).substring(2) + Date.now().toString(36);
-        sessions.set(token, { id: user.id, username: user.username, name: user.name, role: user.role });
+        sessions.set(token, { id: user.id, username: user.username, name: user.name, role: user.role, permissions: user.permissions || [] });
         res.setHeader('Set-Cookie', `session_token=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=86400`);
-        res.json({ success: true, user: { name: user.name, role: user.role } });
+        res.json({ success: true, user: { name: user.name, role: user.role, permissions: user.permissions || [] } });
     } else res.status(401).json({ error: 'Invalid credentials' });
+});
+
+// ════════════════ USER MANAGEMENT (Super Admin Only) ════════════════
+app.get('/api/users', requireAuth, requireSuperAdmin, async (req, res) => {
+    try { res.json(await getUsers()); }
+    catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/users', requireAuth, requireSuperAdmin, async (req, res) => {
+    try {
+        const { username, password, name, role, phone, permissions } = req.body;
+        const id = 'usr_' + Date.now();
+        await saveUser({ id, username, password, name, role: role || 'custom', phone, permissions: permissions || [] });
+        res.json({ success: true });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.put('/api/users/:id', requireAuth, requireSuperAdmin, async (req, res) => {
+    try {
+        const { username, password, name, role, phone, permissions } = req.body;
+        const payload = { id: req.params.id, username, name, role, phone, permissions: permissions || [] };
+        if (password) payload.password = password; // Only update password if provided
+        else {
+             const existing = (await getUsers()).find(u => u.id === req.params.id);
+             if (existing) payload.password = existing.password;
+        }
+        await saveUser(payload);
+        res.json({ success: true });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.delete('/api/users/:id', requireAuth, requireSuperAdmin, async (req, res) => {
+    try {
+        const { error } = await supabase.from('users').delete().eq('id', req.params.id);
+        if (error) throw error;
+        res.json({ success: true });
+    } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.get('/admin.html', requireAuth, (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
@@ -361,10 +415,52 @@ app.post('/api/guest/login', async (req, res) => {
     res.json({ success: true, guest });
 });
 
-app.post('/api/rsvp', async (req, res) => {
-    const { name, message } = req.body;
-    const guest = { id: 'RSVP_' + Date.now(), name, message: message || '', status: 'accepted', type: 'rsvp' };
+app.post('/api/guest/direct-login', express.json(), async (req, res) => {
+    try {
+        const { phone } = req.body;
+        if (!phone) return res.status(400).json({ error: 'Phone number is required' });
+        
+        const clean = phone.replace(/\D/g, '');
+        const contacts = await getContacts();
+        
+        let guest = contacts.find(c => {
+            const cp = (c.phone || '').replace(/\D/g, '');
+            return cp.endsWith(clean.slice(-10));
+        });
+
+        if (!guest) {
+            guest = { 
+                id: 'direct_' + Date.now(), 
+                name: 'Guest ' + clean, 
+                phone: clean, 
+                status: 'pending'
+            };
+        }
+
+        await saveContact(guest);
+
+        const token = 'guest_' + Math.random().toString(36).substring(2);
+        guestSessions.set(token, { guestId: guest.id, name: guest.name, phone: guest.phone });
+        res.setHeader('Set-Cookie', `guest_token=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=2592000`);
+        res.json({ success: true, guest });
+    } catch (err) {
+        console.error('[Direct Login Error]:', err.message);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/rsvp', express.json(), async (req, res) => {
+    const { name, souls, message } = req.body;
+    if (!name) return res.status(400).json({ error: 'Name is required' });
+    const guest = { id: 'RSVP_' + Date.now(), name, souls: souls || 1, message: message || '', status: 'accepted', type: 'rsvp' };
     await saveContact(guest);
+    // Also add to live wishes if there's a message
+    if (message) {
+        const wish = { id: Date.now(), name: name.trim(), message: message.trim(), at: new Date().toISOString() };
+        wishes.push(wish);
+        const payload = JSON.stringify({ type: 'wish', wish });
+        wishClients.forEach(ws => { if (ws.readyState === 1) ws.send(payload); });
+    }
     res.json({ success: true, guest });
 });
 
@@ -725,10 +821,39 @@ app.post('/api/admin/send-push', requireAuth, async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-app.listen(PORT, '0.0.0.0', () => {
+// ════════════════ WISHES WALL ════════════════
+const wishes = []; // in-memory store
+const wishClients = new Set();
+
+app.get('/api/wishes', (req, res) => {
+    res.json(wishes.slice().reverse());
+});
+
+app.post('/api/wishes', express.json(), (req, res) => {
+    const { name, message } = req.body;
+    if (!name || !message) return res.status(400).json({ error: 'Name and message required' });
+    const wish = { id: Date.now(), name: name.trim(), message: message.trim(), at: new Date().toISOString() };
+    wishes.push(wish);
+    // Broadcast to all connected WebSocket clients
+    const payload = JSON.stringify({ type: 'wish', wish });
+    wishClients.forEach(ws => { if (ws.readyState === 1) ws.send(payload); });
+    res.json({ success: true, wish });
+});
+
+const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`👑 AKSHIM Server running on port ${PORT}`);
     initWhatsApp('default');
     ensureBucket();
+});
+
+// WebSocket server for live wishes
+const wss = new WebSocket.Server({ server, path: '/ws/wishes' });
+wss.on('connection', (ws) => {
+    wishClients.add(ws);
+    // Send existing wishes on connect
+    ws.send(JSON.stringify({ type: 'init', wishes: wishes.slice().reverse() }));
+    ws.on('close', () => wishClients.delete(ws));
+    ws.on('error', () => wishClients.delete(ws));
 });
 
 // Graceful shutdown
