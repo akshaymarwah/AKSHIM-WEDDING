@@ -979,11 +979,15 @@ function closeGuestPortal() {
 
 async function submitRSVP() {
     const name = (document.getElementById('rN')?.value || '').trim();
-    const souls = document.getElementById('rG')?.value || 1;
+    const phone = (document.getElementById('rP')?.value || '').trim();
     const btn = document.getElementById('rsvp-submit-btn');
 
     if (!name) {
         alert("Please enter your name.");
+        return;
+    }
+    if (!phone) {
+        alert("Please enter your mobile number.");
         return;
     }
 
@@ -996,7 +1000,7 @@ async function submitRSVP() {
         await fetch('/api/rsvp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, souls }),
+            body: JSON.stringify({ name, phone }),
             signal: controller.signal
         });
         clearTimeout(timeoutId);

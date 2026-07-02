@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Live Blessings — AKSHIM The Royal Union</title>
+    <meta name="description" content="Share your heartfelt blessings for Akshay & Himanshi's sacred union.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;600;700&family=Alex+Brush&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --gold-light: #fdf2cf;
+            --gold-dim: rgba(212,175,55,0.3);
+            --bg: #050010;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--gold-light);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── ANIMATED BG ── */
+        canvas#c-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ── ROYAL FRAME ── */
+        .royal-frame {
+            position: fixed;
+            inset: 12px;
+            z-index: 5;
+            pointer-events: none;
+            border: 1px solid rgba(212,175,55,0.3);
+        }
+
+        /* ── MAIN CONTENT ── */
+        .page-wrap {
+            position: relative;
+            z-index: 10;
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 100px 20px 60px;
+            min-height: 100vh;
+        }
+
+        /* ── BACK NAV ── */
+        .back-nav {
+            position: fixed;
+            top: max(28px, env(safe-area-inset-top, 28px));
+            left: 32px;
+            z-index: 100;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--gold);
+            opacity: 0.6;
+            text-decoration: none;
+            transition: opacity 0.3s;
+            padding: 8px 0;
+        }
+        .back-btn:hover { opacity: 1; }
+        .back-btn svg { transition: transform 0.3s; }
+        .back-btn:hover svg { transform: translateX(-3px); }
+
+        /* ── LOGO NAV ── */
+        .logo-nav {
+            position: fixed;
+            top: max(20px, env(safe-area-inset-top, 20px));
+            right: 28px;
+            z-index: 100;
+        }
+        .logo-nav img { width: 56px; height: 56px; object-fit: contain; opacity: 0.8; }
+
+        /* ── HEADER ── */
+        .page-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .live-dot {
+            display: inline-block;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #4ade80;
+            animation: pulse-dot 2s ease-in-out infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(74,222,128,0.4); }
+            50% { opacity: 0.7; transform: scale(1.2); box-shadow: 0 0 0 6px rgba(74,222,128,0); }
+        }
+
+        .page-title {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.6rem, 6vw, 2.4rem);
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #fdf2cf, #D4AF37, #fdf2cf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1rem;
+            color: rgba(212,175,55,0.6);
+            letter-spacing: 0.1em;
+        }
+
+        .gold-divider {
+            width: 80px;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+            margin: 20px auto;
+        }
+
+        /* ── BLESSING FORM ── */
+        .blessing-form-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 12px;
+            padding: 28px 24px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-label {
+            display: block;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: rgba(212,175,55,0.7);
+            margin-bottom: 10px;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(212,175,55,0.25);
+            padding: 10px 0;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            color: var(--gold-light);
+            outline: none;
+            transition: border-color 0.3s;
+            -webkit-appearance: none;
+        }
+        .form-input::placeholder, .form-textarea::placeholder {
+            color: rgba(253,242,207,0.25);
+        }
+        .form-input:focus, .form-textarea:focus {
+            border-color: var(--gold);
+        }
+
+        .form-textarea {
+            resize: none;
+            min-height: 80px;
+            margin-top: 20px;
+        }
+
+        .btn-gold {
+            width: 100%;
+            margin-top: 20px;
+            padding: 16px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #D4AF37, #f0d060, #D4AF37);
+            color: #050010;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(212,175,55,0.3);
+            transition: filter 0.2s, transform 0.15s;
+        }
+        .btn-gold:hover { filter: brightness(1.1); }
+        .btn-gold:active { transform: scale(0.98); }
+        .btn-gold:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* ── WISHES WALL ── */
+        .wall-section-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .wall-divider {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(212,175,55,0.3));
+        }
+        .wall-divider-r {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to left, transparent, rgba(212,175,55,0.3));
+        }
+        .wall-label {
+            font-family: 'Cinzel', serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--gold);
+        }
+
+        #wishes-wall {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding-bottom: 40px;
+        }
+
+        .wish-card {
+            background: rgba(212,175,55,0.04);
+            border: 1px solid rgba(212,175,55,0.12);
+            border-radius: 10px;
+            padding: 18px 20px;
+            transition: border-color 0.3s, transform 0.3s;
+            animation: wish-in 0.6s ease-out both;
+        }
+        .wish-card:hover {
+            border-color: rgba(212,175,55,0.3);
+            transform: translateY(-2px);
+        }
+
+        @keyframes wish-in {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .wish-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(212,175,55,0.3), rgba(212,175,55,0.1));
+            border: 1px solid rgba(212,175,55,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--gold);
+            flex-shrink: 0;
+        }
+
+        .wish-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .wish-meta { flex: 1; }
+        .wish-name {
+            font-family: 'Cinzel', serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+        }
+        .wish-time {
+            font-size: 9px;
+            letter-spacing: 0.1em;
+            color: rgba(212,175,55,0.35);
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .wish-heart {
+            font-size: 14px;
+            color: rgba(212,175,55,0.4);
+        }
+
+        .wish-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: rgba(253,242,207,0.8);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(212,175,55,0.3);
+        }
+        .empty-state i { font-size: 2rem; margin-bottom: 12px; display: block; }
+        .empty-state p {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.1rem;
+        }
+
+        /* ── SUCCESS FLASH ── */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(10, 1, 26, 0.95);
+            border: 1px solid rgba(212,175,55,0.4);
+            border-radius: 8px;
+            padding: 14px 24px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+            z-index: 999;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            backdrop-filter: blur(20px);
+            white-space: nowrap;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* ── SCROLLBAR ── */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.3); border-radius: 2px; }
+    </style>
+</head>
+<body>
+
+    <canvas id="c-bg"></canvas>
+
+    <!-- Royal Frame -->
+    <div class="royal-frame"></div>
+
+    <!-- Back Button -->
+    <nav class="back-nav">
+        <a href="index.html" class="back-btn">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Back to Invitation
+        </a>
+    </nav>
+
+    <!-- Logo -->
+    <div class="logo-nav">
+        <a href="index.html">
+            <img src="images/akshim_logo.png" alt="AKSHIM Logo">
+        </a>
+    </div>
+
+    <!-- Page Content -->
+    <main class="page-wrap">
+
+        <!-- Header -->
+        <header class="page-header">
+            <p class="page-subtitle" style="font-size:0.75rem; letter-spacing:0.4em; text-transform:uppercase; margin-bottom:16px;">
+                <span class="live-dot"></span>Live
+            </p>
+            <h1 class="page-title">Blessings Wall</h1>
+            <div class="gold-divider"></div>
+            <p class="page-subtitle">Share your heartfelt wishes for the couple</p>
+        </header>
+
+        <!-- Blessing Input Form -->
+        <div class="blessing-form-card">
+            <label class="form-label" style="text-align:center; display:block;">Share Your Blessings</label>
+            <input id="wish-name-input" type="text" class="form-input" placeholder="Your name..." autocomplete="off">
+            <textarea id="wish-input" class="form-textarea" placeholder="Write your heartfelt wish for Akshay & Himanshi..."></textarea>
+            <button class="btn-gold" onclick="submitWish()" id="wish-submit-btn">
+                ✦ &nbsp;SEND BLESSING&nbsp; ✦
+            </button>
+        </div>
+
+        <!-- Wishes Wall -->
+        <div class="wall-section-header">
+            <div class="wall-divider"></div>
+            <span class="wall-label">All Blessings</span>
+            <div class="wall-divider-r"></div>
+        </div>
+
+        <div id="wishes-wall">
+            <!-- Loaded dynamically -->
+            <div class="empty-state" id="empty-state">
+                <i class="fa-regular fa-heart"></i>
+                <p>&ldquo;Be the first to share your blessings...&rdquo;</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ── CANVAS STARFIELD ──
+        (() => {
+            const cv = document.getElementById('c-bg');
+            const cx = cv.getContext('2d');
+            let W, H;
+            const resize = () => { W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; };
+            resize();
+            window.addEventListener('resize', resize);
+            const stars = Array.from({ length: 70 }, () => ({
+                x: Math.random(), y: Math.random(),
+                r: Math.random() * 0.7 + 0.1,
+                a: Math.random() * 0.4 + 0.1,
+                da: Math.random() * 0.004 + 0.002,
+                dir: 1
+            }));
+            const animate = () => {
+                cx.clearRect(0, 0, W, H);
+                const g = cx.createRadialGradient(W/2, H*0.4, 0, W/2, H/2, Math.max(W,H)*0.7);
+                g.addColorStop(0, 'rgba(40,0,90,0.12)');
+                g.addColorStop(1, 'rgba(5,0,16,0)');
+                cx.fillStyle = g; cx.fillRect(0, 0, W, H);
+                stars.forEach(s => {
+                    s.a += s.da * s.dir;
+                    if (s.a > 0.7 || s.a < 0.05) s.dir *= -1;
+                    cx.beginPath();
+                    cx.arc(s.x*W, s.y*H, s.r, 0, Math.PI*2);
+                    cx.fillStyle = `rgba(253,242,207,${s.a})`;
+                    cx.fill();
+                });
+                requestAnimationFrame(animate);
+            };
+            animate();
+        })();
+
+        // ── TOAST ──
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        // ── WISH CARD HTML ──
+        function wishCard(wish) {
+            const initials = (wish.name || '?').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+            const timeStr = wish.created_at
+                ? new Date(wish.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
+                : 'Just now';
+            return `
+                <div class="wish-card">
+                    <div class="wish-header">
+                        <div class="wish-avatar">${initials}</div>
+                        <div class="wish-meta">
+                            <div class="wish-name">${wish.name || 'A Guest'}</div>
+                            <div class="wish-time">${timeStr}</div>
+                        </div>
+                        <span class="wish-heart">♡</span>
+                    </div>
+                    <p class="wish-text">"${wish.message || wish.wish || ''}"</p>
+                </div>
+            `;
+        }
+
+        // ── LOAD WISHES ──
+        let demoWishes = [
+            { name: 'Rahul & Priya', message: 'Wishing you a lifetime of joy and happiness! Can\'t wait for the big day.', created_at: new Date(Date.now() - 3600000).toISOString() },
+            { name: 'The Sharma Family', message: 'May your journey together be as beautiful and magical as this union. God bless!', created_at: new Date(Date.now() - 7200000).toISOString() },
+            { name: 'Vikram Singh', message: 'Congratulations! A perfect match. Looking forward to the grand celebrations.', created_at: new Date(Date.now() - 10800000).toISOString() },
+        ];
+
+        async function loadWishes() {
+            const wall = document.getElementById('wishes-wall');
+            const emptyState = document.getElementById('empty-state');
+            try {
+                const res = await fetch('/api/wishes');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.length > 0) {
+                        emptyState && emptyState.remove();
+                        wall.innerHTML = data.map(wishCard).join('');
+                        return;
+                    }
+                }
+            } catch (e) {}
+            // Fallback to demo data
+            emptyState && emptyState.remove();
+            wall.innerHTML = demoWishes.map(wishCard).join('');
+        }
+
+        // ── SUBMIT WISH ──
+        async function submitWish() {
+            const nameInput = document.getElementById('wish-name-input');
+            const wishInput = document.getElementById('wish-input');
+            const btn = document.getElementById('wish-submit-btn');
+            const name = nameInput.value.trim();
+            const message = wishInput.value.trim();
+
+            if (!name || !message) {
+                showToast('Please enter your name and blessing ✦');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = '✦  Sending...  ✦';
+
+            try {
+                const res = await fetch('/api/wishes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, message })
+                });
+                if (res.ok) {
+                    showToast('Blessing sent! ✦ Thank you');
+                } else {
+                    throw new Error();
+                }
+            } catch (e) {
+                // Still show locally for demo
+                const wall = document.getElementById('wishes-wall');
+                const empty = document.getElementById('empty-state');
+                empty && empty.remove();
+                wall.insertAdjacentHTML('afterbegin', wishCard({ name, message, created_at: new Date().toISOString() }));
+                showToast('Blessing shared! ✦ Thank you');
+            }
+
+            nameInput.value = '';
+            wishInput.value = '';
+            btn.disabled = false;
+            btn.textContent = '✦  SEND BLESSING  ✦';
+
+            await loadWishes();
+        }
+
+        // Init
+        loadWishes();
+
+        // Auto-refresh every 30s
+        setInterval(loadWishes, 30000);
+    </script>
+</body>
+</html>

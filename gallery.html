@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Royal Vault — AKSHIM The Royal Union</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --gold: #D4AF37;
+            --gold-light: #fdf2cf;
+            --bg: #050010;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--gold-light);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        canvas#bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+        .frame {
+            position: fixed;
+            inset: 12px;
+            z-index: 2;
+            pointer-events: none;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+
+        /* ── NAVBAR ── */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: max(20px, env(safe-area-inset-top)) 28px 16px;
+            background: linear-gradient(to bottom, rgba(5,0,16,0.9) 0%, transparent 100%);
+            backdrop-filter: blur(8px);
+        }
+
+        .nav-logo img { width: 52px; height: 52px; object-fit: contain; opacity: 0.8; }
+
+        .nav-actions { display: flex; align-items: center; gap: 12px; }
+
+        .nav-btn {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: rgba(212,175,55,0.6);
+            background: transparent;
+            border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 6px;
+            padding: 8px 14px;
+            cursor: pointer;
+            transition: color 0.3s, border-color 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-btn:hover { color: var(--gold); border-color: rgba(212,175,55,0.5); }
+
+        .guest-name-pill {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+            background: rgba(212,175,55,0.08);
+            border: 1px solid rgba(212,175,55,0.25);
+            border-radius: 20px;
+            padding: 7px 14px;
+        }
+
+        /* ── PAGE WRAP ── */
+        .page-wrap {
+            position: relative;
+            z-index: 10;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 110px 20px 60px;
+        }
+
+        /* ── HEADER ── */
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .page-title {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.6rem, 5vw, 2.4rem);
+            font-weight: 700;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #fdf2cf, #D4AF37, #fdf2cf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+        .page-sub {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 0.95rem;
+            color: rgba(212,175,55,0.5);
+            letter-spacing: 0.1em;
+        }
+        .gold-line {
+            width: 80px; height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+            margin: 18px auto;
+        }
+
+        /* ── FILTERS ── */
+        .filter-bar {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+
+        .filter-btn {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 9px 20px;
+            border-radius: 6px;
+            border: 1px solid rgba(212,175,55,0.2);
+            background: rgba(255,255,255,0.03);
+            color: rgba(212,175,55,0.5);
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: rgba(212,175,55,0.15);
+            border-color: rgba(212,175,55,0.5);
+            color: var(--gold);
+        }
+
+        /* ── UPLOAD ── */
+        .upload-zone {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 36px;
+        }
+        .upload-label {
+            position: relative;
+            cursor: pointer;
+        }
+        .upload-label input { position: absolute; inset: 0; opacity: 0; cursor: pointer; z-index: 2; }
+        .upload-label .upload-ui {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.05));
+            border: 1px dashed rgba(212,175,55,0.35);
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--gold);
+            transition: background 0.3s, border-color 0.3s, transform 0.2s;
+        }
+        .upload-label:hover .upload-ui {
+            background: rgba(212,175,55,0.2);
+            border-color: rgba(212,175,55,0.6);
+            transform: translateY(-2px);
+        }
+
+        /* ── GALLERY GRID ── */
+        .gallery-grid {
+            columns: 2;
+            column-gap: 12px;
+        }
+        @media (min-width: 600px) { .gallery-grid { columns: 3; } }
+        @media (min-width: 900px) { .gallery-grid { columns: 4; } }
+
+        .gallery-item {
+            break-inside: avoid;
+            margin-bottom: 12px;
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid rgba(212,175,55,0.1);
+            cursor: pointer;
+            transition: border-color 0.3s, transform 0.3s;
+            animation: img-in 0.5s ease-out both;
+        }
+        @keyframes img-in {
+            from { opacity: 0; transform: scale(0.95); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+        .gallery-item:hover {
+            border-color: rgba(212,175,55,0.4);
+            transform: translateY(-3px);
+        }
+        .gallery-item img { width: 100%; display: block; object-fit: cover; }
+        .gallery-item .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(5,0,16,0.85) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 12px;
+        }
+        .gallery-item:hover .overlay { opacity: 1; }
+        .overlay-name {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+        }
+        .overlay-date {
+            font-size: 8px;
+            color: rgba(212,175,55,0.4);
+            text-transform: uppercase;
+        }
+
+        /* ── EMPTY STATE ── */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(212,175,55,0.25);
+        }
+        .empty-state i { font-size: 3rem; margin-bottom: 16px; display: block; }
+        .empty-state p { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.1rem; }
+
+        /* ── LIGHTBOX ── */
+        .lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            background: rgba(5,0,16,0.97);
+            backdrop-filter: blur(20px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .lightbox.show { display: flex; }
+        .lightbox img { max-width: 90vw; max-height: 85vh; object-fit: contain; border-radius: 4px; }
+        .lightbox-close {
+            position: absolute;
+            top: 20px; right: 20px;
+            background: transparent;
+            border: 1px solid rgba(212,175,55,0.3);
+            color: var(--gold);
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.3s;
+        }
+        .lightbox-close:hover { background: rgba(212,175,55,0.1); }
+
+        /* ── TOAST ── */
+        .toast {
+            position: fixed;
+            bottom: 28px; left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(10,1,26,0.95);
+            border: 1px solid rgba(212,175,55,0.35);
+            border-radius: 8px;
+            padding: 12px 22px;
+            font-size: 10px; font-weight: 700;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--gold);
+            z-index: 9999;
+            transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+            backdrop-filter: blur(20px);
+            white-space: nowrap;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.3); border-radius: 2px; }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg"></canvas>
+    <div class="frame"></div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <button class="lightbox-close" onclick="closeLightbox()"><i class="fa-solid fa-xmark"></i></button>
+        <img id="lightbox-img" src="" alt="Memory">
+    </div>
+
+    <!-- Nav -->
+    <nav>
+        <a href="index.html" class="nav-logo"><img src="images/akshim_logo.png" alt="AKSHIM"></a>
+        <div class="nav-actions">
+            <span class="guest-name-pill" id="guest-pill">
+                <i class="fa-solid fa-user" style="font-size:9px;"></i> Guest
+            </span>
+            <a href="blessings.html" class="nav-btn">
+                <span class="w-2 h-2 rounded-full bg-green-400" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#4ade80;flex-shrink:0;"></span>
+                Blessings
+            </a>
+            <a href="index.html" class="nav-btn">
+                <i class="fa-solid fa-home"></i>
+            </a>
+        </div>
+    </nav>
+
+    <main class="page-wrap">
+
+        <!-- Header -->
+        <header class="page-header">
+            <h1 class="page-title">The Royal Vault</h1>
+            <div class="gold-line"></div>
+            <p class="page-sub">Shared memories from our sacred union</p>
+        </header>
+
+        <!-- Filters -->
+        <div class="filter-bar">
+            <button class="filter-btn active" id="f-all" onclick="filterGallery('all')">All Images</button>
+            <button class="filter-btn" id="f-mine" onclick="filterGallery('mine')">My Uploads</button>
+            <button class="filter-btn" id="f-tagged" onclick="filterGallery('tagged')">Photos of Me</button>
+        </div>
+
+        <!-- Upload -->
+        <div class="upload-zone">
+            <label class="upload-label">
+                <input type="file" accept="image/*,video/*" multiple onchange="handleUpload(this)">
+                <div class="upload-ui">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    Contribute Memory
+                </div>
+            </label>
+        </div>
+
+        <!-- Gallery -->
+        <div class="gallery-grid" id="gallery">
+            <div class="empty-state" style="grid-column: 1/-1;">
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <p>Loading memories...</p>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ── STARFIELD ──
+        (() => {
+            const cv = document.getElementById('bg');
+            const cx = cv.getContext('2d');
+            let W, H;
+            const resize = () => { W = cv.width = innerWidth; H = cv.height = innerHeight; };
+            resize(); window.addEventListener('resize', resize);
+            const stars = Array.from({length:70}, () => ({
+                x:Math.random(), y:Math.random(), r:Math.random()*0.7+0.1,
+                a:Math.random()*0.4+0.1, da:Math.random()*0.004+0.002, dir:1
+            }));
+            (function animate() {
+                cx.clearRect(0,0,W,H);
+                const g = cx.createRadialGradient(W/2,H*0.4,0,W/2,H/2,Math.max(W,H)*0.7);
+                g.addColorStop(0,'rgba(40,0,90,0.12)'); g.addColorStop(1,'rgba(5,0,16,0)');
+                cx.fillStyle=g; cx.fillRect(0,0,W,H);
+                stars.forEach(s => {
+                    s.a += s.da*s.dir;
+                    if(s.a>0.7||s.a<0.05) s.dir*=-1;
+                    cx.beginPath(); cx.arc(s.x*W,s.y*H,s.r,0,Math.PI*2);
+                    cx.fillStyle=`rgba(253,242,207,${s.a})`; cx.fill();
+                });
+                requestAnimationFrame(animate);
+            })();
+        })();
+
+        // ── GUEST SESSION ──
+        const guest = (() => {
+            try { return JSON.parse(sessionStorage.getItem('akshim_guest')) || {}; } catch(e) { return {}; }
+        })();
+
+        if (guest.name) {
+            document.getElementById('guest-pill').innerHTML =
+                `<i class="fa-solid fa-user" style="font-size:9px;"></i> ${guest.name}`;
+        }
+
+        // ── TOAST ──
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        // ── LIGHTBOX ──
+        function openLightbox(url) {
+            document.getElementById('lightbox-img').src = url;
+            document.getElementById('lightbox').classList.add('show');
+        }
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('show');
+        }
+        document.addEventListener('keydown', e => { if(e.key==='Escape') closeLightbox(); });
+
+        // ── DEMO IMAGES ──
+        const demoImages = [
+            { url:'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=600&q=80', uploader_name:'Rahul Patel', created_at: new Date().toISOString(), type:'all' },
+            { url:'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80', uploader_name:'Priya Sharma', created_at: new Date().toISOString(), type:'all' },
+            { url:'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=600&q=80', uploader_name:'Amit Kumar', created_at: new Date().toISOString(), type:'tagged' },
+            { url:'https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=600&q=80', uploader_name:'Neha Singh', created_at: new Date().toISOString(), type:'all' },
+            { url:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80', uploader_name:'Vikram', created_at: new Date().toISOString(), type:'mine' },
+            { url:'https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=600&q=80', uploader_name:'Divya', created_at: new Date().toISOString(), type:'all' },
+        ];
+
+        let currentFilter = 'all';
+
+        function filterGallery(f) {
+            currentFilter = f;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('f-'+f).classList.add('active');
+            loadGallery(f);
+        }
+
+        function imgCard(img, delay) {
+            const name = img.uploader_name || 'Guest';
+            const date = new Date(img.created_at).toLocaleDateString('en-IN', {day:'numeric', month:'short'});
+            return `
+                <div class="gallery-item" style="animation-delay:${delay}ms" onclick="openLightbox('${img.url}')">
+                    <img src="${img.url}" alt="Memory" loading="lazy">
+                    <div class="overlay">
+                        <div class="overlay-name">${name}</div>
+                        <div class="overlay-date">${date}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function loadGallery(filter = 'all') {
+            const grid = document.getElementById('gallery');
+            grid.innerHTML = `<div class="empty-state" style="column-span:all"><i class="fa-solid fa-spinner fa-spin"></i><p>Loading memories...</p></div>`;
+            try {
+                const res = await fetch(`/api/vault?filter=${filter}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.length > 0) {
+                        grid.innerHTML = data.map((img,i) => imgCard(img, i*80)).join('');
+                        return;
+                    }
+                }
+            } catch(e) {}
+            // Demo fallback
+            const filtered = demoImages.filter(img => filter==='all' || img.type===filter || (filter==='mine' && img.uploader_name===guest?.name));
+            if (!filtered.length) {
+                grid.innerHTML = `<div class="empty-state" style="column-span:all"><i class="fa-solid fa-images"></i><p>No memories in this view yet</p></div>`;
+                return;
+            }
+            grid.innerHTML = filtered.map((img,i) => imgCard(img, i*80)).join('');
+        }
+
+        async function handleUpload(input) {
+            const files = Array.from(input.files);
+            if (!files.length) return;
+            showToast(`Uploading ${files.length} file${files.length>1?'s':''}...`);
+
+            for (const file of files) {
+                const fd = new FormData();
+                fd.append('file', file);
+                fd.append('bucket', 'shared-vault');
+                try {
+                    const res = await fetch('/api/vault/upload', { method:'POST', body:fd });
+                    const data = await res.json();
+                    if (!data.success) throw new Error();
+                } catch(e) {
+                    // Demo: just reload
+                }
+            }
+            showToast('Memories shared! ✦');
+            loadGallery(currentFilter);
+            input.value = '';
+        }
+
+        // Init
+        loadGallery();
+    </script>
+</body>
+</html>
